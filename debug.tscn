@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://maedd7bxl3nr"]
+
+[ext_resource type="Script" path="res://debug.gd" id="1_2aysk"]
+[ext_resource type="PackedScene" uid="uid://pliuagklgv5t" path="res://client/client.tscn" id="1_ht17x"]
+[ext_resource type="PackedScene" uid="uid://bl37ggxcyjtxt" path="res://server/server.tscn" id="2_rbdto"]
+
+[node name="Debug" type="Node2D"]
+script = ExtResource("1_2aysk")
+
+[node name="Server" parent="." instance=ExtResource("2_rbdto")]
+
+[node name="Client" parent="." instance=ExtResource("1_ht17x")]
+
+[node name="Client2" parent="." node_paths=PackedStringArray("_ws_client") instance=ExtResource("1_ht17x")]
+position = Vector2(360, 0)
+_ws_client = NodePath("../Client/WebSocketClient")
+
+[node name="Client3" parent="." node_paths=PackedStringArray("_ws_client") instance=ExtResource("1_ht17x")]
+position = Vector2(720, 0)
+_ws_client = NodePath("../Client/WebSocketClient")
+
+[node name="Client4" parent="." node_paths=PackedStringArray("_ws_client") instance=ExtResource("1_ht17x")]
+position = Vector2(1080, 0)
+_ws_client = NodePath("../Client/WebSocketClient")
