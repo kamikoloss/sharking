@@ -1,3 +1,10 @@
-[gd_scene format=3 uid="uid://bl37ggxcyjtxt"]
+[gd_scene load_steps=3 format=3 uid="uid://bl37ggxcyjtxt"]
 
-[node name="Server" type="Node"]
+[ext_resource type="Script" path="res://server/server.gd" id="1_v6r88"]
+[ext_resource type="PackedScene" uid="uid://kjnwwo7e3v13" path="res://addons/godot-websocket-nodes/WebSocketServer.tscn" id="2_reafv"]
+
+[node name="Server" type="Node" node_paths=PackedStringArray("_ws_server")]
+script = ExtResource("1_v6r88")
+_ws_server = NodePath("WebSocketServer")
+
+[node name="WebSocketServer" parent="." instance=ExtResource("2_reafv")]
