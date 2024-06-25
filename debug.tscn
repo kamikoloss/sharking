@@ -6,6 +6,42 @@
 
 [node name="Debug" type="Node2D"]
 script = ExtResource("1_2aysk")
-_client_scene = ExtResource("1_ht17x")
 
 [node name="Server" parent="." instance=ExtResource("2_rbdto")]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(1440, 640)
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Client" parent="HBoxContainer/MarginContainer" instance=ExtResource("1_ht17x")]
+
+[node name="MarginContainer2" type="MarginContainer" parent="HBoxContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Client" parent="HBoxContainer/MarginContainer2" node_paths=PackedStringArray("_ws_client") instance=ExtResource("1_ht17x")]
+_ws_client = NodePath("../../MarginContainer/Client/WebSocketClient")
+
+[node name="MarginContainer3" type="MarginContainer" parent="HBoxContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Client" parent="HBoxContainer/MarginContainer3" node_paths=PackedStringArray("_ws_client") instance=ExtResource("1_ht17x")]
+_ws_client = NodePath("../../MarginContainer/Client/WebSocketClient")
+
+[node name="MarginContainer4" type="MarginContainer" parent="HBoxContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Client" parent="HBoxContainer/MarginContainer4" node_paths=PackedStringArray("_ws_client") instance=ExtResource("1_ht17x")]
+_ws_client = NodePath("../../MarginContainer/Client/WebSocketClient")
