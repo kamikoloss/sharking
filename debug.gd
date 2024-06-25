@@ -1,15 +1,15 @@
-#@tool
 extends Node2D
 
 
+@export var _client_scene: PackedScene 
+
+
+var _client_position_x_list = [0, 360, 720, 1080]
+
+
 func _ready():
-	_change_project_settings(true)
-
-
-func _change_project_settings(is_enable: bool) -> void:
-	if is_enable:
-		ProjectSettings.set_setting("display/window/size/viewport_width", 1440)
-		ProjectSettings.set_setting("display/window/size/viewport_height", 40)
-	else:
-		ProjectSettings.set_setting("display/window/size/viewport_width", 360)
-		ProjectSettings.set_setting("display/window/size/viewport_height", 640)
+	get_viewport().size = Vector2i(1440, 640)
+	for x in _client_position_x_list:
+		var client = _client_scene.instantiate()
+		client.position.x = x
+		add_child(client)
