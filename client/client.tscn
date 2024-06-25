@@ -1,10 +1,109 @@
-[gd_scene load_steps=3 format=3 uid="uid://pliuagklgv5t"]
+[gd_scene load_steps=8 format=3 uid="uid://pliuagklgv5t"]
 
 [ext_resource type="Script" path="res://client/client.gd" id="1_msniv"]
 [ext_resource type="PackedScene" uid="uid://dqj72j3uqnvgo" path="res://addons/godot-websocket-nodes/WebSocketClient.tscn" id="2_j7dni"]
+[ext_resource type="Texture2D" uid="uid://donorrfpj4qwd" path="res://client/images/base_square.png" id="3_2y5nb"]
+[ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://client/theme/theme.tres" id="3_spi0b"]
+[ext_resource type="Texture2D" uid="uid://dlkhlebgvo10n" path="res://client/images/stage.png" id="3_ysxmw"]
+[ext_resource type="PackedScene" uid="uid://52tpbo5enhtq" path="res://client/hero.tscn" id="4_sen54"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_u1w2v"]
+size = Vector2(256, 256)
 
 [node name="Client" type="Node2D" node_paths=PackedStringArray("_ws_client")]
 script = ExtResource("1_msniv")
 _ws_client = NodePath("WebSocketClient")
 
 [node name="WebSocketClient" parent="." instance=ExtResource("2_j7dni")]
+
+[node name="Level" type="Node2D" parent="."]
+
+[node name="BG" type="Sprite2D" parent="Level"]
+self_modulate = Color(0.501961, 0.501961, 0.752941, 1)
+scale = Vector2(8, 8)
+texture = ExtResource("3_ysxmw")
+
+[node name="Walls" type="Node2D" parent="Level"]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Level/Walls"]
+position = Vector2(0, -800)
+scale = Vector2(16, 0.5)
+
+[node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D"]
+self_modulate = Color(1, 0, 0, 0.501961)
+texture = ExtResource("3_2y5nb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D"]
+shape = SubResource("RectangleShape2D_u1w2v")
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="Level/Walls"]
+position = Vector2(0, 800)
+scale = Vector2(16, 0.5)
+
+[node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D2"]
+self_modulate = Color(1, 0, 0, 0.501961)
+texture = ExtResource("3_2y5nb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D2"]
+shape = SubResource("RectangleShape2D_u1w2v")
+
+[node name="StaticBody2D3" type="StaticBody2D" parent="Level/Walls"]
+position = Vector2(-800, 0)
+rotation = 1.5708
+scale = Vector2(16, 0.5)
+
+[node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D3"]
+self_modulate = Color(1, 0, 0, 0.501961)
+texture = ExtResource("3_2y5nb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D3"]
+shape = SubResource("RectangleShape2D_u1w2v")
+
+[node name="StaticBody2D4" type="StaticBody2D" parent="Level/Walls"]
+position = Vector2(800, 0)
+rotation = 1.5708
+scale = Vector2(16, 0.5)
+
+[node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D4"]
+self_modulate = Color(1, 0, 0, 0.501961)
+texture = ExtResource("3_2y5nb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D4"]
+shape = SubResource("RectangleShape2D_u1w2v")
+
+[node name="Hero" parent="." instance=ExtResource("4_sen54")]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 360.0
+offset_bottom = 640.0
+
+[node name="ButtonLeft" type="Button" parent="Control"]
+visible = false
+layout_mode = 0
+offset_left = 10.0
+offset_top = 570.0
+offset_right = 70.0
+offset_bottom = 630.0
+theme = ExtResource("3_spi0b")
+text = "◀"
+
+[node name="ButtonCenter" type="Button" parent="Control"]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 570.0
+offset_right = 280.0
+offset_bottom = 630.0
+theme = ExtResource("3_spi0b")
+text = "CONNECT"
+
+[node name="ButtonRight" type="Button" parent="Control"]
+visible = false
+layout_mode = 0
+offset_left = 290.0
+offset_top = 570.0
+offset_right = 350.0
+offset_bottom = 630.0
+theme = ExtResource("3_spi0b")
+text = "▶"
