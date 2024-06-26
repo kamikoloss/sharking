@@ -1,0 +1,60 @@
+[gd_scene load_steps=5 format=3 uid="uid://52tpbo5enhtq"]
+
+[ext_resource type="Script" path="res://common/hero.gd" id="1_ifnkb"]
+[ext_resource type="Texture2D" uid="uid://6ywhpgs1x7b5" path="res://client/images/gab.png" id="2_fgwxr"]
+[ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://client/theme/theme.tres" id="3_qksco"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lxfer"]
+radius = 32.0
+
+[node name="Hero" type="RigidBody2D" node_paths=PackedStringArray("_sprite", "_arrow_label")]
+gravity_scale = 0.0
+script = ExtResource("1_ifnkb")
+_sprite = NodePath("Sprite2D")
+_arrow_label = NodePath("Control/ArrowLabel")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_lxfer")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("2_fgwxr")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_lxfer")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="LevelLabel" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = -40.0
+offset_top = -80.0
+offset_right = 40.0
+offset_bottom = -40.0
+theme = ExtResource("3_qksco")
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+text = "9999"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ArrowLabel" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = 100.0
+rotation = 1.5708
+pivot_offset = Vector2(100, 100)
+theme = ExtResource("3_qksco")
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+text = "▲"
+horizontal_alignment = 1
