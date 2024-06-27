@@ -1,17 +1,20 @@
-[gd_scene load_steps=5 format=3 uid="uid://52tpbo5enhtq"]
+[gd_scene load_steps=7 format=3 uid="uid://52tpbo5enhtq"]
 
 [ext_resource type="Script" path="res://scripts/hero.gd" id="1_ifnkb"]
 [ext_resource type="Texture2D" uid="uid://6ywhpgs1x7b5" path="res://images/gab.png" id="2_fgwxr"]
 [ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://themes/default.tres" id="3_qksco"]
+[ext_resource type="Texture2D" uid="uid://donorrfpj4qwd" path="res://images/base_square.png" id="4_r63cl"]
+[ext_resource type="Texture2D" uid="uid://c512m80ajmvsk" path="res://images/base_triangle.png" id="5_g2pgf"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lxfer"]
 radius = 32.0
 
-[node name="Hero" type="RigidBody2D" node_paths=PackedStringArray("_sprite", "_arrow_label")]
+[node name="Hero" type="RigidBody2D" node_paths=PackedStringArray("_sprite", "_arrow", "_arrow_square")]
 gravity_scale = 0.0
 script = ExtResource("1_ifnkb")
 _sprite = NodePath("Sprite2D")
-_arrow_label = NodePath("Control/ArrowLabel")
+_arrow = NodePath("Control/Arrow")
+_arrow_square = NodePath("Control/Arrow/TextureRectSquare")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_lxfer")
@@ -31,30 +34,40 @@ shape = SubResource("CircleShape2D_lxfer")
 layout_mode = 3
 anchors_preset = 0
 
-[node name="LevelLabel" type="Label" parent="Control"]
+[node name="LabelLevel" type="Label" parent="Control"]
 layout_mode = 0
 offset_left = -40.0
 offset_top = -80.0
 offset_right = 40.0
 offset_bottom = -40.0
 theme = ExtResource("3_qksco")
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 8
 text = "9999"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ArrowLabel" type="Label" parent="Control"]
+[node name="Arrow" type="Control" parent="Control"]
+anchors_preset = 0
+
+[node name="TextureRectTriangle" type="TextureRect" parent="Control/Arrow"]
+self_modulate = Color(1, 0, 0, 1)
 layout_mode = 0
-offset_left = -100.0
-offset_top = -100.0
-offset_right = 100.0
-offset_bottom = 100.0
+offset_left = 90.0
+offset_top = -10.0
+offset_right = 110.0
+offset_bottom = 10.0
 rotation = 1.5708
-pivot_offset = Vector2(100, 100)
-theme = ExtResource("3_qksco")
-theme_override_colors/font_color = Color(1, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 8
-text = "▲"
-horizontal_alignment = 1
+pivot_offset = Vector2(10, 10)
+texture = ExtResource("5_g2pgf")
+expand_mode = 1
+
+[node name="TextureRectSquare" type="TextureRect" parent="Control/Arrow"]
+self_modulate = Color(1, 0, 0, 1)
+layout_mode = 0
+offset_left = -90.0
+offset_top = -4.0
+offset_right = 90.0
+offset_bottom = 4.0
+scale = Vector2(1e-05, 1)
+pivot_offset = Vector2(180, 4)
+texture = ExtResource("4_r63cl")
+expand_mode = 1

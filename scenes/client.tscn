@@ -10,9 +10,13 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_u1w2v"]
 size = Vector2(256, 256)
 
-[node name="Client" type="Node2D" node_paths=PackedStringArray("_ws_client")]
+[node name="Client" type="Node2D" node_paths=PackedStringArray("_hero", "_ws_client", "_button_center", "_debug_label_state", "_debug_label_charge")]
 script = ExtResource("1_rfnpf")
+_hero = NodePath("Hero")
 _ws_client = NodePath("WebSocketClient")
+_button_center = NodePath("CanvasLayer/Control/ButtonCenter")
+_debug_label_state = NodePath("CanvasLayer/Control/Debug/LabelState")
+_debug_label_charge = NodePath("CanvasLayer/Control/Debug/LabelCharge")
 
 [node name="WebSocketClient" parent="." instance=ExtResource("2_gpgyy")]
 
@@ -109,3 +113,19 @@ offset_right = 350.0
 offset_bottom = 630.0
 theme = ExtResource("6_63squ")
 text = "▶"
+
+[node name="Debug" type="VBoxContainer" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 0
+
+[node name="LabelState" type="Label" parent="CanvasLayer/Control/Debug"]
+layout_mode = 2
+theme = ExtResource("6_63squ")
+text = "STAT:XXXX"
+
+[node name="LabelCharge" type="Label" parent="CanvasLayer/Control/Debug"]
+layout_mode = 2
+theme = ExtResource("6_63squ")
+text = "CHRG:0.00"
