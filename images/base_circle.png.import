@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://6ywhpgs1x7b5"
-path="res://.godot/imported/gab.png-b4f7cd2d8131bada7f9609f205b86bbb.ctex"
+uid="uid://bxe4id1rhqlnr"
+path="res://.godot/imported/base_circle.png-9ad04265a7df40d90c409839fe355b74.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://client/images/gab.png"
-dest_files=["res://.godot/imported/gab.png-b4f7cd2d8131bada7f9609f205b86bbb.ctex"]
+source_file="res://images/base_circle.png"
+dest_files=["res://.godot/imported/base_circle.png-9ad04265a7df40d90c409839fe355b74.ctex"]
 
 [params]
 

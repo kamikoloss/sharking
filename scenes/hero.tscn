@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://52tpbo5enhtq"]
 
-[ext_resource type="Script" path="res://common/hero.gd" id="1_ifnkb"]
-[ext_resource type="Texture2D" uid="uid://6ywhpgs1x7b5" path="res://client/images/gab.png" id="2_fgwxr"]
-[ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://client/theme/theme.tres" id="3_qksco"]
+[ext_resource type="Script" path="res://scripts/hero.gd" id="1_ifnkb"]
+[ext_resource type="Texture2D" uid="uid://6ywhpgs1x7b5" path="res://images/gab.png" id="2_fgwxr"]
+[ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://themes/default.tres" id="3_qksco"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lxfer"]
 radius = 32.0

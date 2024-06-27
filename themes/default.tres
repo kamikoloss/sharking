@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=2 format=3 uid="uid://cji20uu480k3h"]
 
-[ext_resource type="FontFile" uid="uid://b5812awur0xc2" path="res://client/fonts/PixelMplus12-Regular.ttf" id="1_y3u2h"]
+[ext_resource type="FontFile" uid="uid://b5812awur0xc2" path="res://themes/PixelMplus12-Regular.ttf" id="1_y3u2h"]
 
 [resource]
 default_font = ExtResource("1_y3u2h")

@@ -1,27 +1,27 @@
 [gd_scene load_steps=8 format=3 uid="uid://pliuagklgv5t"]
 
-[ext_resource type="Script" path="res://client/client.gd" id="1_msniv"]
-[ext_resource type="PackedScene" uid="uid://dqj72j3uqnvgo" path="res://addons/godot-websocket-nodes/WebSocketClient.tscn" id="2_j7dni"]
-[ext_resource type="Texture2D" uid="uid://donorrfpj4qwd" path="res://client/images/base_square.png" id="3_2y5nb"]
-[ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://client/theme/theme.tres" id="3_spi0b"]
-[ext_resource type="Texture2D" uid="uid://dlkhlebgvo10n" path="res://client/images/stage.png" id="3_ysxmw"]
-[ext_resource type="PackedScene" uid="uid://52tpbo5enhtq" path="res://client/hero.tscn" id="4_sen54"]
+[ext_resource type="Script" path="res://scripts/client.gd" id="1_rfnpf"]
+[ext_resource type="PackedScene" uid="uid://dqj72j3uqnvgo" path="res://addons/godot-websocket-nodes/WebSocketClient.tscn" id="2_gpgyy"]
+[ext_resource type="Texture2D" uid="uid://dlkhlebgvo10n" path="res://images/stage.png" id="3_0kwsu"]
+[ext_resource type="Texture2D" uid="uid://donorrfpj4qwd" path="res://images/base_square.png" id="4_th2a4"]
+[ext_resource type="PackedScene" uid="uid://52tpbo5enhtq" path="res://scenes/hero.tscn" id="5_e5wad"]
+[ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://themes/default.tres" id="6_63squ"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_u1w2v"]
 size = Vector2(256, 256)
 
 [node name="Client" type="Node2D" node_paths=PackedStringArray("_ws_client")]
-script = ExtResource("1_msniv")
+script = ExtResource("1_rfnpf")
 _ws_client = NodePath("WebSocketClient")
 
-[node name="WebSocketClient" parent="." instance=ExtResource("2_j7dni")]
+[node name="WebSocketClient" parent="." instance=ExtResource("2_gpgyy")]
 
 [node name="Level" type="Node2D" parent="."]
 
 [node name="BG" type="Sprite2D" parent="Level"]
 self_modulate = Color(0.501961, 0.501961, 0.752941, 1)
 scale = Vector2(8, 8)
-texture = ExtResource("3_ysxmw")
+texture = ExtResource("3_0kwsu")
 
 [node name="Walls" type="Node2D" parent="Level"]
 
@@ -31,7 +31,7 @@ scale = Vector2(16, 0.5)
 
 [node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D"]
 self_modulate = Color(1, 0, 0, 0.501961)
-texture = ExtResource("3_2y5nb")
+texture = ExtResource("4_th2a4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D"]
 shape = SubResource("RectangleShape2D_u1w2v")
@@ -42,7 +42,7 @@ scale = Vector2(16, 0.5)
 
 [node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D2"]
 self_modulate = Color(1, 0, 0, 0.501961)
-texture = ExtResource("3_2y5nb")
+texture = ExtResource("4_th2a4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D2"]
 shape = SubResource("RectangleShape2D_u1w2v")
@@ -54,7 +54,7 @@ scale = Vector2(16, 0.5)
 
 [node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D3"]
 self_modulate = Color(1, 0, 0, 0.501961)
-texture = ExtResource("3_2y5nb")
+texture = ExtResource("4_th2a4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D3"]
 shape = SubResource("RectangleShape2D_u1w2v")
@@ -66,44 +66,46 @@ scale = Vector2(16, 0.5)
 
 [node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D4"]
 self_modulate = Color(1, 0, 0, 0.501961)
-texture = ExtResource("3_2y5nb")
+texture = ExtResource("4_th2a4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D4"]
 shape = SubResource("RectangleShape2D_u1w2v")
 
-[node name="Hero" parent="." instance=ExtResource("4_sen54")]
+[node name="Hero" parent="." instance=ExtResource("5_e5wad")]
 
-[node name="Control" type="Control" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 360.0
 offset_bottom = 640.0
 
-[node name="ButtonLeft" type="Button" parent="Control"]
+[node name="ButtonLeft" type="Button" parent="CanvasLayer/Control"]
 visible = false
 layout_mode = 0
 offset_left = 10.0
 offset_top = 570.0
 offset_right = 70.0
 offset_bottom = 630.0
-theme = ExtResource("3_spi0b")
+theme = ExtResource("6_63squ")
 text = "◀"
 
-[node name="ButtonCenter" type="Button" parent="Control"]
+[node name="ButtonCenter" type="Button" parent="CanvasLayer/Control"]
 layout_mode = 0
 offset_left = 80.0
 offset_top = 570.0
 offset_right = 280.0
 offset_bottom = 630.0
-theme = ExtResource("3_spi0b")
+theme = ExtResource("6_63squ")
 text = "CONNECT"
 
-[node name="ButtonRight" type="Button" parent="Control"]
+[node name="ButtonRight" type="Button" parent="CanvasLayer/Control"]
 visible = false
 layout_mode = 0
 offset_left = 290.0
 offset_top = 570.0
 offset_right = 350.0
 offset_bottom = 630.0
-theme = ExtResource("3_spi0b")
+theme = ExtResource("6_63squ")
 text = "▶"
