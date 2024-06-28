@@ -1,4 +1,5 @@
 extends Node
+class_name Enum
 
 
 # Server から Clinet に送信するメッセージのタイプ

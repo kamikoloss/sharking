@@ -82,5 +82,5 @@ func _process_refresh_ping(delta: float) -> void:
 
 # Debug
 func _process_refresh_debug(_delta: float) -> void:
-	_debug_label_state.text = "STAT:%s" % Hero.MoveState.keys()[_hero.move_state]
+	_debug_label_state.text = "STTS:%s" % Hero.MoveState.keys()[_hero.move_state]
 	_debug_label_charge.text = "CHRG:%s" % snapped(_hero.charge, 0.01)

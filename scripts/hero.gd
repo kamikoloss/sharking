@@ -15,28 +15,31 @@ enum MoveState {
 }
 
 
+const MOVE_IMPULSE_BASE = 500 # 移動タメの係数
+
+
 var move_state = MoveState.WAITING
+var charge: float = 0.0 # 現在の移動タメ度 (最大 1.0)
+
 
 @export var _sprite: Sprite2D
 @export var _arrow: Control
 @export var _arrow_square: TextureRect
+@export var _arrow_square_bg: TextureRect
 
-var _direction: float = 90.0 # 現在の移動方向 (deg)
-@export var _direction_rotation_speed_default: float = 90.0
-var _direction_rotation_speed: float = _direction_rotation_speed_default # 移動方向の矢印の回転速度 (deg/s)
+var _direction: float = 0.0 # 現在の移動方向 (deg)
+@export var _direction_rotation_speed_default: float = 90.0 # 移動方向の矢印の回転速度 (deg/s)
+var _direction_rotation_speed: float = _direction_rotation_speed_default
 
-var charge: float = 0.0 # 現在の移動タメ度 (最大 1.0)
-@export var _charge_speed_default: float = 0.2
-var _charge_speed: float = _charge_speed_default  # 移動タメの速度 (/s)
-@export var _charge_duration_default: float = 1.0
-var _charge_duration = _charge_duration_default # 移動タメが最大に達するまでの秒数 (s)
+@export var _charge_duration_default: float = 3.0 # 移動タメの周期 (s)
+var _charge_duration = _charge_duration_default
 
-var _move_tween: Tween:
+var _sprite_tween: Tween:
 	get:
-		if _move_tween:
-			_move_tween.kill()
-		_move_tween = create_tween()
-		return _move_tween
+		if _sprite_tween:
+			_sprite_tween.kill()
+		_sprite_tween = create_tween()
+		return _sprite_tween
 var _arrow_square_tween: Tween:
 	get:
 		if _arrow_square_tween:
@@ -57,22 +60,35 @@ func _process(delta: float) -> void:
 func enter_charge() -> void:
 	move_state = MoveState.CHARGING
 
-	_move_tween.set_loops()
-	_move_tween.set_parallel(true)
-	_move_tween.tween_method(func(v): charge = _charge_speed * v, 0.0, 1.0, _charge_duration)
-	_move_tween.tween_property(_arrow_square, "scale.x", 1.0, _charge_duration)
+	# arrow
+	_arrow_square_bg.visible = true
+	var tween = _arrow_square_tween
+	tween.set_loops()
+	tween.set_parallel(true)
+	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
+	tween.tween_method(func(v): charge = v, 0.0, 1.0, _charge_duration)
+	tween.tween_method(func(v): _arrow_square.scale.y = v, 0.0, 1.0, _charge_duration)
 
 
 # 移動のタメを終了する
 func exit_charge() -> void:
 	move_state = MoveState.COOLING
 
-	_move_tween.set_parallel(true)
-	_move_tween.set_ease(Tween.EASE_OUT)
-	_move_tween.set_trans(Tween.TRANS_QUINT)
-	charge = 0.0
-	_move_tween.tween_property(_arrow_square, "scale.x", 0.0, _charge_duration / 4)
+	# 移動する
+	var impulse = Vector2.UP.rotated(deg_to_rad(_direction)) * charge * MOVE_IMPULSE_BASE
+	print("[Hero] impulse! direction: %s, charge: %s, vector: %s" % [_direction, charge, impulse])
+	apply_impulse(impulse)
 
+	# arrow
+	_arrow_square_bg.visible = false
+	var tween = _arrow_square_tween
+	tween.set_parallel(true)
+	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+	tween.tween_method(func(v): _arrow_square.scale.y = v, charge, 0.0, 0.25)
+	charge = 0.0
+	tween.finished.connect(func(): move_state = MoveState.WAITING)
+
+	print("[Hero] move started.")
 	move_started.emit()
 
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://52tpbo5enhtq"]
+[gd_scene load_steps=8 format=3 uid="uid://52tpbo5enhtq"]
 
 [ext_resource type="Script" path="res://scripts/hero.gd" id="1_ifnkb"]
 [ext_resource type="Texture2D" uid="uid://6ywhpgs1x7b5" path="res://images/gab.png" id="2_fgwxr"]
@@ -6,17 +6,31 @@
 [ext_resource type="Texture2D" uid="uid://donorrfpj4qwd" path="res://images/base_square.png" id="4_r63cl"]
 [ext_resource type="Texture2D" uid="uid://c512m80ajmvsk" path="res://images/base_triangle.png" id="5_g2pgf"]
 
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_r0glp"]
+friction = 100.0
+rough = true
+bounce = 0.2
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_lxfer"]
 radius = 32.0
 
-[node name="Hero" type="RigidBody2D" node_paths=PackedStringArray("_sprite", "_arrow", "_arrow_square")]
+[node name="Hero" type="RigidBody2D" node_paths=PackedStringArray("_sprite", "_arrow", "_arrow_square", "_arrow_square_bg")]
+physics_material_override = SubResource("PhysicsMaterial_r0glp")
 gravity_scale = 0.0
+lock_rotation = true
 script = ExtResource("1_ifnkb")
 _sprite = NodePath("Sprite2D")
 _arrow = NodePath("Control/Arrow")
 _arrow_square = NodePath("Control/Arrow/TextureRectSquare")
+_arrow_square_bg = NodePath("Control/Arrow/TextureRectSquareBg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_lxfer")
+
+[node name="Area2D" type="Area2D" parent="."]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("CircleShape2D_lxfer")
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -24,11 +38,6 @@ shape = SubResource("CircleShape2D_lxfer")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.4, 0.4)
 texture = ExtResource("2_fgwxr")
-
-[node name="Area2D" type="Area2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-shape = SubResource("CircleShape2D_lxfer")
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -51,23 +60,30 @@ anchors_preset = 0
 [node name="TextureRectTriangle" type="TextureRect" parent="Control/Arrow"]
 self_modulate = Color(1, 0, 0, 1)
 layout_mode = 0
-offset_left = 90.0
-offset_top = -10.0
-offset_right = 110.0
-offset_bottom = 10.0
-rotation = 1.5708
-pivot_offset = Vector2(10, 10)
+offset_left = -10.0
+offset_top = -100.0
+offset_right = 10.0
+offset_bottom = -80.0
 texture = ExtResource("5_g2pgf")
+expand_mode = 1
+
+[node name="TextureRectSquareBg" type="TextureRect" parent="Control/Arrow"]
+visible = false
+self_modulate = Color(0.501961, 0.501961, 0.501961, 0.501961)
+offset_left = -4.0
+offset_top = -80.0
+offset_right = 4.0
+offset_bottom = 80.0
+texture = ExtResource("4_r63cl")
 expand_mode = 1
 
 [node name="TextureRectSquare" type="TextureRect" parent="Control/Arrow"]
 self_modulate = Color(1, 0, 0, 1)
 layout_mode = 0
-offset_left = -90.0
-offset_top = -4.0
-offset_right = 90.0
-offset_bottom = 4.0
-scale = Vector2(1e-05, 1)
-pivot_offset = Vector2(180, 4)
+offset_left = -4.0
+offset_top = -80.0
+offset_right = 4.0
+offset_bottom = 80.0
+scale = Vector2(1, 1e-05)
 texture = ExtResource("4_r63cl")
 expand_mode = 1
