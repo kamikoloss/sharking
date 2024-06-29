@@ -31,8 +31,8 @@ func kill() -> void:
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	tween.tween_property(_sprite, "self_modulate", Color.WHITE, 0.1)
 	tween.tween_property(_sprite, "self_modulate", Color.TRANSPARENT, 1.0)
-	print("[Exp] kill.")
 	tween.finished.connect(func(): queue_free())
+	print("[Exp %s] kill." % get_instance_id())
 
 
 func _on_area_entered(area: Area2D) -> void:

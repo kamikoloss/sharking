@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://c512m80ajmvsk" path="res://images/base_triangle.png" id="5_g2pgf"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lxfer"]
-radius = 32.0
+radius = 40.0
 
 [node name="Hero" type="Area2D" node_paths=PackedStringArray("_sprite", "_label_level", "_arrow", "_arrow_square", "_arrow_square_bg")]
 script = ExtResource("1_ifnkb")
