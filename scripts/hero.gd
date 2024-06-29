@@ -12,6 +12,13 @@ enum MoveState {
 	MOVING, # 移動中/移動終了待ち
 	COOLING, # クールタイム中/クールタイム終了待ち
 }
+# Tween
+enum TweenType {
+	MOVE, # 座標移動
+	ARROW_SQ, # 矢印の棒 (タメ)
+	ARROW_SQ_CT, # 矢印の棒 (クールタイム)
+	ARROW_SQ_BG, # 矢印の棒 (タメ背景)
+}
 
 
 const MOVE_VECTOR_RATIO: int = 500 # 移動距離の係数
@@ -43,30 +50,7 @@ var _direction_rotation_speed: float = _direction_rotation_speed_default
 @export var _charge_duration_default: float = 3.0 # 移動タメの周期 (s)
 var _charge_duration = _charge_duration_default
 
-var _move_tween: Tween:
-	get:
-		if _move_tween:
-			_move_tween.kill()
-		_move_tween = create_tween()
-		return _move_tween
-var _arrow_square_tween: Tween:
-	get:
-		if _arrow_square_tween:
-			_arrow_square_tween.kill()
-		_arrow_square_tween = create_tween()
-		return _arrow_square_tween
-var _arrow_square_ct_tween: Tween:
-	get:
-		if _arrow_square_ct_tween:
-			_arrow_square_ct_tween.kill()
-		_arrow_square_ct_tween = create_tween()
-		return _arrow_square_ct_tween
-var _arrow_square_bg_tween: Tween:
-	get:
-		if _arrow_square_bg_tween:
-			_arrow_square_bg_tween.kill()
-		_arrow_square_bg_tween = create_tween()
-		return _arrow_square_bg_tween
+var _tweens: Dictionary = {} # { TweenType: Tween, ... } 
 
 
 func _ready() -> void:
@@ -89,17 +73,17 @@ func enter_charge() -> void:
 	move_state = MoveState.CHARGING
 
 	# _arrow_square_bg
-	var arrow_square_bg_tween = _arrow_square_bg_tween
+	var arrow_square_bg_tween = _get_tween(TweenType.ARROW_SQ_CT)
 	arrow_square_bg_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	arrow_square_bg_tween.tween_method(func(v): _arrow_square_bg.scale.y = v, 0.0, 1.0, 0.25)
 
 	# _arrow_square
-	var tween = _arrow_square_tween
-	tween.set_loops()
-	tween.set_parallel(true)
-	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
-	tween.tween_method(func(v): charge = v, 0.0, 1.0, _charge_duration)
-	tween.tween_method(func(v): _arrow_square.scale.y = v, 0.0, 1.0, _charge_duration)
+	var arrow_square_tween = _get_tween(TweenType.ARROW_SQ)
+	arrow_square_tween.set_loops()
+	arrow_square_tween.set_parallel(true)
+	arrow_square_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
+	arrow_square_tween.tween_method(func(v): charge = v, 0.0, 1.0, _charge_duration)
+	arrow_square_tween.tween_method(func(v): _arrow_square.scale.y = v, 0.0, 1.0, _charge_duration)
 
 
 # 移動のタメを終了する
@@ -109,18 +93,18 @@ func exit_charge() -> void:
 	move_state = MoveState.MOVING
 
 	# _arrow_square_bg
-	var arrow_square_bg_tween = _arrow_square_bg_tween
+	var arrow_square_bg_tween = _get_tween(TweenType.ARROW_SQ_BG)
 	arrow_square_bg_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	arrow_square_bg_tween.tween_method(func(v): _arrow_square_bg.scale.y = v, 1.0, 0.0, 0.25)
 
 	# _arrow_square
-	var arrow_square_tween = _arrow_square_tween
+	var arrow_square_tween = _get_tween(TweenType.ARROW_SQ)
 	arrow_square_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	arrow_square_tween.tween_method(func(v): _arrow_square.scale.y = v, charge, 0.0, 0.25)
 
 	# move
 	_sprite.flip_h = 180.0 < _direction
-	var move_tween = _move_tween
+	var move_tween = _get_tween(TweenType.MOVE)
 
 	var _before_duration = MOVE_BEFORE_SEC # TODO: ping を考慮する
 	move_tween.set_parallel(true)
@@ -138,7 +122,7 @@ func exit_charge() -> void:
 
 	# _arrow_square_ct
 	_arrow_square_ct.scale.y = charge
-	var arrow_square_ct_tween = _arrow_square_ct_tween
+	var arrow_square_ct_tween = _get_tween(TweenType.ARROW_SQ_CT)
 	arrow_square_ct_tween.tween_interval(_before_duration)
 	arrow_square_ct_tween.tween_method(func(v): _arrow_square_ct.scale.y = v, charge, 0.0, move_duration)
 
@@ -163,3 +147,10 @@ func _process_rotate_direction(delta: float) -> void:
 		_direction -= 360.0
 
 	_arrow.rotation_degrees = _direction
+
+
+func _get_tween(type: TweenType) -> Tween:
+	if _tweens.has(type):
+		_tweens[type].kill()
+	_tweens[type] = create_tween()
+	return _tweens[type]
