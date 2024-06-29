@@ -1,14 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://pliuagklgv5t"]
+[gd_scene load_steps=6 format=3 uid="uid://pliuagklgv5t"]
 
 [ext_resource type="Script" path="res://scripts/client.gd" id="1_rfnpf"]
 [ext_resource type="PackedScene" uid="uid://dqj72j3uqnvgo" path="res://addons/godot-websocket-nodes/WebSocketClient.tscn" id="2_gpgyy"]
-[ext_resource type="Texture2D" uid="uid://dlkhlebgvo10n" path="res://images/stage.png" id="3_0kwsu"]
-[ext_resource type="Texture2D" uid="uid://donorrfpj4qwd" path="res://images/base_square.png" id="4_th2a4"]
+[ext_resource type="PackedScene" uid="uid://dhwvkf3taw8db" path="res://scenes/level.tscn" id="3_crljq"]
 [ext_resource type="PackedScene" uid="uid://52tpbo5enhtq" path="res://scenes/hero.tscn" id="5_e5wad"]
 [ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://themes/default.tres" id="6_63squ"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_u1w2v"]
-size = Vector2(256, 256)
 
 [node name="Client" type="Node2D" node_paths=PackedStringArray("_hero", "_ws_client", "_button_center", "_debug_label_state", "_debug_label_charge")]
 script = ExtResource("1_rfnpf")
@@ -20,60 +16,7 @@ _debug_label_charge = NodePath("CanvasLayer/Control/Debug/LabelCharge")
 
 [node name="WebSocketClient" parent="." instance=ExtResource("2_gpgyy")]
 
-[node name="Level" type="Node2D" parent="."]
-
-[node name="BG" type="Sprite2D" parent="Level"]
-self_modulate = Color(0.501961, 0.501961, 0.752941, 1)
-scale = Vector2(8, 8)
-texture = ExtResource("3_0kwsu")
-
-[node name="Walls" type="Node2D" parent="Level"]
-
-[node name="StaticBody2D" type="StaticBody2D" parent="Level/Walls" groups=["Wall"]]
-position = Vector2(0, -800)
-scale = Vector2(16, 1)
-
-[node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D"]
-self_modulate = Color(1, 0, 0, 0.501961)
-texture = ExtResource("4_th2a4")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D"]
-shape = SubResource("RectangleShape2D_u1w2v")
-
-[node name="StaticBody2D2" type="StaticBody2D" parent="Level/Walls" groups=["Wall"]]
-position = Vector2(0, 800)
-scale = Vector2(32, 1)
-
-[node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D2"]
-self_modulate = Color(1, 0, 0, 0.501961)
-texture = ExtResource("4_th2a4")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D2"]
-shape = SubResource("RectangleShape2D_u1w2v")
-
-[node name="StaticBody2D3" type="StaticBody2D" parent="Level/Walls" groups=["Wall"]]
-position = Vector2(-800, 0)
-rotation = 1.5708
-scale = Vector2(32, 1)
-
-[node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D3"]
-self_modulate = Color(1, 0, 0, 0.501961)
-texture = ExtResource("4_th2a4")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D3"]
-shape = SubResource("RectangleShape2D_u1w2v")
-
-[node name="StaticBody2D4" type="StaticBody2D" parent="Level/Walls" groups=["Wall"]]
-position = Vector2(800, 0)
-rotation = 1.5708
-scale = Vector2(32, 1)
-
-[node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D4"]
-self_modulate = Color(1, 0, 0, 0.501961)
-texture = ExtResource("4_th2a4")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D4"]
-shape = SubResource("RectangleShape2D_u1w2v")
+[node name="Level" parent="." instance=ExtResource("3_crljq")]
 
 [node name="Hero" parent="." instance=ExtResource("5_e5wad")]
 

@@ -23,6 +23,7 @@ var move_state = MoveState.WAITING:
 		move_state = value
 		move_state_changed.emit(value)
 		print("[Hero] move state changed. %s -> %s" % [MoveState.keys()[from], MoveState.keys()[value]])
+
 var charge: float = 0.0 # 現在の移動タメ度 (最大 1.0)
 
 
@@ -71,7 +72,7 @@ func enter_charge() -> void:
 	if move_state != MoveState.WAITING:
 		return
 	move_state = MoveState.CHARGING
-	_enter_arrow()
+	_enter_arrow() # charge も変わる
 
 
 # 移動のタメを終了する
@@ -79,7 +80,7 @@ func exit_charge() -> void:
 	if move_state != MoveState.CHARGING:
 		return
 	move_state = MoveState.MOVING
-	_move() # 移動終了後に MoveState は WAITING に変わる
+	_move()
 	_exit_arrow()
 	charge = 0.0
 
@@ -88,6 +89,7 @@ func _process_rotate_direction(delta: float) -> void:
 	if move_state != MoveState.WAITING:
 		return
 
+	# TODO: 反時計回りへの対応
 	_direction += _direction_rotation_speed * delta
 	if 360.0 < _direction:
 		_direction -= 360.0
@@ -96,13 +98,14 @@ func _process_rotate_direction(delta: float) -> void:
 
 
 func _move():
+	# 移動する
 	var tween = _move_tween
-	var dest_position = self.position + Vector2.UP.rotated(deg_to_rad(_direction)) * charge * MOVE_VECTOR_RATIO
+	var dest_position = position + Vector2.UP.rotated(deg_to_rad(_direction)) * charge * MOVE_VECTOR_RATIO
 	var move_duration = _charge_duration * charge # TODO
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	tween.tween_property(self, "position", dest_position, move_duration)
 	tween.finished.connect(func(): move_state = MoveState.WAITING)
-	print("[Hero] move started. direction: %s, charge: %s, dest: %s" % [_direction, charge, dest_position])
+	print("[Hero] move. direction: %s, charge: %s, dest: %s" % [_direction, charge, dest_position])
 
 
 func _enter_arrow():

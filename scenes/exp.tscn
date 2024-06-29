@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://1e3yy5gkxjgl"]
+
+[ext_resource type="Texture2D" uid="uid://bxe4id1rhqlnr" path="res://images/base_circle.png" id="1_x41g6"]
+[ext_resource type="Script" path="res://scripts/exp.gd" id="1_yyyhv"]
+[ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://themes/default.tres" id="2_8t3s3"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_32f54"]
+radius = 128.0
+
+[node name="Exp" type="Area2D" node_paths=PackedStringArray("_label")]
+scale = Vector2(0.05, 0.05)
+script = ExtResource("1_yyyhv")
+_label = NodePath("Label")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+self_modulate = Color(0, 1, 1, 0.501961)
+texture = ExtResource("1_x41g6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_32f54")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -128.0
+offset_top = -128.0
+offset_right = 128.0
+offset_bottom = 128.0
+theme = ExtResource("2_8t3s3")
+theme_override_constants/outline_size = 32
+theme_override_font_sizes/font_size = 128
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1
