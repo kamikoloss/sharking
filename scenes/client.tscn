@@ -29,9 +29,9 @@ texture = ExtResource("3_0kwsu")
 
 [node name="Walls" type="Node2D" parent="Level"]
 
-[node name="StaticBody2D" type="StaticBody2D" parent="Level/Walls"]
+[node name="StaticBody2D" type="StaticBody2D" parent="Level/Walls" groups=["Wall"]]
 position = Vector2(0, -800)
-scale = Vector2(16, 0.5)
+scale = Vector2(16, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D"]
 self_modulate = Color(1, 0, 0, 0.501961)
@@ -40,9 +40,9 @@ texture = ExtResource("4_th2a4")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D"]
 shape = SubResource("RectangleShape2D_u1w2v")
 
-[node name="StaticBody2D2" type="StaticBody2D" parent="Level/Walls"]
+[node name="StaticBody2D2" type="StaticBody2D" parent="Level/Walls" groups=["Wall"]]
 position = Vector2(0, 800)
-scale = Vector2(16, 0.5)
+scale = Vector2(32, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D2"]
 self_modulate = Color(1, 0, 0, 0.501961)
@@ -51,10 +51,10 @@ texture = ExtResource("4_th2a4")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D2"]
 shape = SubResource("RectangleShape2D_u1w2v")
 
-[node name="StaticBody2D3" type="StaticBody2D" parent="Level/Walls"]
+[node name="StaticBody2D3" type="StaticBody2D" parent="Level/Walls" groups=["Wall"]]
 position = Vector2(-800, 0)
 rotation = 1.5708
-scale = Vector2(16, 0.5)
+scale = Vector2(32, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D3"]
 self_modulate = Color(1, 0, 0, 0.501961)
@@ -63,10 +63,10 @@ texture = ExtResource("4_th2a4")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Walls/StaticBody2D3"]
 shape = SubResource("RectangleShape2D_u1w2v")
 
-[node name="StaticBody2D4" type="StaticBody2D" parent="Level/Walls"]
+[node name="StaticBody2D4" type="StaticBody2D" parent="Level/Walls" groups=["Wall"]]
 position = Vector2(800, 0)
 rotation = 1.5708
-scale = Vector2(16, 0.5)
+scale = Vector2(32, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="Level/Walls/StaticBody2D4"]
 self_modulate = Color(1, 0, 0, 0.501961)

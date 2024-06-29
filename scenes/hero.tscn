@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://52tpbo5enhtq"]
+[gd_scene load_steps=7 format=3 uid="uid://52tpbo5enhtq"]
 
 [ext_resource type="Script" path="res://scripts/hero.gd" id="1_ifnkb"]
 [ext_resource type="Texture2D" uid="uid://6ywhpgs1x7b5" path="res://images/gab.png" id="2_fgwxr"]
@@ -6,18 +6,10 @@
 [ext_resource type="Texture2D" uid="uid://donorrfpj4qwd" path="res://images/base_square.png" id="4_r63cl"]
 [ext_resource type="Texture2D" uid="uid://c512m80ajmvsk" path="res://images/base_triangle.png" id="5_g2pgf"]
 
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_r0glp"]
-friction = 100.0
-rough = true
-bounce = 0.2
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_lxfer"]
 radius = 32.0
 
-[node name="Hero" type="RigidBody2D" node_paths=PackedStringArray("_sprite", "_arrow", "_arrow_square", "_arrow_square_bg")]
-physics_material_override = SubResource("PhysicsMaterial_r0glp")
-gravity_scale = 0.0
-lock_rotation = true
+[node name="Hero" type="Area2D" node_paths=PackedStringArray("_sprite", "_arrow", "_arrow_square", "_arrow_square_bg")]
 script = ExtResource("1_ifnkb")
 _sprite = NodePath("Sprite2D")
 _arrow = NodePath("Control/Arrow")
@@ -25,12 +17,6 @@ _arrow_square = NodePath("Control/Arrow/TextureRectSquare")
 _arrow_square_bg = NodePath("Control/Arrow/TextureRectSquareBg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_lxfer")
-
-[node name="Area2D" type="Area2D" parent="."]
-visible = false
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("CircleShape2D_lxfer")
 
 [node name="Camera2D" type="Camera2D" parent="."]
