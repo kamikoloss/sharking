@@ -15,6 +15,7 @@ enum MoveState {
 # Tween
 enum TweenType {
 	MOVE, # 座標移動
+	DIRECTION, # 移動方向の回転速度
 	ARROW_SQ, # 矢印の棒 (タメ)
 	ARROW_SQ_CT, # 矢印の棒 (クールタイム)
 	ARROW_SQ_BG, # 矢印の棒 (タメ背景)
@@ -37,11 +38,11 @@ var exp_point: int = 10 # 取得した経験値ポイント
 
 
 @export var _sprite: Sprite2D
-@export var _label_level: Label
-@export var _arrow: Control
-@export var _arrow_square: TextureRect
-@export var _arrow_square_ct: TextureRect # クールタイム用
-@export var _arrow_square_bg: TextureRect # 背景用
+@export var _level_label: Label
+@export var _arrow: Control # 矢印
+@export var _arrow_square: TextureRect # 矢印の棒 (タメ)
+@export var _arrow_square_ct: TextureRect # 矢印の棒 (クールタイム)
+@export var _arrow_square_bg: TextureRect # 矢印の棒 (タメ背景)
 
 var _direction: float = 0.0 # 現在の移動方向 (deg)
 @export var _direction_rotation_speed_default: float = 90.0 # 移動方向の矢印の回転速度 (deg/s)
@@ -55,7 +56,7 @@ var _tweens: Dictionary = {} # { TweenType: Tween, ... }
 
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
-	_label_level.text = str(exp_point)
+	_level_label.text = str(exp_point)
 	
 	_arrow_square.scale.y = 0.0
 	_arrow_square_ct.scale.y = 0.0
@@ -72,18 +73,23 @@ func enter_charge() -> void:
 		return
 	move_state = MoveState.CHARGING
 
-	# _arrow_square_bg
-	var arrow_square_bg_tween = _get_tween(TweenType.ARROW_SQ_CT)
-	arrow_square_bg_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
-	arrow_square_bg_tween.tween_method(func(v): _arrow_square_bg.scale.y = v, 0.0, 1.0, 0.25)
+	# DIRECTION
+	var tween_direction = _get_tween(TweenType.DIRECTION)
+	tween_direction.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+	tween_direction.tween_method(func(v): _direction_rotation_speed = v, _direction_rotation_speed_default, 0.0, 0.5)
 
-	# _arrow_square
-	var arrow_square_tween = _get_tween(TweenType.ARROW_SQ)
-	arrow_square_tween.set_loops()
-	arrow_square_tween.set_parallel(true)
-	arrow_square_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
-	arrow_square_tween.tween_method(func(v): charge = v, 0.0, 1.0, _charge_duration)
-	arrow_square_tween.tween_method(func(v): _arrow_square.scale.y = v, 0.0, 1.0, _charge_duration)
+	# ARROW_SQ_CT
+	var tween_arrow_sq_ct = _get_tween(TweenType.ARROW_SQ_CT)
+	tween_arrow_sq_ct.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+	tween_arrow_sq_ct.tween_method(func(v): _arrow_square_bg.scale.y = v, 0.0, 1.0, 0.25)
+
+	# ARROW_SQ
+	var tween_arrow_sq = _get_tween(TweenType.ARROW_SQ)
+	tween_arrow_sq.set_loops()
+	tween_arrow_sq.set_parallel(true)
+	tween_arrow_sq.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
+	tween_arrow_sq.tween_method(func(v): charge = v, 0.0, 1.0, _charge_duration)
+	tween_arrow_sq.tween_method(func(v): _arrow_square.scale.y = v, 0.0, 1.0, _charge_duration)
 
 
 # 移動のタメを終了する
@@ -92,39 +98,46 @@ func exit_charge() -> void:
 		return
 	move_state = MoveState.MOVING
 
-	# _arrow_square_bg
-	var arrow_square_bg_tween = _get_tween(TweenType.ARROW_SQ_BG)
-	arrow_square_bg_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
-	arrow_square_bg_tween.tween_method(func(v): _arrow_square_bg.scale.y = v, 1.0, 0.0, 0.25)
-
-	# _arrow_square
-	var arrow_square_tween = _get_tween(TweenType.ARROW_SQ)
-	arrow_square_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
-	arrow_square_tween.tween_method(func(v): _arrow_square.scale.y = v, charge, 0.0, 0.25)
-
-	# move
-	_sprite.flip_h = 180.0 < _direction
-	var move_tween = _get_tween(TweenType.MOVE)
-
-	var _before_duration = MOVE_BEFORE_SEC # TODO: ping を考慮する
-	move_tween.set_parallel(true)
-	move_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
-	move_tween.tween_property(_sprite, "rotation_degrees", _direction, _before_duration)
-	move_tween.tween_property(_sprite, "scale", Vector2(clampf(charge, 0.6, 0.8), 0.4), _before_duration)
-
+	var before_duration = MOVE_BEFORE_SEC # TODO: ping を考慮する
 	var dest_position = position + Vector2.UP.rotated(deg_to_rad(_direction)) * charge * MOVE_VECTOR_RATIO
 	var move_duration = _charge_duration * charge
-	move_tween.chain()
-	move_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
-	move_tween.tween_property(self, "position", dest_position, move_duration)
-	move_tween.tween_property(_sprite, "scale", Vector2(0.4, 0.4), 0.5)
-	move_tween.finished.connect(func(): move_state = MoveState.WAITING)
 
-	# _arrow_square_ct
+	# DIRECTION
+	var tween_direction = _get_tween(TweenType.DIRECTION)
+	tween_direction.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUINT)
+	tween_direction.tween_interval(before_duration + move_duration)
+	tween_direction.tween_method(func(v): _direction_rotation_speed = v, 0.0, _direction_rotation_speed_default, 0.5)
+
+	# ARROW_SQ_BG
+	var tween_arrow_sq_bg = _get_tween(TweenType.ARROW_SQ_BG)
+	tween_arrow_sq_bg.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+	tween_arrow_sq_bg.tween_method(func(v): _arrow_square_bg.scale.y = v, 1.0, 0.0, 0.25)
+
+	# ARROW_SQ_CT
 	_arrow_square_ct.scale.y = charge
-	var arrow_square_ct_tween = _get_tween(TweenType.ARROW_SQ_CT)
-	arrow_square_ct_tween.tween_interval(_before_duration)
-	arrow_square_ct_tween.tween_method(func(v): _arrow_square_ct.scale.y = v, charge, 0.0, move_duration)
+	var tween_arrow_sq_ct = _get_tween(TweenType.ARROW_SQ_CT)
+	tween_arrow_sq_ct.tween_interval(before_duration)
+	tween_arrow_sq_ct.tween_method(func(v): _arrow_square_ct.scale.y = v, charge, 0.0, move_duration)
+
+	# ARROW_SQ
+	var tween_arrow_sq = _get_tween(TweenType.ARROW_SQ)
+	tween_arrow_sq.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+	tween_arrow_sq.tween_method(func(v): _arrow_square.scale.y = v, charge, 0.0, 0.25)
+
+	# MOVE
+	_sprite.flip_h = 180.0 < _direction
+	var tween_move = _get_tween(TweenType.MOVE)
+
+	tween_move.set_parallel(true)
+	tween_move.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+	tween_move.tween_property(_sprite, "rotation_degrees", _direction, before_duration)
+	tween_move.tween_property(_sprite, "scale", Vector2(clampf(charge, 0.6, 0.8), 0.4), before_duration)
+
+	tween_move.chain()
+	tween_move.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+	tween_move.tween_property(self, "position", dest_position, move_duration)
+	tween_move.tween_property(_sprite, "scale", Vector2(0.4, 0.4), 0.5)
+	tween_move.finished.connect(func(): move_state = MoveState.WAITING)
 
 	# finish
 	charge = 0.0
@@ -134,18 +147,14 @@ func exit_charge() -> void:
 func _on_area_entered(area: Area2D) -> void:
 	if area is Exp:
 		exp_point += area.point
-		_label_level.text = str(exp_point)
+		_level_label.text = str(exp_point)
 
 
 func _process_rotate_direction(delta: float) -> void:
-	if move_state != MoveState.WAITING:
-		return
-
 	# TODO: 反時計回りへの対応
 	_direction += _direction_rotation_speed * delta
 	if 360.0 < _direction:
 		_direction -= 360.0
-
 	_arrow.rotation_degrees = _direction
 
 
