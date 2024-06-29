@@ -55,8 +55,7 @@ texture = ExtResource("5_g2pgf")
 expand_mode = 1
 
 [node name="TextureRectSquareBg" type="TextureRect" parent="Control/Arrow"]
-visible = false
-self_modulate = Color(0.501961, 0.501961, 0.501961, 0.501961)
+self_modulate = Color(0, 0, 0, 0.501961)
 layout_mode = 0
 offset_left = -4.0
 offset_top = -80.0
@@ -72,6 +71,5 @@ offset_left = -4.0
 offset_top = -80.0
 offset_right = 4.0
 offset_bottom = 80.0
-scale = Vector2(1, 1e-05)
 texture = ExtResource("4_r63cl")
 expand_mode = 1

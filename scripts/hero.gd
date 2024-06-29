@@ -54,11 +54,20 @@ var _arrow_square_tween: Tween:
 			_arrow_square_tween.kill()
 		_arrow_square_tween = create_tween()
 		return _arrow_square_tween
+var _arrow_square_bg_tween: Tween:
+	get:
+		if _arrow_square_bg_tween:
+			_arrow_square_bg_tween.kill()
+		_arrow_square_bg_tween = create_tween()
+		return _arrow_square_bg_tween
 
 
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 	_label_level.text = str(exp_point)
+	
+	_arrow_square_bg.scale.y = 0.0
+	_arrow_square.scale.y = 0.0
 
 
 func _process(delta: float) -> void:
@@ -71,10 +80,13 @@ func enter_charge() -> void:
 		return
 	move_state = MoveState.CHARGING
 
-	# arrow
-	_arrow_square_bg.visible = true
-	var tween = _arrow_square_tween
+	# _arrow_square_bg
+	var arrow_square_bg_tween = _arrow_square_bg_tween
+	arrow_square_bg_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+	arrow_square_bg_tween.tween_method(func(v): _arrow_square_bg.scale.y = v, 0.0, 1.0, 0.25)
 
+	# _arrow_square
+	var tween = _arrow_square_tween
 	tween.set_loops()
 	tween.set_parallel(true)
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
@@ -88,22 +100,26 @@ func exit_charge() -> void:
 		return
 	move_state = MoveState.MOVING
 
-	# arrow
-	_arrow_square_bg.visible = false
-	var arrow_square_tween = _arrow_square_tween
+	# _arrow_square_bg
+	var arrow_square_bg_tween = _arrow_square_bg_tween
+	arrow_square_bg_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+	arrow_square_bg_tween.tween_method(func(v): _arrow_square_bg.scale.y = v, 1.0, 0.0, 0.25)
 
+	# _arrow_square
+	var arrow_square_tween = _arrow_square_tween
 	arrow_square_tween.set_parallel(true)
 	arrow_square_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	arrow_square_tween.tween_method(func(v): _arrow_square.scale.y = v, charge, 0.0, 0.25)
 
-	# 移動する
+	# move
 	_sprite.flip_h = 180.0 < _direction
 	var move_tween = _move_tween
 
+	var _before_duration = MOVE_BEFORE_SEC # TODO: ping を考慮する
 	move_tween.set_parallel(true)
 	move_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
-	move_tween.tween_property(_sprite, "rotation_degrees", _direction, MOVE_BEFORE_SEC)
-	move_tween.tween_property(_sprite, "scale", Vector2(0.5, 0.4), MOVE_BEFORE_SEC)
+	move_tween.tween_property(_sprite, "rotation_degrees", _direction, _before_duration)
+	move_tween.tween_property(_sprite, "scale", Vector2(clampf(charge, 0.6, 0.8), 0.4), _before_duration)
 
 	var dest_position = position + Vector2.UP.rotated(deg_to_rad(_direction)) * charge * MOVE_VECTOR_RATIO
 	var move_duration = _charge_duration * charge
@@ -113,8 +129,8 @@ func exit_charge() -> void:
 	move_tween.tween_property(_sprite, "scale", Vector2(0.4, 0.4), 0.5)
 	move_tween.finished.connect(func(): move_state = MoveState.WAITING)
 
-	print("[Hero] move. direction: %s, charge: %s, dest: %s" % [_direction, charge, dest_position])
 	charge = 0.0
+	print("[Hero] move. direction: %s, charge: %s, dest: %s" % [_direction, charge, dest_position])
 
 
 func _on_area_entered(area: Area2D) -> void:
