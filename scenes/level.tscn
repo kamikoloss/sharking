@@ -8,9 +8,10 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_u1w2v"]
 size = Vector2(256, 256)
 
-[node name="Level" type="Node2D"]
+[node name="Level" type="Node2D" node_paths=PackedStringArray("_exps_node")]
 script = ExtResource("1_4ip8d")
 _exp_scene = ExtResource("4_dxgh1")
+_exps_node = NodePath("Exps")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 self_modulate = Color(0.501961, 0.501961, 0.752941, 1)
@@ -61,3 +62,5 @@ texture = ExtResource("2_3d4xe")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/StaticBody2D4"]
 shape = SubResource("RectangleShape2D_u1w2v")
+
+[node name="Exps" type="Node2D" parent="."]

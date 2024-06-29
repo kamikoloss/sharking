@@ -9,5 +9,10 @@ var point: int = 0
 
 
 func _ready() -> void:
-	_label.text = str(point)
-	scale *= point
+	var scale_ratio: = 1.0 + (float(point) - 1.0) / 2.0
+	scale *= scale_ratio
+
+	if 1 < point:
+		_label.text = str(point)
+	else:
+		_label.visible = false

@@ -2,7 +2,15 @@ extends Node2D
 class_name Level
 
 
+const CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyz"
+const ID_LENGTH = 16
+
+
+var exp_intance_ids: Array[int] = []
+
+
 @export var _exp_scene: PackedScene
+@export var _exps_node: Node2D
 var _exp_point_sum = 500 # 合計何 pt になるまで EXP を生成するか
 var _exp_point_list: Array[int] = [1, 1, 1, 2, 2, 3] # 生成する EXP のポイントのリスト
 
@@ -18,12 +26,13 @@ func _ready() -> void:
 func initialize_exp() -> void:
 	var sum = 0
 	while (sum < _exp_point_sum):
-		var exp = _exp_scene.instantiate()
+		var exp: Exp = _exp_scene.instantiate()
 		var point = _exp_point_list.pick_random()
 		exp.point = point
 		exp.position = _get_random_position()
-		add_child(exp)
+		_exps_node.add_child(exp)
 		sum += point
+		exp_intance_ids.append(exp.get_instance_id())
 
 
 func _get_random_position() -> Vector2:

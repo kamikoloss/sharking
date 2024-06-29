@@ -25,6 +25,7 @@ var move_state = MoveState.WAITING:
 		print("[Hero] move state changed. %s -> %s" % [MoveState.keys()[from], MoveState.keys()[value]])
 
 var charge: float = 0.0 # 現在の移動タメ度 (最大 1.0)
+var level: int = 0 # 経験値によって増えるレベル
 
 
 @export var _sprite: Sprite2D
@@ -97,8 +98,8 @@ func _process_rotate_direction(delta: float) -> void:
 	_arrow.rotation_degrees = _direction
 
 
+# 移動する
 func _move():
-	# 移動する
 	var tween = _move_tween
 	var dest_position = position + Vector2.UP.rotated(deg_to_rad(_direction)) * charge * MOVE_VECTOR_RATIO
 	var move_duration = _charge_duration * charge # TODO
