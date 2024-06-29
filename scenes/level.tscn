@@ -15,11 +15,11 @@ _exps_node = NodePath("Exps")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 self_modulate = Color(0.501961, 0.501961, 0.752941, 1)
-scale = Vector2(8, 8)
+scale = Vector2(10, 10)
 texture = ExtResource("1_1htsr")
 
 [node name="Walls" type="Node2D" parent="."]
-modulate = Color(1, 0.501961, 0.501961, 0.501961)
+modulate = Color(0.501961, 0.25098, 0.25098, 0.501961)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="Walls" groups=["Wall"]]
 position = Vector2(0, -800)

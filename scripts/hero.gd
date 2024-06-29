@@ -25,10 +25,11 @@ var move_state = MoveState.WAITING:
 		print("[Hero] move state changed. %s -> %s" % [MoveState.keys()[from], MoveState.keys()[value]])
 
 var charge: float = 0.0 # 現在の移動タメ度 (最大 1.0)
-var level: int = 0 # 経験値によって増えるレベル
+var exp_point: int = 10 # 取得した経験値ポイント
 
 
 @export var _sprite: Sprite2D
+@export var _label_level: Label
 @export var _arrow: Control
 @export var _arrow_square: TextureRect
 @export var _arrow_square_bg: TextureRect
@@ -61,7 +62,8 @@ var _arrow_square_tween: Tween:
 
 
 func _ready() -> void:
-	pass
+	area_entered.connect(_on_area_entered)
+	_label_level.text = str(exp_point)
 
 
 func _process(delta: float) -> void:
@@ -84,6 +86,13 @@ func exit_charge() -> void:
 	_move()
 	_exit_arrow()
 	charge = 0.0
+
+
+func _on_area_entered(area: Area2D) -> void:
+	if area is Exp:
+		exp_point += area.point
+		_label_level.text = str(exp_point)
+		area.kill()
 
 
 func _process_rotate_direction(delta: float) -> void:

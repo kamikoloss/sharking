@@ -7,9 +7,10 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_32f54"]
 radius = 128.0
 
-[node name="Exp" type="Area2D" node_paths=PackedStringArray("_label")]
+[node name="Exp" type="Area2D" node_paths=PackedStringArray("_sprite", "_label")]
 scale = Vector2(0.05, 0.05)
 script = ExtResource("1_yyyhv")
+_sprite = NodePath("Sprite2D")
 _label = NodePath("Label")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
