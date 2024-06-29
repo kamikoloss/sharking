@@ -9,13 +9,14 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_lxfer"]
 radius = 40.0
 
-[node name="Hero" type="Area2D" node_paths=PackedStringArray("_sprite", "_label_level", "_arrow", "_arrow_square", "_arrow_square_bg")]
+[node name="Hero" type="Area2D" node_paths=PackedStringArray("_sprite", "_label_level", "_arrow", "_arrow_square", "_arrow_square_ct", "_arrow_square_bg")]
 script = ExtResource("1_ifnkb")
 _sprite = NodePath("Sprite2D")
-_label_level = NodePath("Control/LabelLevel")
+_label_level = NodePath("Control/Level")
 _arrow = NodePath("Control/Arrow")
-_arrow_square = NodePath("Control/Arrow/TextureRectSquare")
-_arrow_square_bg = NodePath("Control/Arrow/TextureRectSquareBg")
+_arrow_square = NodePath("Control/Arrow/Square")
+_arrow_square_ct = NodePath("Control/Arrow/SquareCt")
+_arrow_square_bg = NodePath("Control/Arrow/SquareBg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_lxfer")
@@ -30,7 +31,7 @@ texture = ExtResource("2_1j1dn")
 layout_mode = 3
 anchors_preset = 0
 
-[node name="LabelLevel" type="Label" parent="Control"]
+[node name="Level" type="Label" parent="Control"]
 layout_mode = 0
 offset_left = -40.0
 offset_top = -80.0
@@ -44,7 +45,7 @@ vertical_alignment = 1
 [node name="Arrow" type="Control" parent="Control"]
 anchors_preset = 0
 
-[node name="TextureRectTriangle" type="TextureRect" parent="Control/Arrow"]
+[node name="Triangle" type="TextureRect" parent="Control/Arrow"]
 self_modulate = Color(1, 0, 0, 1)
 layout_mode = 0
 offset_left = -10.0
@@ -54,8 +55,8 @@ offset_bottom = -80.0
 texture = ExtResource("5_g2pgf")
 expand_mode = 1
 
-[node name="TextureRectSquareBg" type="TextureRect" parent="Control/Arrow"]
-self_modulate = Color(0, 0, 0, 0.501961)
+[node name="SquareBg" type="TextureRect" parent="Control/Arrow"]
+self_modulate = Color(0, 0, 0, 0.752941)
 layout_mode = 0
 offset_left = -4.0
 offset_top = -80.0
@@ -64,7 +65,16 @@ offset_bottom = 80.0
 texture = ExtResource("4_r63cl")
 expand_mode = 1
 
-[node name="TextureRectSquare" type="TextureRect" parent="Control/Arrow"]
+[node name="SquareCt" type="TextureRect" parent="Control/Arrow"]
+self_modulate = Color(1, 0, 0, 0.501961)
+offset_left = -4.0
+offset_top = -80.0
+offset_right = 4.0
+offset_bottom = 80.0
+texture = ExtResource("4_r63cl")
+expand_mode = 1
+
+[node name="Square" type="TextureRect" parent="Control/Arrow"]
 self_modulate = Color(1, 0, 0, 1)
 layout_mode = 0
 offset_left = -4.0

@@ -33,7 +33,8 @@ var exp_point: int = 10 # 取得した経験値ポイント
 @export var _label_level: Label
 @export var _arrow: Control
 @export var _arrow_square: TextureRect
-@export var _arrow_square_bg: TextureRect
+@export var _arrow_square_ct: TextureRect # クールタイム用
+@export var _arrow_square_bg: TextureRect # 背景用
 
 var _direction: float = 0.0 # 現在の移動方向 (deg)
 @export var _direction_rotation_speed_default: float = 90.0 # 移動方向の矢印の回転速度 (deg/s)
@@ -54,6 +55,12 @@ var _arrow_square_tween: Tween:
 			_arrow_square_tween.kill()
 		_arrow_square_tween = create_tween()
 		return _arrow_square_tween
+var _arrow_square_ct_tween: Tween:
+	get:
+		if _arrow_square_ct_tween:
+			_arrow_square_ct_tween.kill()
+		_arrow_square_ct_tween = create_tween()
+		return _arrow_square_ct_tween
 var _arrow_square_bg_tween: Tween:
 	get:
 		if _arrow_square_bg_tween:
@@ -66,8 +73,9 @@ func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 	_label_level.text = str(exp_point)
 	
-	_arrow_square_bg.scale.y = 0.0
 	_arrow_square.scale.y = 0.0
+	_arrow_square_ct.scale.y = 0.0
+	_arrow_square_bg.scale.y = 0.0
 
 
 func _process(delta: float) -> void:
@@ -107,7 +115,6 @@ func exit_charge() -> void:
 
 	# _arrow_square
 	var arrow_square_tween = _arrow_square_tween
-	arrow_square_tween.set_parallel(true)
 	arrow_square_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	arrow_square_tween.tween_method(func(v): _arrow_square.scale.y = v, charge, 0.0, 0.25)
 
@@ -129,6 +136,13 @@ func exit_charge() -> void:
 	move_tween.tween_property(_sprite, "scale", Vector2(0.4, 0.4), 0.5)
 	move_tween.finished.connect(func(): move_state = MoveState.WAITING)
 
+	# _arrow_square_ct
+	_arrow_square_ct.scale.y = charge
+	var arrow_square_ct_tween = _arrow_square_ct_tween
+	arrow_square_ct_tween.tween_interval(_before_duration)
+	arrow_square_ct_tween.tween_method(func(v): _arrow_square_ct.scale.y = v, charge, 0.0, move_duration)
+
+	# finish
 	charge = 0.0
 	print("[Hero] move. direction: %s, charge: %s, dest: %s" % [_direction, charge, dest_position])
 
