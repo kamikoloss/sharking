@@ -1,6 +1,10 @@
 extends Node2D
 
 
+var heros: Dictionary = {} # { Peer ID: Hero, ... }
+var exps: Dictionary = {} # { Inst ID: Exp, ... }
+
+
 # WebSocket
 @export var _ws_server: WebSocketServer
 @export var _ws_port: int = 8000
@@ -18,15 +22,27 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	_process_send(delta)
+	#_process_send(delta)
+	pass
 
 
 func _on_web_socket_server_client_connected(peer_id: int):
 	print("[Server] New peer connected. ID: ", peer_id)
+	# 接続した本人に送信する
+	_ws_server.send(peer_id, ServerMessage.PlayerConnected.new(peer_id, heros, exps))
+	# 接続した本人以外に送信する
+	for pid in _ws_server.peers:
+		if pid != peer_id:
+			_ws_server.send(pid, ServerMessage.OtherPlayerConnected.new(peer_id))
 
 
 func _on_web_socket_server_client_disconnected(peer_id: int):
 	print("[Server] Peer disconnected. ID: ", peer_id)
+	# 切断した本人には送信できない
+	# 切断した本人以外に送信する
+	for pid in _ws_server.peers:
+		if pid != peer_id:
+			_ws_server.send(pid, ServerMessage.OtherPlayerDisconnected.new(peer_id))
 
 
 func _on_web_socket_server_message_received(peer_id: int , message: Variant):
@@ -61,7 +77,5 @@ func _process_send(delta: float) -> void:
 	_send_timer = 0.0
 
 	for peer_id in _ws_server.peers:
-		var message = {
-			"type": Enum.MessageType.NONE,
-		}
+		var message = {}
 		_ws_server.send(peer_id, message)
