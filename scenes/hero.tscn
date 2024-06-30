@@ -56,7 +56,7 @@ texture = ExtResource("5_g2pgf")
 expand_mode = 1
 
 [node name="SquareBg" type="TextureRect" parent="Control/Arrow"]
-self_modulate = Color(0, 0, 0, 0.752941)
+self_modulate = Color(0, 0, 0, 0.501961)
 layout_mode = 0
 offset_left = -4.0
 offset_top = -80.0

@@ -2,17 +2,13 @@ extends Node2D
 class_name Level
 
 
-const CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyz"
-const ID_LENGTH = 16
-
-
 var exp_intance_ids: Array[int] = []
 
 
 @export var _exp_scene: PackedScene
 @export var _exps_node: Node2D
 var _exp_point_sum = 500 # 合計何 pt になるまで EXP を生成するか
-var _exp_point_list: Array[int] = [1, 1, 1, 2, 2, 3] # 生成する EXP のポイントのリスト
+var _exp_point_list: Array[int] = [1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 5] # 生成する EXP のポイントのリスト (確率込み)
 
 var _level_size: int = 640 # Level の大きさ (px, 辺/2)
 var _rng = RandomNumberGenerator.new()
