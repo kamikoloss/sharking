@@ -1,5 +1,5 @@
-extends Node2D
 class_name Level
+extends Node2D
 
 
 var exp_intance_ids: Array[int] = []

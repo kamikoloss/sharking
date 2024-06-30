@@ -1,5 +1,5 @@
-extends Area2D
 class_name Exp
+extends Area2D
 
 
 var is_active: bool = true
@@ -9,38 +9,26 @@ var point: int = 0
 @export var _sprite: Sprite2D
 @export var _label: Label
 
-var _kill_tween: Tween:
+var _die_tween: Tween:
 	get:
-		if _kill_tween:
-			_kill_tween.kill()
-		_kill_tween = create_tween()
-		return _kill_tween
+		if _die_tween:
+			_die_tween.kill()
+		_die_tween = create_tween()
+		return _die_tween
 
 
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
-	_refresh()
-
-
-# 消滅する
-func kill() -> void:
-	is_active = false
-	_label.visible = false
-
-	var tween = _kill_tween
-	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
-	tween.tween_property(_sprite, "self_modulate", Color.WHITE, 0.1)
-	tween.tween_property(_sprite, "self_modulate", Color.TRANSPARENT, 1.0)
-	tween.finished.connect(func(): queue_free())
-	print("[Exp %s] kill." % get_instance_id())
+	_init_visual()
 
 
 func _on_area_entered(area: Area2D) -> void:
 	if area is Hero:
-		kill()
+		_die()
 
 
-func _refresh() -> void:
+# 自身の見た目を決定する
+func _init_visual() -> void:
 	var scale_ratio: = 1.0 + (float(point) - 1.0) / 2.0
 	scale *= scale_ratio
 
@@ -48,3 +36,16 @@ func _refresh() -> void:
 		_label.text = str(point)
 	else:
 		_label.visible = false
+
+
+# 消滅する
+func _die() -> void:
+	is_active = false
+	_label.visible = false
+
+	var tween = _die_tween
+	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+	tween.tween_property(_sprite, "self_modulate", Color.WHITE, 0.25)
+	tween.tween_property(_sprite, "self_modulate", Color.TRANSPARENT, 1.0)
+	tween.finished.connect(func(): queue_free())
+	print("[Exp %s] die." % get_instance_id())

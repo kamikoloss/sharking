@@ -53,18 +53,15 @@ func _on_web_socket_client_connection_closed():
 
 func _on_web_socket_client_message_received(message: Variant):
 	print("[Client] Message received from server. Message: %s" % [message])
-	var message_type = message["type"] as ServerMessage.MessageType
+	var message_type = message["type"] as Message.MessageType
 	match message_type:
-		ServerMessage.MessageType.PING:
-			# Ping の値を更新する
+		Message.MessageType.PING:
 			pass
-		ServerMessage.MessageType.PLAYER_CONNECTED:
+		Message.MessageType.PLAYER_CONNECTED:
 			peer_id = message.peer_id
-		ServerMessage.MessageType.OTHER_PLAYER_CONNECTED:
-			# 他プレイヤーを作成する
+		Message.MessageType.OTHER_PLAYER_CONNECTED:
 			pass
-		ServerMessage.MessageType.OTHER_PLAYER_DISCONNECTED:
-			# 他プレイヤーを削除する
+		Message.MessageType.OTHER_PLAYER_DISCONNECTED:
 			pass
 
 

@@ -1,5 +1,5 @@
-extends Area2D
 class_name Hero
+extends Area2D
 
 
 signal move_state_changed
@@ -123,7 +123,7 @@ func exit_charge() -> void:
 	# ARROW_SQ
 	var tween_arrow_sq = _get_tween(TweenType.ARROW_SQ)
 	tween_arrow_sq.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
-	tween_arrow_sq.tween_method(func(v): _arrow_square.scale.y = v, charge, 0.0, 0.25)
+	tween_arrow_sq.tween_method(func(v): _arrow_square.scale.y = v, charge, 0.0, 0.5)
 
 	# MOVE
 	_sprite.flip_h = 180.0 < _direction
@@ -141,8 +141,8 @@ func exit_charge() -> void:
 	tween_move.finished.connect(func(): move_state = MoveState.WAITING)
 
 	# finish
-	charge = 0.0
 	print("[Hero] move. direction: %s, charge: %s, dest: %s" % [_direction, charge, dest_position])
+	charge = 0.0 # TODO: クールタイムみたいにじっくり減らす？
 
 
 func _on_area_entered(area: Area2D) -> void:

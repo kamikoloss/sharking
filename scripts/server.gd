@@ -28,21 +28,17 @@ func _process(delta: float) -> void:
 
 func _on_web_socket_server_client_connected(peer_id: int):
 	print("[Server] New peer connected. ID: ", peer_id)
-	# 接続した本人に送信する
-	_ws_server.send(peer_id, ServerMessage.PlayerConnected.new(peer_id, heros, exps))
-	# 接続した本人以外に送信する
+	_ws_server.send(peer_id, Message.PlayerConnected.new(heros, exps))
 	for pid in _ws_server.peers:
 		if pid != peer_id:
-			_ws_server.send(pid, ServerMessage.OtherPlayerConnected.new(peer_id))
+			_ws_server.send(pid, Message.OtherPlayerConnected.new(peer_id))
 
 
 func _on_web_socket_server_client_disconnected(peer_id: int):
 	print("[Server] Peer disconnected. ID: ", peer_id)
-	# 切断した本人には送信できない
-	# 切断した本人以外に送信する
 	for pid in _ws_server.peers:
 		if pid != peer_id:
-			_ws_server.send(pid, ServerMessage.OtherPlayerDisconnected.new(peer_id))
+			_ws_server.send(pid, Message.OtherPlayerDisconnected.new(peer_id))
 
 
 func _on_web_socket_server_message_received(peer_id: int , message: Variant):
