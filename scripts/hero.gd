@@ -103,6 +103,7 @@ func exit_charge() -> void:
 	var move_duration = _charge_duration * charge
 
 	# DIRECTION
+	_direction_rotation_speed = 0.0 # ここで止めないと enter_charge() の減速が続いてしまう
 	var tween_direction = _get_tween(TweenType.DIRECTION)
 	tween_direction.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUINT)
 	tween_direction.tween_interval(before_duration + move_duration)
