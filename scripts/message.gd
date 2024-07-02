@@ -13,28 +13,33 @@ enum MessageType {
 	HERO_SPAWNED,
 	HERO_MOVE_STARTED,
 	HERO_MOVE_FINISHED,
-	#HERO_DAMAGED,
-	#HERO_DEAD,
-	#EXP_SPAWNED,
+	HERO_DAMAGED,
+	HERO_DEAD,
+	EXP_SPAWNED,
 }
 
 
+# Server に送信されたメッセージを送信者以外のすべての Peer に共有するタイプ
+const THROUGH_MESSAGE_TYPES: Array[MessageType] = [
+	MessageType.HERO_SPAWNED,
+	MessageType.HERO_MOVE_STARTED,
+	MessageType.HERO_MOVE_FINISHED,
+	MessageType.HERO_DAMAGED,
+	MessageType.HERO_DEAD,
+]
+
+
 var type: MessageType
-var peer_id: int # アクションを起こした Peer ID
-
-
-# アクションを起こした Client の Peer ID を設定する
-# TODO: CPU は疑似的な Peer ID を設定する
-func set_peer_id(peer_id: int) -> void:
-	self.peer_id = peer_id
+var peer_id: int # アクションを起こした Peer の ID
 
 
 # (CSC) Ping を計測するとき
 class Ping extends Message:
 	var ping_id: String # 時間差を計算するための識別子
 	var time: int # Client の Unixtime
-	func _init(ping_id: String, time: int) -> void:
-		type = MessageType.PING
+	func _init(peer_id: int, ping_id: String, time: int) -> void:
+		self.type = MessageType.PING
+		self.peer_id = peer_id
 		self.ping_id = ping_id
 		self.time = time
 
@@ -43,49 +48,55 @@ class Ping extends Message:
 class PlayerConnected extends Message:
 	var heros: Dictionary # すでに存在する他プレイヤーの情報 { ID: Hero, ... }
 	var exps: Dictionary # EXP の情報 { ID: Exp, ... }
-	func _init(heros: Dictionary, exps: Dictionary) -> void:
-		type = MessageType.PLAYER_CONNECTED
+	func _init(peer_id: int, heros: Dictionary, exps: Dictionary) -> void:
+		self.type = MessageType.PLAYER_CONNECTED
+		self.peer_id = peer_id
 		self.heros = heros
 		self.exps = exps
 
 
 # (SC) 他プレイヤーが接続したとき
 class OtherPlayerConnected extends Message:
-	var hero: Hero # 接続した他プレイヤ―の情報
-	func _init(hero: Hero) -> void:
-		type = MessageType.OTHER_PLAYER_CONNECTED
-		self.hero = hero
+	func _init(peer_id: int) -> void:
+		self.type = MessageType.OTHER_PLAYER_CONNECTED
+		self.peer_id = peer_id
 
 
 # (SC) 他プレイヤーが切断したとき
 class OtherPlayerDisconnected extends Message:
 	func _init(peer_id: int) -> void:
-		type = MessageType.OTHER_PLAYER_DISCONNECTED
+		self.type = MessageType.OTHER_PLAYER_DISCONNECTED
+		self.peer_id = peer_id
 
 
 # (CSC) Hero が Level に生まれたとき
 class HeroSpanwed extends Message:
-	var position: Vector2
-	func _init(position: Vector2) -> void:
-		type = MessageType.HERO_SPAWNED
+	var hero: Hero
+	var position: Vector2 # スポーンした座標
+	func _init(peer_id: int, hero: Hero, position: Vector2) -> void:
+		self.type = MessageType.HERO_SPAWNED
+		self.peer_id = peer_id
+		self.hero = hero
 		self.position = position
 
 
 # (CSC) Hero が移動を開始したとき
 class HeroMoveStarted extends Message:
 	var direction: float # 移動方向 (deg)
-	var charge: float # 移動タメ
-	func _init(direction: float, charge: float) -> void:
-		type = MessageType.HERO_MOVE_STARTED
+	var charge: float # 移動タメ (0.0-1.0)
+	func _init(peer_id: int, direction: float, charge: float) -> void:
+		self.type = MessageType.HERO_MOVE_STARTED
+		self.peer_id = peer_id
 		self.direction = direction
 		self.charge = charge
 
 
 # (CSC) Hero が移動を終了したとき
 class HeroMoveFinished extends Message:
-	var final_position: Vector2 # 最終的な座標 (調整用)
-	var got_exps: Dictionary # 移動で取得した EXP
-	func _init(final_position: Vector2, got_exps: Dictionary) -> void:
-		type = MessageType.HERO_MOVE_FINISHED
+	var final_position: Vector2 # 停止した座標 (調整用)
+	var got_exp_ids: Array[int] # 移動で取得した EXP の ID のリスト
+	func _init(peer_id: int, final_position: Vector2, got_exp_ids: Array[int]) -> void:
+		self.type = MessageType.HERO_MOVE_FINISHED
+		self.peer_id = peer_id
 		self.final_position = final_position
-		self.got_exps = got_exps
+		self.got_exp_ids = got_exp_ids

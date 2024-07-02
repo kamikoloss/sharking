@@ -33,8 +33,10 @@ var move_state = MoveState.WAITING:
 		move_state_changed.emit(value)
 		print("[Hero] move state changed. %s -> %s" % [MoveState.keys()[from], MoveState.keys()[value]])
 
+var id: int = -1
 var charge: float = 0.0 # 現在の移動タメ度 (最大 1.0)
 var exp_point: int = 10 # 取得した経験値ポイント
+@export var is_local: bool = false # 実行マシン上で操作している Hero かどうか
 
 
 @export var _sprite: Sprite2D
@@ -147,8 +149,9 @@ func exit_charge() -> void:
 
 func _on_area_entered(area: Area2D) -> void:
 	if area is Exp:
-		exp_point += area.point
-		_level_label.text = str(exp_point)
+		if area.is_active:
+			exp_point += area.point
+			_level_label.text = str(exp_point)
 
 
 func _process_rotate_direction(delta: float) -> void:

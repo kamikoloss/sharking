@@ -4,8 +4,9 @@
 [ext_resource type="PackedScene" uid="uid://kjnwwo7e3v13" path="res://addons/godot-websocket-nodes/WebSocketServer.tscn" id="2_reafv"]
 [ext_resource type="PackedScene" uid="uid://dhwvkf3taw8db" path="res://scenes/level.tscn" id="3_juxhr"]
 
-[node name="Server" type="Node2D" node_paths=PackedStringArray("_ws_server")]
+[node name="Server" type="Node2D" node_paths=PackedStringArray("_level", "_ws_server")]
 script = ExtResource("1_v6r88")
+_level = NodePath("Level")
 _ws_server = NodePath("WebSocketServer")
 
 [node name="WebSocketServer" parent="." instance=ExtResource("2_reafv")]

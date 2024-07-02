@@ -2,35 +2,88 @@ class_name Level
 extends Node2D
 
 
-var exp_intance_ids: Array[int] = []
+signal exp_spawned(spanwed_exps: Array[Exp]) # EXP が生成された
+signal exp_despawned(despawned_exps: Array[Exp]) # EXP が破壊された
+
+
+# Level 上に存在する EXP { Instance ID: EXP, ... }
+# 接続した Client に現在の状態を教えるために保持しておく
+var exps_on_level: Dictionary = {}
 
 
 @export var _exp_scene: PackedScene
-@export var _exps_node: Node2D
-var _exp_point_sum = 500 # 合計何 pt になるまで EXP を生成するか
-var _exp_point_list: Array[int] = [1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 5] # 生成する EXP のポイントのリスト (確率込み)
+@export var _exps_parent_node: Node2D
+var _exp_point_sum = 0 # Level 上に存在する EXP pt の合計
+var _exp_point_sum_max = 500 # 合計何 pt になるまで EXP を生成するか
+var _exp_point_list: Array[int] = [1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 5] # 生成する EXP pt のリスト (確率込み)
 
 var _level_size: int = 640 # Level の大きさ (px, 辺/2)
 var _rng = RandomNumberGenerator.new()
 
 
 func _ready() -> void:
-	initialize_exp() # TODO: Server が実行して同期する
+	pass
 
 
-# 経験値を初期生成する
-func initialize_exp() -> void:
-	var sum = 0
-	while (sum < _exp_point_sum):
-		var exp: Exp = _exp_scene.instantiate()
+# 上限になるまでの EXP のリストを取得する
+func get_exps_to_limit() -> Array[Exp]:
+	var exps: Array[Exp] = []
+	var point_sum = _exp_point_sum
+
+	while (point_sum < _exp_point_sum_max):
 		var point = _exp_point_list.pick_random()
-		exp.point = point
-		exp.position = _get_random_position()
-		_exps_node.add_child(exp)
-		sum += point
-		exp_intance_ids.append(exp.get_instance_id())
+		var _position = _get_random_position()
+		var exp_data = Exp.new(point, _position)
+
+		point_sum += point
+		exps.append(exp_data)
+
+	return exps
 
 
+# EXP を生成する
+func spawn_exps(exps: Array[Exp]) -> void:
+	var spawned_exps: Array[Exp] = []
+
+	for _exp in exps:
+		# EXP が Level 上に存在しない場合: 生成する
+		if not _exp.id in exps_on_level.keys():
+			var exp_instance: Exp = _exp_scene.instantiate()
+			# 引数データに ID が設定されていない場合は Instance ID を使用する (Server)
+			# 引数データに ID が設定されている場合はそれを使用する (Client) 
+			var id = exp_instance.get_instance_id() if _exp.id < 0 else _exp.id
+
+			exp_instance.id = id
+			exp_instance.point = _exp.point
+			exp_instance.position = _exp.position
+			_exps_parent_node.add_child(exp_instance)
+
+			exps_on_level[exp_instance.id] = exp_instance
+			_exp_point_sum -= _exp.point
+			spawned_exps.append(_exp)
+
+	if 0 < len(spawned_exps):
+		exp_spawned.emit(spawned_exps)
+
+
+# EXP を破壊する
+func despawn_exps(exps: Array[Exp]) -> void:
+	var despwned_exps: Array[Exp] = []
+
+	for _exp in exps:
+		# EXP が Level 上に存在する かつ Level 上に存在する EXP が有効な場合: 破壊する
+		if _exp.id in exps_on_level.keys() and exps_on_level[_exp.id].is_active:
+			exps_on_level[_exp.id].destroy()
+
+			exps_on_level.erase(_exp.id)
+			_exp_point_sum -= _exp.point
+			despwned_exps.append(_exp)
+
+	if 0 < len(despwned_exps):
+		exp_despawned.emit(despwned_exps)
+
+
+# 指定範囲内のランダムな座標を取得する
 func _get_random_position() -> Vector2:
 	var x = _rng.randi_range(_level_size * -1, _level_size)
 	var y = _rng.randi_range(_level_size * -1, _level_size)

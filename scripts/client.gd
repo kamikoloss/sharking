@@ -1,10 +1,7 @@
 extends Node2D
 
-
-var peer_id: int = -1
-var other_players: Dictionary = {}
-
-
+# Game Nodes
+@export var _level: Level
 @export var _hero: Hero
 
 # WebSocket
@@ -13,6 +10,9 @@ var other_players: Dictionary = {}
 @export var _send_interval: float = 0.05
 var _send_timer: float = 0.0
 
+# UI
+@export var _button_center: Button
+
 # Ping
 @export var _ping_current_label: Label
 @export var _ping_average_label: Label
@@ -20,9 +20,6 @@ var _send_timer: float = 0.0
 var _ping_refresh_timer: float = 0.0
 var _recent_ping_list: Array[float] = []
 var _recent_ping_list_max_size: int = 50
-
-# UI
-@export var _button_center: Button
 
 # Debug
 @export var _debug_label_state: Label
@@ -53,15 +50,20 @@ func _on_web_socket_client_connection_closed():
 
 func _on_web_socket_client_message_received(message: Variant):
 	print("[Client] Message received from server. Message: %s" % [message])
-	var message_type = message["type"] as Message.MessageType
-	match message_type:
+	match message["type"] as Message.MessageType:
 		Message.MessageType.PING:
 			pass
 		Message.MessageType.PLAYER_CONNECTED:
-			peer_id = message.peer_id
+			pass
 		Message.MessageType.OTHER_PLAYER_CONNECTED:
 			pass
 		Message.MessageType.OTHER_PLAYER_DISCONNECTED:
+			pass
+		Message.MessageType.HERO_SPAWNED:
+			pass
+		Message.MessageType.HERO_MOVE_STARTED:
+			pass
+		Message.MessageType.HERO_MOVE_FINISHED:
 			pass
 
 
