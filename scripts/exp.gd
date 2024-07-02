@@ -18,7 +18,7 @@ var _die_tween: Tween:
 		return _die_tween
 
 
-func _init(point: int, position: Vector2) -> void:
+func _init(point: int = 0, position: Vector2 = Vector2.ZERO) -> void:
 	self.point = point
 	self.position = position
 

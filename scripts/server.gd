@@ -21,6 +21,7 @@ func _ready() -> void:
 	var exps = _level.get_exps_to_limit()
 	_level.spawn_exps(exps)
 
+	# サーバー開始
 	_parse_args()
 	_start_server()
 
