@@ -68,9 +68,9 @@ theme_override_constants/separation = 0
 [node name="LabelState" type="Label" parent="CanvasLayer/Control/Debug"]
 layout_mode = 2
 theme = ExtResource("6_63squ")
-text = "STAT:XXXX"
+text = "STT:XXXX"
 
 [node name="LabelCharge" type="Label" parent="CanvasLayer/Control/Debug"]
 layout_mode = 2
 theme = ExtResource("6_63squ")
-text = "CHRG:0.00"
+text = "CHR:0.00"

@@ -54,10 +54,6 @@ func _on_web_socket_server_message_received(peer_id: int, message: Variant):
 		_send_message_to_peers(message, peer_id)
 		return
 
-	match message_type:
-		Message.MessageType.PING:
-			pass
-
 
 func _parse_args() -> void:
 	var args = OS.get_cmdline_user_args()

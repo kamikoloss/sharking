@@ -33,7 +33,7 @@ shape = SubResource("RectangleShape2D_u1w2v")
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="Walls" groups=["Wall"]]
 position = Vector2(0, 800)
-scale = Vector2(32, 1)
+scale = Vector2(16, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="Walls/StaticBody2D2"]
 texture = ExtResource("2_3d4xe")
@@ -44,7 +44,7 @@ shape = SubResource("RectangleShape2D_u1w2v")
 [node name="StaticBody2D3" type="StaticBody2D" parent="Walls" groups=["Wall"]]
 position = Vector2(-800, 0)
 rotation = 1.5708
-scale = Vector2(32, 1)
+scale = Vector2(16, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="Walls/StaticBody2D3"]
 texture = ExtResource("2_3d4xe")
@@ -55,7 +55,7 @@ shape = SubResource("RectangleShape2D_u1w2v")
 [node name="StaticBody2D4" type="StaticBody2D" parent="Walls" groups=["Wall"]]
 position = Vector2(800, 0)
 rotation = 1.5708
-scale = Vector2(32, 1)
+scale = Vector2(16, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="Walls/StaticBody2D4"]
 texture = ExtResource("2_3d4xe")

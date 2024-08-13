@@ -6,7 +6,6 @@ extends Node
 # メッセージのタイプ
 # TODO: Class があるならいらない？
 enum MessageType {
-	PING,
 	PLAYER_CONNECTED,
 	OTHER_PLAYER_CONNECTED,
 	OTHER_PLAYER_DISCONNECTED,
@@ -29,19 +28,9 @@ const THROUGH_MESSAGE_TYPES: Array[MessageType] = [
 ]
 
 
+# すべての Message に共通するプロパティ
 var type: MessageType
 var peer_id: int # アクションを起こした Peer の ID
-
-
-# (CSC) Ping を計測するとき
-class Ping extends Message:
-	var ping_id: String # 時間差を計算するための識別子
-	var time: int # Client の Unixtime
-	func _init(peer_id: int, ping_id: String, time: int) -> void:
-		self.type = MessageType.PING
-		self.peer_id = peer_id
-		self.ping_id = ping_id
-		self.time = time
 
 
 # (SC) 自プレイヤーが接続したとき
