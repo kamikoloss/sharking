@@ -143,7 +143,7 @@ func exit_charge() -> void:
 	tween_move.finished.connect(func(): move_state = MoveState.WAITING)
 
 	# finish
-	print("[Hero] move. direction: %s, charge: %s, dest: %s" % [_direction, charge, dest_position])
+	print("[Hero] moved. direction: %s, charge: %s, dest: %s" % [_direction, charge, dest_position])
 	charge = 0.0 # TODO: クールタイムみたいにじっくり減らす？
 
 

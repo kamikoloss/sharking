@@ -42,8 +42,8 @@ func get_exps_to_limit() -> Array[Exp]:
 
 
 # EXP を生成する
-func spawn_exps(exps: Array[Exp]) -> void:
-	var spawned_exps: Array[Exp] = []
+func spawn_exps(exps: Array) -> void:
+	var spawned_exps: Array = []
 
 	for _exp in exps:
 		# EXP が Level 上に存在しない場合: 生成する

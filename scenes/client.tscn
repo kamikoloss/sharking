@@ -21,6 +21,8 @@ _debug_label_charge = NodePath("CanvasLayer/Control/Debug/LabelCharge")
 
 [node name="Hero" parent="." instance=ExtResource("5_e5wad")]
 is_local = true
+_direction_rotation_speed_default = 90.0
+_charge_duration_default = 3.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -33,29 +35,29 @@ offset_bottom = 640.0
 [node name="ButtonLeft" type="Button" parent="CanvasLayer/Control"]
 visible = false
 layout_mode = 0
-offset_left = 10.0
-offset_top = 570.0
-offset_right = 70.0
-offset_bottom = 630.0
+offset_left = 20.0
+offset_top = 560.0
+offset_right = 80.0
+offset_bottom = 620.0
 theme = ExtResource("6_63squ")
 text = "◀"
 
 [node name="ButtonCenter" type="Button" parent="CanvasLayer/Control"]
 layout_mode = 0
-offset_left = 80.0
-offset_top = 570.0
-offset_right = 280.0
-offset_bottom = 630.0
+offset_left = 100.0
+offset_top = 560.0
+offset_right = 260.0
+offset_bottom = 620.0
 theme = ExtResource("6_63squ")
-text = "CONNECT"
+text = "(BUTTON)"
 
 [node name="ButtonRight" type="Button" parent="CanvasLayer/Control"]
 visible = false
 layout_mode = 0
-offset_left = 290.0
-offset_top = 570.0
-offset_right = 350.0
-offset_bottom = 630.0
+offset_left = 280.0
+offset_top = 560.0
+offset_right = 340.0
+offset_bottom = 620.0
 theme = ExtResource("6_63squ")
 text = "▶"
 

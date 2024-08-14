@@ -1,4 +1,14 @@
+class_name Client
 extends Node2D
+
+
+enum GameState {
+	LOBBY, # 接続待ち
+	GAME, # 接続中
+}
+
+
+var _game_state = GameState.LOBBY
 
 # Game Nodes
 @export var _level: Level
@@ -26,6 +36,8 @@ func _ready() -> void:
 	_button_center.button_down.connect(_on_center_button_down)
 	_button_center.button_up.connect(_on_center_button_up)
 
+	_button_center.text = "CONNECT"
+
 
 func _process(delta: float) -> void:
 	_process_refresh_debug(delta)
@@ -42,31 +54,52 @@ func _on_web_socket_client_connection_closed():
 func _on_web_socket_client_message_received(message: Variant):
 	print("[Client] Message received from server. Message: %s" % [message])
 	match message["type"] as Message.MessageType:
+		# 自プレイヤーが接続したとき
 		Message.MessageType.PLAYER_CONNECTED:
-			pass
+			# Server から受け取った EXP 情報を同期する
+			var exps_data = message["exps"]
+			var exps = []
+			for exp in exps_data:
+				var _exp = Exp.new(exp["point"], exp["position"])
+				exps.append(_exp)
+			print("[Client/Debug] exps %s" % [exps])
+			_level.spawn_exps(exps)
+		# 他プレイヤーが接続したとき
 		Message.MessageType.OTHER_PLAYER_CONNECTED:
 			pass
+		#
 		Message.MessageType.OTHER_PLAYER_DISCONNECTED:
 			pass
+		#
 		Message.MessageType.HERO_SPAWNED:
 			pass
+		#
 		Message.MessageType.HERO_MOVE_STARTED:
 			pass
+		#
 		Message.MessageType.HERO_MOVE_FINISHED:
 			pass
 
 
 func _on_center_button_down():
-	_hero.enter_charge()
+	match _game_state:
+		GameState.LOBBY:
+			_connect_to_server()
+		GameState.GAME:
+			_hero.enter_charge()
 
 
 func _on_center_button_up():
-	_hero.exit_charge()
+	match _game_state:
+		GameState.GAME:
+			_hero.exit_charge()
 
 
 func _connect_to_server():
 	var _error = _ws_client.connect_to_url(_ws_address)
-	if _error != OK:
+	if _error == OK:
+		_game_state = GameState.GAME
+	else:
 		print("[Client] connection failed. (%s)" % error_string(_error))
 
 

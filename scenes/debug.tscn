@@ -4,30 +4,13 @@
 [ext_resource type="PackedScene" uid="uid://pliuagklgv5t" path="res://scenes/client.tscn" id="1_ht17x"]
 [ext_resource type="PackedScene" uid="uid://bl37ggxcyjtxt" path="res://scenes/server.tscn" id="2_rbdto"]
 
-[node name="Debug" type="Node2D" node_paths=PackedStringArray("_client_1", "_client_2")]
+[node name="Debug" type="Node2D" node_paths=PackedStringArray("_server_scene", "_client_scene")]
 script = ExtResource("1_2aysk")
-_server_scene = ExtResource("2_rbdto")
-_client_scene = ExtResource("1_ht17x")
-_client_1 = NodePath("MarginContainer/Client")
-_client_2 = NodePath("MarginContainer2/Client")
+_server_scene = NodePath("Server")
+_client_scene = NodePath("Client")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
-clip_contents = true
-offset_right = 360.0
-offset_bottom = 640.0
+[node name="Server" parent="." instance=ExtResource("2_rbdto")]
+position = Vector2(-5000, 0)
 
-[node name="Client" parent="MarginContainer" instance=ExtResource("1_ht17x")]
-
-[node name="MarginContainer2" type="MarginContainer" parent="."]
-clip_contents = true
-offset_left = 360.0
-offset_right = 720.0
-offset_bottom = 640.0
-
-[node name="Client" parent="MarginContainer2" node_paths=PackedStringArray("_level", "_hero", "_ws_client", "_button_center", "_debug_label_state", "_debug_label_charge") instance=ExtResource("1_ht17x")]
-_level = NodePath("../../MarginContainer/Client/Level")
-_hero = NodePath("../../MarginContainer/Client/Hero")
-_ws_client = NodePath("../../MarginContainer/Client/WebSocketClient")
-_button_center = NodePath("../../MarginContainer/Client/CanvasLayer/Control/ButtonCenter")
-_debug_label_state = NodePath("../../MarginContainer/Client/CanvasLayer/Control/Debug/LabelState")
-_debug_label_charge = NodePath("../../MarginContainer/Client/CanvasLayer/Control/Debug/LabelCharge")
+[node name="Client" parent="." instance=ExtResource("1_ht17x")]
+position = Vector2(47, 51)

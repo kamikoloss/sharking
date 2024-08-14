@@ -1,3 +1,4 @@
+class_name Server
 extends Node2D
 
 
@@ -33,9 +34,33 @@ func _process(delta: float) -> void:
 
 func _on_web_socket_server_client_connected(peer_id: int):
 	print("[Server] New peer connected. ID: ", peer_id)
-	var msg_pc = Message.PlayerConnected.new(peer_id, _heros, _level.exps_on_level)
+	#var msg_pc = Message.PlayerConnected.new(peer_id, _heros, _level.exps_on_level)
+	var exps_data = []
+	for exp in _level.exps_on_level.values():
+		exps_data.append({
+			"id": exp.id,
+			"position": exp.position,
+			"point": exp.point,
+		})
+	var heros_data = []
+	for hero in _heros.values():
+		heros_data.append({
+			"id": hero.id,
+			"position": hero.position,
+			"exp_point": hero.exp_point,
+		})
+	var msg_pc = {
+		"type": Message.MessageType.PLAYER_CONNECTED,
+		"peer_id": peer_id,
+		"heros": heros_data,
+		"exps": exps_data,
+	}
 	_send_message_to_peer(msg_pc, peer_id)
-	var msg_opc = Message.OtherPlayerConnected.new(peer_id)
+	#var msg_opc = Message.OtherPlayerConnected.new(peer_id)
+	var msg_opc = {
+		"type": Message.MessageType.OTHER_PLAYER_CONNECTED,
+		"peer_id": peer_id,
+	}
 	_send_message_to_peers(msg_opc, peer_id)
 
 
@@ -74,12 +99,12 @@ func _start_server() -> void:
 
 
 # 特定の Peer にメッセージを送信する
-func _send_message_to_peer(message: Message, peer_id: int) -> void:
+func _send_message_to_peer(message: Variant, peer_id: int) -> void:
 	_ws_server.send(peer_id, message)
 
 
 # 接続中のすべての Peer にメッセージを一括送信する
-func _send_message_to_peers(message: Message, except_peer_id: int = 0) -> void:
+func _send_message_to_peers(message: Variant, except_peer_id: int = 0) -> void:
 	for peer_id in _ws_server.peers:
 		if except_peer_id != 0 and peer_id != except_peer_id:
 			_ws_server.send(peer_id, message)
