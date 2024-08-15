@@ -1,5 +1,6 @@
 class_name Exp
 extends Area2D
+# TODO: 生成時の Tween
 
 
 var id: int = -1
@@ -38,7 +39,7 @@ func destroy() -> void:
 	tween.tween_property(_sprite, "self_modulate", Color.WHITE, 0.25)
 	tween.tween_property(_sprite, "self_modulate", Color.TRANSPARENT, 1.0)
 	tween.finished.connect(func(): queue_free())
-	print("[Exp %s] die." % get_instance_id())
+	print("[Exp %s] died." % get_instance_id())
 
 
 func _on_area_entered(area: Area2D) -> void:

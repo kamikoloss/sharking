@@ -27,46 +27,36 @@ func _ready() -> void:
 	_start_server()
 
 
-func _process(delta: float) -> void:
-	#_process_send(delta)
-	pass
-
-
 func _on_web_socket_server_client_connected(peer_id: int):
 	print("[Server] New peer connected. ID: ", peer_id)
-	#var msg_pc = Message.PlayerConnected.new(peer_id, _heros, _level.exps_on_level)
+	# 新しく接続した Peer に現在の状況を共有する
 	var exps_data = []
 	for exp in _level.exps_on_level.values():
-		exps_data.append({
-			"id": exp.id,
-			"position": exp.position,
-			"point": exp.point,
-		})
+		exps_data.append({ "id": exp.id, "pt": exp.point, "pos": exp.position })
 	var heros_data = []
 	for hero in _heros.values():
-		heros_data.append({
-			"id": hero.id,
-			"position": hero.position,
-			"exp_point": hero.exp_point,
-		})
+		heros_data.append({ "id": hero.id, "pos": hero.position, "exp": hero.exp_point })
 	var msg_pc = {
 		"type": Message.MessageType.PLAYER_CONNECTED,
-		"peer_id": peer_id,
+		"pid": peer_id,
 		"heros": heros_data,
 		"exps": exps_data,
 	}
 	_send_message_to_peer(msg_pc, peer_id)
-	#var msg_opc = Message.OtherPlayerConnected.new(peer_id)
+	# 接続済みの Peer に新しく接続した Peer を共有する
 	var msg_opc = {
 		"type": Message.MessageType.OTHER_PLAYER_CONNECTED,
-		"peer_id": peer_id,
+		"pid": peer_id,
 	}
 	_send_message_to_peers(msg_opc, peer_id)
 
 
 func _on_web_socket_server_client_disconnected(peer_id: int):
 	print("[Server] Peer disconnected. ID: ", peer_id)
-	var msg = Message.OtherPlayerDisconnected.new(peer_id)
+	var msg = {
+		"type": Message.MessageType.OTHER_PLAYER_CONNECTED,
+		"pid": peer_id,
+	}
 	_send_message_to_peers(msg, peer_id)
 
 
@@ -88,8 +78,6 @@ func _parse_args() -> void:
 			# --tick-rate
 			if key_value[0] == "--tick-rate":
 				_send_interval = 1.0 / float(key_value[1])
-		else:
-			pass
 
 
 func _start_server() -> void:
@@ -108,16 +96,3 @@ func _send_message_to_peers(message: Variant, except_peer_id: int = 0) -> void:
 	for peer_id in _ws_server.peers:
 		if except_peer_id != 0 and peer_id != except_peer_id:
 			_ws_server.send(peer_id, message)
-
-
-# 接続中のすべての Peer にデータを一括送信する
-func _process_send(delta: float) -> void:
-	if _ws_server.peers.is_empty():
-		return
-	_send_timer += delta
-	if _send_timer < _send_interval:
-		return
-	_send_timer = 0.0
-
-	for peer_id in _ws_server.peers:
-		pass # TODO

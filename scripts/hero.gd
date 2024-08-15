@@ -33,7 +33,7 @@ var move_state = MoveState.WAITING:
 		move_state_changed.emit(value)
 		print("[Hero] move state changed. %s -> %s" % [MoveState.keys()[from], MoveState.keys()[value]])
 
-var id: int = -1
+#var id: int = -1
 var charge: float = 0.0 # 現在の移動タメ度 (最大 1.0)
 var exp_point: int = 10 # 取得した経験値ポイント
 @export var is_local: bool = false # 実行マシン上で操作している Hero かどうか

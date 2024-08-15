@@ -45,39 +45,39 @@ func get_exps_to_limit() -> Array[Exp]:
 func spawn_exps(exps: Array) -> void:
 	var spawned_exps: Array = []
 
-	for _exp in exps:
+	for exp in exps:
 		# EXP が Level 上に存在しない場合: 生成する
-		if not _exp.id in exps_on_level.keys():
+		if not exp.id in exps_on_level.keys():
 			var exp_instance: Exp = _exp_scene.instantiate()
 			# 引数データに ID が設定されていない場合は Instance ID を使用する (Server)
 			# 引数データに ID が設定されている場合はそれを使用する (Client) 
-			var id = exp_instance.get_instance_id() if _exp.id < 0 else _exp.id
+			var id = exp_instance.get_instance_id() if exp.id < 0 else exp.id
 
 			exp_instance.id = id
-			exp_instance.point = _exp.point
-			exp_instance.position = _exp.position
+			exp_instance.point = exp.point
+			exp_instance.position = exp.position
 			_exps_parent_node.add_child(exp_instance)
 
 			exps_on_level[exp_instance.id] = exp_instance
-			_exp_point_sum -= _exp.point
-			spawned_exps.append(_exp)
+			_exp_point_sum -= exp.point
+			spawned_exps.append(exp)
 
 	if 0 < len(spawned_exps):
 		exp_spawned.emit(spawned_exps)
 
 
 # EXP を破壊する
-func despawn_exps(exps: Array[Exp]) -> void:
-	var despwned_exps: Array[Exp] = []
+func despawn_exps(exps: Array) -> void:
+	var despwned_exps: Array = []
 
-	for _exp in exps:
+	for exp in exps:
 		# EXP が Level 上に存在する かつ Level 上に存在する EXP が有効な場合: 破壊する
-		if _exp.id in exps_on_level.keys() and exps_on_level[_exp.id].is_active:
-			exps_on_level[_exp.id].destroy()
+		if exp.id in exps_on_level.keys() and exps_on_level[exp.id].is_active:
+			exps_on_level[exp.id].destroy()
 
-			exps_on_level.erase(_exp.id)
-			_exp_point_sum -= _exp.point
-			despwned_exps.append(_exp)
+			exps_on_level.erase(exp.id)
+			_exp_point_sum -= exp.point
+			despwned_exps.append(exp)
 
 	if 0 < len(despwned_exps):
 		exp_despawned.emit(despwned_exps)
