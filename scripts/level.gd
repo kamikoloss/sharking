@@ -55,6 +55,7 @@ func spawn_exps(exps: Array) -> void:
 
 			exp_instance.id = id
 			exp_instance.point = exp.point
+			exp_instance.is_active = true
 			exp_instance.position = exp.position
 			_exps_parent_node.add_child(exp_instance)
 

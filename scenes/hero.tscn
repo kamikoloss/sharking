@@ -11,15 +11,12 @@ radius = 40.0
 
 [node name="Hero" type="Area2D" node_paths=PackedStringArray("_sprite", "_level_label", "_arrow", "_arrow_square", "_arrow_square_ct", "_arrow_square_bg")]
 script = ExtResource("1_ifnkb")
-is_local = null
 _sprite = NodePath("Sprite2D")
 _level_label = NodePath("Control/Level")
 _arrow = NodePath("Control/Arrow")
 _arrow_square = NodePath("Control/Arrow/Square")
 _arrow_square_ct = NodePath("Control/Arrow/SquareCt")
 _arrow_square_bg = NodePath("Control/Arrow/SquareBg")
-_direction_rotation_speed_default = null
-_charge_duration_default = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_lxfer")

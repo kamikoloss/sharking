@@ -11,7 +11,6 @@ enum MessageType {
 	HERO_MOVE_STARTED,
 	HERO_MOVE_FINISHED,
 	HERO_DAMAGED,
-	HERO_DEAD,
 	EXP_SPAWNED,
 }
 
@@ -22,5 +21,4 @@ const THROUGH_MESSAGE_TYPES: Array[MessageType] = [
 	MessageType.HERO_MOVE_STARTED,
 	MessageType.HERO_MOVE_FINISHED,
 	MessageType.HERO_DAMAGED,
-	MessageType.HERO_DEAD,
 ]
