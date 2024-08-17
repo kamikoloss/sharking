@@ -43,6 +43,7 @@ func _ready() -> void:
 
 	_button_center.button_down.connect(_on_center_button_down)
 	_button_center.button_up.connect(_on_center_button_up)
+
 	_change_game_mode(GameMode.TITLE)
 
 
@@ -94,9 +95,10 @@ func _on_web_socket_client_message_received(message: Variant):
 			_other_heros[hero_instance.id] = hero_instance
 		# Hero が移動開始したとき
 		Message.MessageType.HERO_MOVE_STARTED:
-			pass
+			var other_hero = _other_heros[message["pid"]]
+			other_hero.move(message["dest"], 0.5, message["dur"])
 		# Hero が移動終了したとき
-		Message.MessageType.HERO_MOVE_FINISHED:
+		Message.MessageType.HERO_MOVE_STOPPED:
 			pass
 		# Hero がダメージを受けたとき (死んだときも含む)
 		Message.MessageType.HERO_DAMAGED:
@@ -162,6 +164,9 @@ func _spawn_main_hero() -> void:
 	add_child(hero_instance)
 	_main_hero = hero_instance
 
+	_main_hero.move_started.connect(_on_hero_move_started)
+	_main_hero.move_stopped.connect(_on_hero_move_stopped)
+
 	var msg = {
 		"type": Message.MessageType.HERO_SPAWNED,
 		"pid": _peer_id,
@@ -170,6 +175,31 @@ func _spawn_main_hero() -> void:
 	_send_message(msg)
 
 	_change_game_mode(GameMode.GAME)
+
+
+func _despawn_main_hero() -> void:
+	pass
+
+
+func _on_hero_move_started(dest_position: Vector2, move_duration: float) -> void:
+	var msg = {
+		"type": Message.MessageType.HERO_MOVE_STARTED,
+		"pid": _peer_id,
+		"dest": dest_position,
+		"dur": move_duration,
+		"pos": _main_hero.position,
+	}
+	_send_message(msg)
+
+
+func _on_hero_move_stopped() -> void:
+	var msg = {
+		"type": Message.MessageType.HERO_MOVE_STOPPED,
+		"pid": _peer_id,
+		"expids": _main_hero.got_exp_ids,
+		"pos": _main_hero.position,
+	}
+	_send_message(msg)
 
 
 # Debug

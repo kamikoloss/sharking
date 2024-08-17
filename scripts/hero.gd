@@ -3,6 +3,8 @@ extends Area2D
 
 
 signal move_state_changed
+signal move_started
+signal move_stopped
 
 
 # 移動状態
@@ -37,8 +39,10 @@ var id: int = -1
 var charge: float = 0.0 # 現在の移動タメ度 (最大 1.0)
 var exp_point: int = 0 # 取得した経験値ポイント
 var is_local: bool = false # 実行マシン上で操作している Hero かどうか
+var got_exp_ids = [] # 移動中に取得した EXP の ID のリスト, 移動ごとにリセットされる
 
 
+@export var _camera: Camera2D
 @export var _sprite: Sprite2D
 @export var _level_label: Label
 @export var _arrow: Control # 矢印
@@ -65,11 +69,13 @@ func _ready() -> void:
 		_arrow_square_ct.scale.y = 0.0
 		_arrow_square_bg.scale.y = 0.0
 	else:
+		_camera.enabled = false
 		_arrow.visible = false
 
 
 func _process(delta: float) -> void:
-	_process_rotate_direction(delta)
+	if is_local:
+		_process_rotate_direction(delta)
 
 
 # 移動のタメを開始する
@@ -82,12 +88,10 @@ func enter_charge() -> void:
 	var tween_direction = _get_tween(TweenType.DIRECTION)
 	tween_direction.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	tween_direction.tween_method(func(v): _direction_rotation_speed = v, _direction_rotation_speed_default, 0.0, 0.5)
-
 	# ARROW_SQ_CT
 	var tween_arrow_sq_ct = _get_tween(TweenType.ARROW_SQ_CT)
 	tween_arrow_sq_ct.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	tween_arrow_sq_ct.tween_method(func(v): _arrow_square_bg.scale.y = v, 0.0, 1.0, 0.25)
-
 	# ARROW_SQ
 	var tween_arrow_sq = _get_tween(TweenType.ARROW_SQ)
 	tween_arrow_sq.set_loops()
@@ -101,10 +105,9 @@ func enter_charge() -> void:
 func exit_charge() -> void:
 	if move_state != MoveState.CHARGING:
 		return
-	move_state = MoveState.MOVING
 
-	var before_duration = MOVE_BEFORE_SEC # TODO: ping を考慮する
 	var dest_position = position + Vector2.UP.rotated(deg_to_rad(_direction)) * charge * MOVE_VECTOR_RATIO
+	var before_duration = MOVE_BEFORE_SEC
 	var move_duration = _charge_duration * charge
 
 	# DIRECTION
@@ -113,45 +116,54 @@ func exit_charge() -> void:
 	tween_direction.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUINT)
 	tween_direction.tween_interval(before_duration + move_duration)
 	tween_direction.tween_method(func(v): _direction_rotation_speed = v, 0.0, _direction_rotation_speed_default, 0.5)
-
 	# ARROW_SQ_BG
 	var tween_arrow_sq_bg = _get_tween(TweenType.ARROW_SQ_BG)
 	tween_arrow_sq_bg.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	tween_arrow_sq_bg.tween_method(func(v): _arrow_square_bg.scale.y = v, 1.0, 0.0, 0.25)
-
 	# ARROW_SQ_CT
 	_arrow_square_ct.scale.y = charge
 	var tween_arrow_sq_ct = _get_tween(TweenType.ARROW_SQ_CT)
 	tween_arrow_sq_ct.tween_interval(before_duration)
 	tween_arrow_sq_ct.tween_method(func(v): _arrow_square_ct.scale.y = v, charge, 0.0, move_duration)
-
 	# ARROW_SQ
 	var tween_arrow_sq = _get_tween(TweenType.ARROW_SQ)
 	tween_arrow_sq.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	tween_arrow_sq.tween_method(func(v): _arrow_square.scale.y = v, charge, 0.0, 0.5)
 
-	# MOVE
-	_sprite.flip_h = 180.0 < _direction
-	var tween_move = _get_tween(TweenType.MOVE)
+	# 移動する
+	move(dest_position, before_duration, move_duration)
 
+
+# 移動する
+# dest_position: 移動先の座標
+# before_duration: 移動前の時間 (s)
+# move_duration: 移動にかかる時間 (s)
+func move(dest_position: Vector2, before_duration: float, move_duration: float) -> void:
+	move_state = MoveState.MOVING
+
+	print("[Hero] move started. direction: %s, charge: %s, dest: %s" % [_direction, charge, dest_position])
+	move_started.emit(dest_position, move_duration)
+	got_exp_ids = []
+	charge = 0.0 # TODO: クールタイムみたいにじっくり減らす？
+
+	var tween_move = _get_tween(TweenType.MOVE)
+	# 移動先の方向に回転する
+	_sprite.flip_h = 180.0 < _direction
 	tween_move.set_parallel(true)
 	tween_move.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	tween_move.tween_property(_sprite, "rotation_degrees", _direction, before_duration)
 	tween_move.tween_property(_sprite, "scale", Vector2(clampf(charge, 0.6, 0.8), 0.4), before_duration)
-
+	# 移動先の座標まで移動する
 	tween_move.chain()
 	tween_move.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	tween_move.tween_property(self, "position", dest_position, move_duration)
 	tween_move.tween_property(_sprite, "scale", Vector2(0.4, 0.4), 0.5)
 	tween_move.finished.connect(func(): move_state = MoveState.WAITING)
-
-	# finish
-	print("[Hero] moved. direction: %s, charge: %s, dest: %s" % [_direction, charge, dest_position])
-	charge = 0.0 # TODO: クールタイムみたいにじっくり減らす？
+	tween_move.finished.connect(func(): move_stopped.emit())
 
 
 func _on_area_entered(area: Area2D) -> void:
-	if area is Exp:
+	if is_local and area is Exp:
 		exp_point += area.point
 		_level_label.text = str(exp_point)
 
