@@ -149,8 +149,6 @@ func exit_charge() -> void:
 
 func _on_area_entered(area: Area2D) -> void:
 	if area is Exp:
-		print([area.id, area.is_active, area.point])
-		#if area.is_active:
 		exp_point += area.point
 		_level_label.text = str(exp_point)
 

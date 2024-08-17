@@ -69,7 +69,6 @@ func _on_web_socket_client_message_received(message: Variant):
 			var exps = []
 			for exp in message["exps"]:
 				exps.append(Exp.new(exp["pt"], exp["pos"]))
-			#print([exps])
 			_level.spawn_exps(exps)
 			# 他 Hero 情報を同期する
 			for hero in message["heros"]:
@@ -134,6 +133,11 @@ func _connect_to_server():
 		print("[Client] connection failed. (%s)" % error_string(_error))
 
 
+# Server にメッセージを送信する
+func _send_message(message: Variant) -> void:
+	_ws_client.send(message)
+
+
 func _change_game_mode(to: GameMode) -> void:
 	_game_mode = to
 	match to:
@@ -148,15 +152,24 @@ func _change_game_mode(to: GameMode) -> void:
 func _spawn_main_hero() -> void:
 	if _peer_id < 0:
 		print("[Client] failed to spawn main hero.")
-	else:
-		var hero_instance = _hero_scene.instantiate()
-		hero_instance.id = _peer_id
-		hero_instance.exp_point = 0
-		hero_instance.position = Vector2.ZERO # TODO
-		hero_instance.is_local = true
-		add_child(hero_instance)
-		_main_hero = hero_instance
-		_change_game_mode(GameMode.GAME)
+		return
+
+	var hero_instance = _hero_scene.instantiate()
+	hero_instance.id = _peer_id
+	hero_instance.exp_point = 0
+	hero_instance.position = Vector2.ZERO # TODO
+	hero_instance.is_local = true
+	add_child(hero_instance)
+	_main_hero = hero_instance
+
+	var msg = {
+		"type": Message.MessageType.HERO_SPAWNED,
+		"pid": _peer_id,
+		"pos": _main_hero.position,
+	}
+	_send_message(msg)
+
+	_change_game_mode(GameMode.GAME)
 
 
 # Debug

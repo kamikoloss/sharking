@@ -61,7 +61,7 @@ func _on_web_socket_server_client_disconnected(peer_id: int):
 
 
 func _on_web_socket_server_message_received(peer_id: int, message: Variant):
-	print("[Server] Message received from client. ID: %d, Message: %s" % [peer_id, message])
+	#print("[Server] Message received from client. ID: %d, Message: %s" % [peer_id, message])
 	var message_type = message["type"] as Message.MessageType
 
 	# 送信者以外のすべての Peer に共有する
