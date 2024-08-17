@@ -60,9 +60,12 @@ func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 	_level_label.text = str(exp_point)
 	
-	_arrow_square.scale.y = 0.0
-	_arrow_square_ct.scale.y = 0.0
-	_arrow_square_bg.scale.y = 0.0
+	if is_local:
+		_arrow_square.scale.y = 0.0
+		_arrow_square_ct.scale.y = 0.0
+		_arrow_square_bg.scale.y = 0.0
+	else:
+		_arrow.visible = false
 
 
 func _process(delta: float) -> void:
