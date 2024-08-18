@@ -1,10 +1,5 @@
 class_name Level
 extends Node2D
-# TODO: Level と EXP の処理をそれぞれ切り分ける
-
-
-signal exp_spawned(spanwed_exps: Array[Exp]) # EXP が生成された
-signal exp_despawned(despawned_exps: Array[Exp]) # EXP が破壊された
 
 
 # Level 上に存在する EXP/Hero { ID: Instance, ... }
@@ -48,45 +43,30 @@ func get_exps_to_limit() -> Array[Exp]:
 
 # EXP を生成する
 func spawn_exps(exps: Array) -> void:
-	var spawned_exps: Array = []
-
 	for exp in exps:
 		# EXP が Level 上に存在しない場合: 生成する
 		if not exp.id in exps_on_level.keys():
 			var exp_instance: Exp = _exp_scene.instantiate()
 			# 引数データに ID が設定されていない場合は Instance ID を使用する (Server)
 			# 引数データに ID が設定されている場合はそれを使用する (Client) 
-			var id = exp_instance.get_instance_id() if exp.id < 0 else exp.id
-
-			exp_instance.id = id
+			var exp_id = exp_instance.get_instance_id() if exp.id < 0 else exp.id
+			exp_instance.id = exp_id
 			exp_instance.point = exp.point
-			exp_instance.is_active = true
 			exp_instance.position = exp.position
-			_exps_parent_node.add_child(exp_instance)
 
-			exps_on_level[exp_instance.id] = exp_instance
 			_exp_point_sum -= exp.point
-			spawned_exps.append(exp)
-
-	if 0 < len(spawned_exps):
-		exp_spawned.emit(spawned_exps)
+			_exps_parent_node.add_child(exp_instance)
+			exps_on_level[exp_instance.id] = exp_instance
 
 
 # EXP を破壊する
-func despawn_exps(exps: Array) -> void:
-	var despwned_exps: Array = []
-
-	for exp in exps:
+func despawn_exps(expids: Array) -> void:
+	for exp_id in expids:
 		# EXP が Level 上に存在する かつ Level 上に存在する EXP が有効な場合: 破壊する
-		if exp.id in exps_on_level.keys() and exps_on_level[exp.id].is_active:
-			exps_on_level[exp.id].destroy()
-
-			exps_on_level.erase(exp.id)
-			_exp_point_sum -= exp.point
-			despwned_exps.append(exp)
-
-	if 0 < len(despwned_exps):
-		exp_despawned.emit(despwned_exps)
+		if exp_id in exps_on_level.keys() and exps_on_level[exp_id].is_active:
+			_exp_point_sum -= exps_on_level[exp_id].point
+			exps_on_level[exp_id].destroy()
+			exps_on_level.erase(exp_id)
 
 
 # Hero を生成する

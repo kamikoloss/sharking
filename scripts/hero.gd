@@ -143,8 +143,6 @@ func move(dest_position: Vector2, before_duration: float, move_duration: float) 
 
 	print("[Hero] move started. direction: %s, charge: %s, dest: %s" % [direction, charge, dest_position])
 	move_started.emit(dest_position, move_duration)
-	got_exp_ids = []
-	charge = 0.0 # TODO: クールタイムみたいにじっくり減らす？
 
 	var tween_move = _get_tween(TweenType.MOVE)
 	# 移動先の方向に回転する
@@ -158,14 +156,20 @@ func move(dest_position: Vector2, before_duration: float, move_duration: float) 
 	tween_move.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	tween_move.tween_property(self, "position", dest_position, move_duration)
 	tween_move.tween_property(_sprite, "scale", Vector2(0.4, 0.4), 0.5)
-	tween_move.finished.connect(func(): move_state = MoveState.WAITING)
-	tween_move.finished.connect(func(): move_stopped.emit())
+	tween_move.finished.connect(_on_move_finished)
+
+func _on_move_finished():
+	move_stopped.emit()
+	move_state = MoveState.WAITING
+	got_exp_ids = []
+	charge = 0.0
 
 
 func _on_area_entered(area: Area2D) -> void:
 	if is_local and area is Exp:
 		exp_point += area.point
 		_level_label.text = str(exp_point)
+		got_exp_ids.append(area.id)
 
 
 func _process_rotate_direction(delta: float) -> void:
