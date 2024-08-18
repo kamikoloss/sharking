@@ -6,11 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://52tpbo5enhtq" path="res://scenes/hero.tscn" id="5_e5wad"]
 [ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://themes/default.tres" id="6_63squ"]
 
-[node name="Client" type="Node2D" node_paths=PackedStringArray("_level", "_other_heros_parent_node", "_ws_client", "_button_center", "_debug_label_game_mode", "_debug_label_peer_id", "_debug_label_hero_move_state", "_debug_label_hero_charge")]
+[node name="Client" type="Node2D" node_paths=PackedStringArray("_level", "_ws_client", "_button_center", "_debug_label_game_mode", "_debug_label_peer_id", "_debug_label_hero_move_state", "_debug_label_hero_charge")]
 script = ExtResource("1_rfnpf")
 _level = NodePath("Level")
 _hero_scene = ExtResource("5_e5wad")
-_other_heros_parent_node = NodePath("OtherHeros")
 _ws_client = NodePath("WebSocketClient")
 _button_center = NodePath("CanvasLayer/Control/ButtonCenter")
 _debug_label_game_mode = NodePath("CanvasLayer/Control/Debug/LabelGameMode")

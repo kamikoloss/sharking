@@ -4,7 +4,6 @@ extends Node2D
 
 # Game Nodes
 @export var _level: Level
-var _heros: Dictionary = {} # { ID: Hero, ... }
 
 # WebSocket
 @export var _ws_server: WebSocketServer
@@ -34,13 +33,13 @@ func _on_web_socket_server_client_connected(peer_id: int):
 	for exp in _level.exps_on_level.values():
 		exps_data.append({ "id": exp.id, "pt": exp.point, "pos": exp.position })
 	var heros_data = []
-	for hero in _heros.values():
-		heros_data.append({ "id": hero.id, "pos": hero.position, "exp": hero.exp_point })
+	for hero in _level.heros_on_level.values():
+		heros_data.append({ "id": hero.id, "exp": hero.exp_point, "pos": hero.position })
 	var msg_pc = {
 		"type": Message.MessageType.PLAYER_CONNECTED,
 		"pid": peer_id,
-		"heros": heros_data,
 		"exps": exps_data,
+		"heros": heros_data,
 	}
 	_send_message_to_peer(msg_pc, peer_id)
 	# 接続済みの Peer に新しく接続した Peer を共有する
@@ -67,7 +66,13 @@ func _on_web_socket_server_message_received(peer_id: int, message: Variant):
 	# 送信者以外のすべての Peer に共有する
 	if message_type in Message.THROUGH_MESSAGE_TYPES:
 		_send_message_to_peers(message, peer_id)
-		return
+
+		# Server 上の Hero 情報を更新する
+		if message_type == Message.MessageType.HERO_SPAWNED:
+			_level.spawn_hero(message["pid"])
+			_level.update_hero(message["pid"], 0, message["pos"])
+		else:
+			_level.update_hero(message["pid"], message["exp"], message["pos"])
 
 
 func _parse_args() -> void:

@@ -13,12 +13,8 @@ var _game_mode = GameMode.TITLE
 var _peer_id = -1
 
 @export var _level: Level
-
-# TODO: Hero 系の管理は Node 分ける
 @export var _hero_scene: PackedScene
 var _main_hero: Hero
-var _other_heros: Dictionary = {} # { ID: Hero, ... }
-@export var _other_heros_parent_node: Node2D
 
 # WebSocket
 @export var _ws_client: WebSocketClient
@@ -69,16 +65,14 @@ func _on_web_socket_client_message_received(message: Variant):
 			# EXP 情報を同期する
 			var exps = []
 			for exp in message["exps"]:
-				exps.append(Exp.new(exp["pt"], exp["pos"]))
+				var exp_instance = Exp.new(exp["pt"], exp["pos"])
+				exp_instance.id = exp["id"]
+				exps.append(exp_instance)
 			_level.spawn_exps(exps)
 			# 他 Hero 情報を同期する
 			for hero in message["heros"]:
-				var hero_instance = _hero_scene.instantiate()
-				hero_instance.id = hero["id"]
-				hero_instance.exp_point = hero["exp"]
-				hero_instance.position = hero["pos"]
-				_other_heros_parent_node.add_child(hero_instance)
-				_other_heros[hero_instance.id] = hero_instance
+				_level.spawn_hero(hero["id"])
+				_level.update_hero(hero["id"], hero["exp"], hero["pos"])
 		# 他プレイヤーが接続したとき
 		Message.MessageType.OTHER_PLAYER_CONNECTED:
 			pass
@@ -86,20 +80,16 @@ func _on_web_socket_client_message_received(message: Variant):
 		Message.MessageType.OTHER_PLAYER_DISCONNECTED:
 			pass
 		# Hero が生まれたとき
-		Message.MessageType.HERO_SPAWNED:
-			var hero_instance = _hero_scene.instantiate()
-			hero_instance.id = message["pid"]
-			hero_instance.exp_point = 0
-			hero_instance.position = message["pos"]
-			_other_heros_parent_node.add_child(hero_instance)
-			_other_heros[hero_instance.id] = hero_instance
+		Message.MessageType.HERO_SPAWNED: 
+			_level.spawn_hero(message["pid"])
+			_level.update_hero(message["pid"], 0, message["pos"])
 		# Hero が移動開始したとき
 		Message.MessageType.HERO_MOVE_STARTED:
-			var other_hero = _other_heros[message["pid"]]
+			var other_hero = _level.heros_on_level[message["pid"]]
 			other_hero.move(message["dest"], 0.5, message["dur"])
 		# Hero が移動終了したとき
 		Message.MessageType.HERO_MOVE_STOPPED:
-			pass
+			_level.update_hero(message["pid"], message["exp"], message["pos"])
 		# Hero がダメージを受けたとき (死んだときも含む)
 		Message.MessageType.HERO_DAMAGED:
 			pass
@@ -187,6 +177,7 @@ func _on_hero_move_started(dest_position: Vector2, move_duration: float) -> void
 		"pid": _peer_id,
 		"dest": dest_position,
 		"dur": move_duration,
+		"exp": _main_hero.exp_point,
 		"pos": _main_hero.position,
 	}
 	_send_message(msg)
@@ -197,6 +188,7 @@ func _on_hero_move_stopped() -> void:
 		"type": Message.MessageType.HERO_MOVE_STOPPED,
 		"pid": _peer_id,
 		"expids": _main_hero.got_exp_ids,
+		"exp": _main_hero.exp_point,
 		"pos": _main_hero.position,
 	}
 	_send_message(msg)

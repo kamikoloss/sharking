@@ -1,14 +1,16 @@
 class_name Level
 extends Node2D
+# TODO: Level と EXP の処理をそれぞれ切り分ける
 
 
 signal exp_spawned(spanwed_exps: Array[Exp]) # EXP が生成された
 signal exp_despawned(despawned_exps: Array[Exp]) # EXP が破壊された
 
 
-# Level 上に存在する EXP { Instance ID: EXP, ... }
+# Level 上に存在する EXP/Hero { ID: Instance, ... }
 # 接続した Client に現在の状態を教えるために保持しておく
 var exps_on_level: Dictionary = {}
+var heros_on_level: Dictionary = {}
 
 
 @export var _exp_scene: PackedScene
@@ -16,6 +18,9 @@ var exps_on_level: Dictionary = {}
 var _exp_point_sum = 0 # Level 上に存在する EXP pt の合計
 var _exp_point_sum_max = 500 # 合計何 pt になるまで EXP を生成するか
 var _exp_point_list: Array[int] = [1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 5] # 生成する EXP pt のリスト (確率込み)
+
+@export var _hero_scene: PackedScene
+@export var _heros_parent_node: Node2D
 
 var _level_size: int = 640 # Level の大きさ (px, 辺/2)
 var _rng = RandomNumberGenerator.new()
@@ -82,6 +87,31 @@ func despawn_exps(exps: Array) -> void:
 
 	if 0 < len(despwned_exps):
 		exp_despawned.emit(despwned_exps)
+
+
+# Hero を生成する
+func spawn_hero(pid: int) -> void:
+	var hero_instance = _hero_scene.instantiate()
+	hero_instance.id = pid
+	hero_instance.exp_point = 0
+	_heros_parent_node.add_child(hero_instance)
+	heros_on_level[pid] = hero_instance
+
+
+# Hero を破壊する
+func despawn_hero(pid: int) -> void:
+	if not heros_on_level.has(pid):
+		return
+	heros_on_level[pid].queue_free()
+	heros_on_level.erase(pid)
+
+
+# Hero の情報を更新する
+func update_hero(pid: int, exp: int, position: Vector2) -> void:
+	if not heros_on_level.has(pid):
+		return
+	heros_on_level[pid].exp_point = exp
+	heros_on_level[pid].position = position
 
 
 # 指定範囲内のランダムな座標を取得する
