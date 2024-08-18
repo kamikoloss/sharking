@@ -135,23 +135,23 @@ func exit_charge() -> void:
 
 
 # 移動する
-# dest_position: 移動先の座標
-# before_duration: 移動前の時間 (s)
-# move_duration: 移動にかかる時間 (s)
 func move(dest_position: Vector2, before_duration: float, move_duration: float) -> void:
 	move_state = MoveState.MOVING
 
-	print("[Hero] move started. direction: %s, charge: %s, dest: %s" % [_direction, charge, dest_position])
+	var direction = rad_to_deg(position.angle_to_point(dest_position)) + 90.0
+	direction = clamp_deg(direction)
+
+	print("[Hero] move started. direction: %s, charge: %s, dest: %s" % [direction, charge, dest_position])
 	move_started.emit(dest_position, move_duration)
 	got_exp_ids = []
 	charge = 0.0 # TODO: クールタイムみたいにじっくり減らす？
 
 	var tween_move = _get_tween(TweenType.MOVE)
 	# 移動先の方向に回転する
-	_sprite.flip_h = 180.0 < _direction
+	_sprite.flip_h = 180.0 < direction
 	tween_move.set_parallel(true)
 	tween_move.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
-	tween_move.tween_property(_sprite, "rotation_degrees", _direction, before_duration)
+	tween_move.tween_property(_sprite, "rotation_degrees", direction, before_duration)
 	tween_move.tween_property(_sprite, "scale", Vector2(clampf(charge, 0.6, 0.8), 0.4), before_duration)
 	# 移動先の座標まで移動する
 	tween_move.chain()
@@ -169,10 +169,8 @@ func _on_area_entered(area: Area2D) -> void:
 
 
 func _process_rotate_direction(delta: float) -> void:
-	# TODO: 反時計回りへの対応
 	_direction += _direction_rotation_speed * delta
-	if 360.0 < _direction:
-		_direction -= 360.0
+	_direction = clamp_deg(_direction)
 	_arrow.rotation_degrees = _direction
 
 
@@ -181,3 +179,12 @@ func _get_tween(type: TweenType) -> Tween:
 		_tweens[type].kill()
 	_tweens[type] = create_tween()
 	return _tweens[type]
+
+
+func clamp_deg(deg: float) -> float:
+	if deg < 0.0:
+		return deg + 360.0
+	elif 360.0 < deg:
+		return deg - 360.0
+	else:
+		return deg

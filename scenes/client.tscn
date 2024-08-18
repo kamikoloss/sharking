@@ -63,6 +63,7 @@ text = "▶"
 layout_mode = 0
 offset_right = 180.0
 offset_bottom = 160.0
+scale = Vector2(0.5, 0.5)
 theme_override_constants/separation = 0
 
 [node name="LabelGameMode" type="Label" parent="CanvasLayer/Control/Debug"]
