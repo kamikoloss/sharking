@@ -12,6 +12,7 @@ enum MessageType {
 	HERO_MOVE_STOPPED,
 	HERO_DAMAGED,
 	EXP_SPAWNED,
+	EXP_DESPAWNED,
 }
 
 

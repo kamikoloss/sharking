@@ -3,7 +3,7 @@ extends Node2D
 
 
 # Level 上に存在する EXP/Hero { ID: Instance, ... }
-# 接続した Client に現在の状態を教えるために保持しておく
+# 接続した Client に現在の状態を教えるために保持しておく (Server 用)
 var exps_on_level: Dictionary = {}
 var heros_on_level: Dictionary = {}
 
@@ -35,9 +35,9 @@ func respawn_exps_to_limit() -> void:
 
 
 # EXP を生成する
-func spawn_exp(id: int, point: int, positon: Vector2) -> void:
-	# 既に存在する場合: 何もしない
-	if id in exps_on_level.keys():
+func spawn_exp(id: int, point: int, pos: Vector2) -> void:
+	# Level 上に存在する場合: 何もしない
+	if exps_on_level.has(id):
 		return
 
 	# EXP インスタンスを作成する
@@ -47,7 +47,7 @@ func spawn_exp(id: int, point: int, positon: Vector2) -> void:
 	var exp_id = exp_instance.get_instance_id() if id < 0 else id
 	exp_instance.id = exp_id
 	exp_instance.point = point
-	exp_instance.position = position
+	exp_instance.position = pos
 
 	_exp_point_sum -= point
 	_exps_parent_node.add_child(exp_instance)
@@ -59,12 +59,9 @@ func despawn_exp(id: int) -> void:
 	# Level 上に存在しない場合: 何もしない
 	if not exps_on_level.has(id):
 		return
-	# Level 上に存在する EXP が有効でない場合: 何もしない
-	if not exps_on_level[id].is_active:
-		return
 
 	_exp_point_sum -= exps_on_level[id].point
-	exps_on_level[id].destroy()
+	exps_on_level[id].destroy(true)
 	exps_on_level.erase(id)
 
 
@@ -90,13 +87,13 @@ func despawn_hero(pid: int) -> void:
 
 
 # Hero の情報を更新する
-func update_hero(pid: int, exp: int, position: Vector2) -> void:
+func update_hero(pid: int, exp: int, pos: Vector2) -> void:
 	# Level 上に存在しない場合: 何もしない
 	if not heros_on_level.has(pid):
 		return
 
 	heros_on_level[pid].exp_point = exp
-	heros_on_level[pid].position = position
+	heros_on_level[pid].position = pos
 
 
 # 上限になるまでの EXP のリストを取得する
@@ -115,7 +112,7 @@ func _get_exps_to_limit() -> Array[Exp]:
 	return exps
 
 
-# 指定範囲内のランダムな座標を取得する
+# Level 内のランダムな座標を取得する
 func _get_random_position() -> Vector2:
 	var x = _rng.randi_range(_level_size * -1, _level_size)
 	var y = _rng.randi_range(_level_size * -1, _level_size)

@@ -86,7 +86,6 @@ func _on_web_socket_client_message_received(message: Variant):
 		# Hero が移動終了したとき
 		Message.MessageType.HERO_MOVE_STOPPED:
 			_level.update_hero(message["pid"], message["exp"], message["pos"])
-			#_level.despawn_exps(message["expids"])
 		# Hero がダメージを受けたとき (死んだときも含む)
 		Message.MessageType.HERO_DAMAGED:
 			pass

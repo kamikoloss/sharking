@@ -33,7 +33,7 @@ var move_state = MoveState.WAITING:
 		var from = move_state
 		move_state = value
 		move_state_changed.emit(value)
-		print("[Hero] move state changed. %s -> %s" % [MoveState.keys()[from], MoveState.keys()[value]])
+		print("[Hero %s] move state changed. %s -> %s" % [id, MoveState.keys()[from], MoveState.keys()[value]])
 
 var id: int = -1
 var charge: float = 0.0 # 現在の移動タメ度 (最大 1.0)
@@ -139,13 +139,11 @@ func exit_charge() -> void:
 
 # 移動する
 func move(dest_position: Vector2, before_duration: float, move_duration: float) -> void:
+	move_started.emit(dest_position, move_duration)
 	move_state = MoveState.MOVING
 
 	var direction = rad_to_deg(position.angle_to_point(dest_position)) + 90.0
 	direction = _clamp_deg(direction)
-
-	print("[Hero] move started. direction: %s, charge: %s, dest: %s" % [direction, charge, dest_position])
-	move_started.emit(dest_position, move_duration)
 
 	var tween_move = _get_tween(TweenType.MOVE)
 	# 移動先の方向に回転する
@@ -160,6 +158,7 @@ func move(dest_position: Vector2, before_duration: float, move_duration: float) 
 	tween_move.tween_property(self, "position", dest_position, move_duration)
 	tween_move.tween_property(_sprite, "scale", Vector2(0.4, 0.4), 0.5)
 	tween_move.finished.connect(_on_move_finished)
+
 
 func _on_move_finished():
 	move_stopped.emit()

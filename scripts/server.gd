@@ -30,7 +30,6 @@ func _on_web_socket_server_client_connected(peer_id: int):
 
 	# 新しく接続した Peer に現在の状況を共有する
 	var exps_data = []
-	print(_level.exps_on_level)
 	for exp in _level.exps_on_level.values():
 		exps_data.append({ "id": exp.id, "pt": exp.point, "pos": exp.position })
 	var heros_data = []
@@ -69,6 +68,10 @@ func _on_web_socket_server_message_received(peer_id: int, message: Variant):
 	if message_type in Message.HERO_ACTION_MESSAGE_TYPES:
 		# 送信者以外のすべての Peer に共有する
 		_send_message_to_peers(message, peer_id)
+		# Server 上の EXP 情報を更新する
+		if message_type == Message.MessageType.HERO_MOVE_STOPPED:
+			for exp_id in message["expids"]:
+				_level.despawn_exp(exp_id)
 		# Server 上の Hero 情報を更新する
 		if message_type == Message.MessageType.HERO_SPAWNED:
 			_level.spawn_hero(message["pid"])
@@ -99,7 +102,8 @@ func _send_message_to_peer(message: Variant, peer_id: int) -> void:
 
 
 # 接続中のすべての Peer にメッセージを一括送信する
+# except_peer_id: 一括送信先から除く Peer ID
 func _send_message_to_peers(message: Variant, except_peer_id: int = 0) -> void:
-	for peer_id in _ws_server.peers:
+	for peer_id in _ws_server.peers.keys():
 		if peer_id != except_peer_id:
 			_send_message_to_peer(message, peer_id)

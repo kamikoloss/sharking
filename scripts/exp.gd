@@ -4,7 +4,6 @@ extends Area2D
 
 
 var id: int = -1
-var is_active: bool = true
 var point: int = 0
 
 
@@ -30,16 +29,17 @@ func _ready() -> void:
 
 
 # 自身を破壊する
-func destroy() -> void:
-	is_active = false
+# free: インスタンスの破壊まで行う
+func destroy(free: bool = false) -> void:
 	_label.visible = false
 
 	var tween = _die_tween
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	tween.tween_property(_sprite, "self_modulate", Color.WHITE, 0.25)
 	tween.tween_property(_sprite, "self_modulate", Color.TRANSPARENT, 1.0)
-	tween.finished.connect(func(): queue_free())
-	print("[Exp %s] died." % get_instance_id())
+	if free:
+		tween.finished.connect(func(): queue_free())
+	print("[Exp %s] died." % id)
 
 
 func _on_area_entered(area: Area2D) -> void:
