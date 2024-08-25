@@ -11,6 +11,9 @@ extends Node2D
 @export var _send_interval: float = 0.05
 var _send_timer: float = 0.0
 
+var _respawn_exps_timer: float = 0.0
+var _respawn_exps_cooltime: float = 5.0 # 何秒ごとに EXP が復活するか
+
 
 func _ready() -> void:
 	_ws_server.client_connected.connect(_on_web_socket_server_client_connected)
@@ -23,6 +26,10 @@ func _ready() -> void:
 	# サーバー開始
 	_parse_args()
 	_start_server()
+
+
+func _process(delta: float) -> void:
+	_process_respawn_exps(delta)
 
 
 func _on_web_socket_server_client_connected(peer_id: int):
@@ -107,3 +114,24 @@ func _send_message_to_peers(message: Variant, except_peer_id: int = 0) -> void:
 	for peer_id in _ws_server.peers.keys():
 		if peer_id != except_peer_id:
 			_send_message_to_peer(message, peer_id)
+
+
+func _process_respawn_exps(delta: float) -> void:
+	_respawn_exps_timer += delta
+	if _respawn_exps_cooltime < _respawn_exps_timer:
+		_respawn_exps_timer = 0.0
+		_respawn_exps()
+
+
+func _respawn_exps() -> void:
+	var exps = _level.respawn_exps_to_limit()
+	var exps_data = []
+	var total_point = 0
+	for exp in exps:
+		exps_data.append({ "id": exp.id, "pt": exp.point, "pos": exp.position })
+		_level.spawn_exp(exp.id, exp.point, exp.position)
+		total_point += exp.point
+
+	print("[Server] Respaened exps. Count: %s, Total Point: %s" % [exps_data.size(), total_point])
+	var msg = { "type": Message.MessageType.EXP_SPAWNED, "exps": exps_data }
+	_send_message_to_peers(msg)

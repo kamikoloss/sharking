@@ -37,7 +37,7 @@ func destroy() -> void:
 	tween.tween_property(_sprite, "self_modulate", Color.WHITE, 0.25)
 	tween.tween_property(_sprite, "self_modulate", Color.TRANSPARENT, 1.0)
 	tween.finished.connect(func(): queue_free())
-	print("[Exp %s] died." % id)
+	#print("[Exp %s] died." % id)
 
 
 func _on_area_entered(area: Area2D) -> void:

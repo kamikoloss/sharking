@@ -2,10 +2,6 @@ class_name Level
 extends Node2D
 
 
-signal exp_spawned
-signal exp_despawned
-
-
 # Client 上の Level かどうか
 @export var is_client: bool = true
 
@@ -36,13 +32,15 @@ func _ready() -> void:
 
 
 # EXP を上限いっぱいまで再生成する (Server 用)
-func respawn_exps_to_limit() -> void:
+func respawn_exps_to_limit() -> Array[Exp]:
 	if is_client:
-		return
+		return []
 
 	var exps = _get_exps_to_limit()
 	for exp in exps:
 		spawn_exp(-1, exp.point, exp.position)
+
+	return exps
 
 
 # EXP を生成する
@@ -60,11 +58,9 @@ func spawn_exp(id: int, point: int, pos: Vector2) -> void:
 	exp_instance.point = point
 	exp_instance.position = pos
 
-	_exp_point_sum -= point
+	_exp_point_sum += point
 	_exps_parent_node.add_child(exp_instance)
 	exps_on_level[exp_instance.id] = exp_instance
-
-	exp_spawned.emit()
 
 
 # EXP を破壊する
@@ -76,8 +72,6 @@ func despawn_exp(id: int) -> void:
 	_exp_point_sum -= exps_on_level[id].point
 	exps_on_level[id].destroy()
 	exps_on_level.erase(id)
-
-	exp_despawned.emit()
 
 
 # Hero を生成する
