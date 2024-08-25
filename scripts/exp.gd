@@ -44,10 +44,7 @@ func destroy() -> void:
 
 func _on_area_entered(area: Area2D) -> void:
 	if area is Hero:
-		# 操作している Hero に衝突した場合: 破壊する
-		# リモート上の Hero に衝突した場合は破壊しない (同期的に破壊する)
-		if area.is_local:
-			destroy()
+		destroy()
 
 
 # 自身の見た目を決定する

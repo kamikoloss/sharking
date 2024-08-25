@@ -63,12 +63,8 @@ func _on_web_socket_client_message_received(message: Variant):
 			# 自身の Peer ID を保持する
 			_peer_id = message["pid"]
 			# EXP 情報を同期する
-			var exps = []
 			for exp in message["exps"]:
-				var exp_instance = Exp.new(exp["pt"], exp["pos"])
-				exp_instance.id = exp["id"]
-				exps.append(exp_instance)
-			_level.spawn_exps(exps)
+				_level.spawn_exp(exp["id"], exp["pt"], exp["pos"])
 			# 他 Hero 情報を同期する
 			for hero in message["heros"]:
 				_level.spawn_hero(hero["id"])
@@ -90,7 +86,7 @@ func _on_web_socket_client_message_received(message: Variant):
 		# Hero が移動終了したとき
 		Message.MessageType.HERO_MOVE_STOPPED:
 			_level.update_hero(message["pid"], message["exp"], message["pos"])
-			_level.despawn_exps(message["expids"])
+			#_level.despawn_exps(message["expids"])
 		# Hero がダメージを受けたとき (死んだときも含む)
 		Message.MessageType.HERO_DAMAGED:
 			pass

@@ -9,11 +9,11 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_lxfer"]
 radius = 40.0
 
-[node name="Hero" type="Area2D" node_paths=PackedStringArray("_camera", "_sprite", "_level_label", "_arrow", "_arrow_square", "_arrow_square_ct", "_arrow_square_bg")]
+[node name="Hero" type="Area2D" node_paths=PackedStringArray("_camera", "_sprite", "_exp_label", "_arrow", "_arrow_square", "_arrow_square_ct", "_arrow_square_bg")]
 script = ExtResource("1_ifnkb")
 _camera = NodePath("Camera2D")
 _sprite = NodePath("Sprite2D")
-_level_label = NodePath("Control/Level")
+_exp_label = NodePath("Control/Exp")
 _arrow = NodePath("Control/Arrow")
 _arrow_square = NodePath("Control/Arrow/Square")
 _arrow_square_ct = NodePath("Control/Arrow/SquareCt")
@@ -32,7 +32,7 @@ texture = ExtResource("2_1j1dn")
 layout_mode = 3
 anchors_preset = 0
 
-[node name="Level" type="Label" parent="Control"]
+[node name="Exp" type="Label" parent="Control"]
 layout_mode = 0
 offset_left = -40.0
 offset_top = -80.0
