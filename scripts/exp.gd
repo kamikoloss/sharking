@@ -28,22 +28,20 @@ func _ready() -> void:
 	_init_visual()
 
 
-# 自身を破壊する
-# free: インスタンスの破壊まで行う
-func destroy(free: bool = false) -> void:
+# 自身を (見た目上) 破壊する
+func destroy() -> void:
 	_label.visible = false
 
 	var tween = _die_tween
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	tween.tween_property(_sprite, "self_modulate", Color.WHITE, 0.25)
 	tween.tween_property(_sprite, "self_modulate", Color.TRANSPARENT, 1.0)
-	if free:
-		tween.finished.connect(func(): queue_free())
+	tween.finished.connect(func(): queue_free())
 	print("[Exp %s] died." % id)
 
 
 func _on_area_entered(area: Area2D) -> void:
-	if area is Hero:
+	if area is Hero and area.is_client:
 		destroy()
 
 

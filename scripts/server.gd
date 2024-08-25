@@ -64,20 +64,20 @@ func _on_web_socket_server_message_received(peer_id: int, message: Variant):
 	print("[Server] Message received from client. ID: %d, Message: %s" % [peer_id, message])
 	var message_type = message["type"] as Message.MessageType
 
-	# Hero の動作の場合
-	if message_type in Message.HERO_ACTION_MESSAGE_TYPES:
-		# 送信者以外のすべての Peer に共有する
+	# 送信者以外のすべての Peer に共有する
+	if message_type in Message.THROUGH_MESSAGE_TYPES:
 		_send_message_to_peers(message, peer_id)
-		# Server 上の EXP 情報を更新する
-		if message_type == Message.MessageType.HERO_MOVE_STOPPED:
-			for exp_id in message["expids"]:
-				_level.despawn_exp(exp_id)
-		# Server 上の Hero 情報を更新する
-		if message_type == Message.MessageType.HERO_SPAWNED:
-			_level.spawn_hero(message["pid"])
-			_level.update_hero(message["pid"], 0, message["pos"])
-		else:
-			_level.update_hero(message["pid"], message["exp"], message["pos"])
+
+	# Server 上の EXP 情報を更新する
+	if message_type == Message.MessageType.HERO_MOVE_STOPPED:
+		for exp_id in message["expids"]:
+			_level.despawn_exp(exp_id)
+	# Server 上の Hero 情報を更新する
+	if message_type == Message.MessageType.HERO_SPAWNED:
+		_level.spawn_hero(message["pid"])
+		_level.update_hero(message["pid"], 0, message["pos"])
+	else:
+		_level.update_hero(message["pid"], message["exp"], message["pos"])
 
 
 func _parse_args() -> void:

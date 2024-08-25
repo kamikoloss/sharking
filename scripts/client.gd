@@ -9,7 +9,16 @@ enum GameMode {
 }
 
 
-var _game_mode = GameMode.TITLE
+var _game_mode = GameMode.TITLE:
+	set(value):
+		_game_mode = value
+		match value:
+			GameMode.TITLE:
+				_button_center.text = "CONNECT"
+			GameMode.LOBBY:
+				_button_center.text = "SPAWN"
+			GameMode.GAME:
+				_button_center.text = "MOVE"
 var _peer_id = -1
 
 @export var _level: Level
@@ -40,7 +49,8 @@ func _ready() -> void:
 	_button_center.button_down.connect(_on_center_button_down)
 	_button_center.button_up.connect(_on_center_button_up)
 
-	_change_game_mode(GameMode.TITLE)
+	# 初期処理
+	_game_mode = GameMode.TITLE
 
 
 func _process(delta: float) -> void:
@@ -75,7 +85,7 @@ func _on_web_socket_client_message_received(message: Variant):
 		# 他プレイヤーが切断したとき
 		Message.MessageType.OTHER_PLAYER_DISCONNECTED:
 			pass
-		# Hero が生まれたとき
+		# Hero が生成されたとき
 		Message.MessageType.HERO_SPAWNED: 
 			_level.spawn_hero(message["pid"])
 			_level.update_hero(message["pid"], 0, message["pos"])
@@ -89,8 +99,11 @@ func _on_web_socket_client_message_received(message: Variant):
 		# Hero がダメージを受けたとき (死んだときも含む)
 		Message.MessageType.HERO_DAMAGED:
 			pass
-		# EXP が生まれたとき
+		# EXP が生成されたとき
 		Message.MessageType.EXP_SPAWNED:
+			pass
+		# EXP が破壊されたとき
+		Message.MessageType.EXP_DESPAWNED:
 			pass
 
 
@@ -116,7 +129,7 @@ func _on_center_button_up():
 func _connect_to_server():
 	var _error = _ws_client.connect_to_url(_ws_address)
 	if _error == OK:
-		_change_game_mode(GameMode.LOBBY)
+		_game_mode = GameMode.LOBBY
 	else:
 		print("[Client] connection failed. (%s)" % error_string(_error))
 
@@ -126,17 +139,6 @@ func _send_message(message: Variant) -> void:
 	_ws_client.send(message)
 
 
-func _change_game_mode(to: GameMode) -> void:
-	_game_mode = to
-	match to:
-		GameMode.TITLE:
-			_button_center.text = "CONNECT"
-		GameMode.LOBBY:
-			_button_center.text = "SPAWN"
-		GameMode.GAME:
-			_button_center.text = "MOVE"
-
-
 func _spawn_main_hero() -> void:
 	if _peer_id < 0:
 		print("[Client] failed to spawn main hero.")
@@ -144,9 +146,10 @@ func _spawn_main_hero() -> void:
 
 	var hero_instance = _hero_scene.instantiate()
 	hero_instance.id = _peer_id
+	hero_instance.is_client = true
+	hero_instance.is_local = true
 	hero_instance.exp_point = 0
 	hero_instance.position = Vector2.ZERO # TODO
-	hero_instance.is_local = true
 	add_child(hero_instance)
 	_main_hero = hero_instance
 
@@ -160,7 +163,7 @@ func _spawn_main_hero() -> void:
 	}
 	_send_message(msg)
 
-	_change_game_mode(GameMode.GAME)
+	_game_mode = GameMode.GAME
 
 
 func _despawn_main_hero() -> void:

@@ -17,7 +17,7 @@ enum MessageType {
 
 
 # Server に送信されたメッセージを送信者以外のすべての Peer に共有するタイプ
-const HERO_ACTION_MESSAGE_TYPES: Array[MessageType] = [
+const THROUGH_MESSAGE_TYPES: Array[MessageType] = [
 	MessageType.HERO_SPAWNED,
 	MessageType.HERO_MOVE_STARTED,
 	MessageType.HERO_MOVE_STOPPED,

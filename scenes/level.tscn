@@ -67,5 +67,6 @@ texture = ExtResource("2_3d4xe")
 shape = SubResource("RectangleShape2D_u1w2v")
 
 [node name="Exps" type="Node2D" parent="."]
+z_index = 10
 
 [node name="Heros" type="Node2D" parent="."]

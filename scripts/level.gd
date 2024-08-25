@@ -2,8 +2,16 @@ class_name Level
 extends Node2D
 
 
+signal exp_spawned
+signal exp_despawned
+
+
+# Client 上の Level かどうか
+@export var is_client: bool = true
+
 # Level 上に存在する EXP/Hero { ID: Instance, ... }
-# 接続した Client に現在の状態を教えるために保持しておく (Server 用)
+# Server: 接続した Client に現在の状態を教えるために保持しておく
+# Client: 指定 ID の Instance を破壊するために保持しておく
 var exps_on_level: Dictionary = {}
 var heros_on_level: Dictionary = {}
 
@@ -29,6 +37,9 @@ func _ready() -> void:
 
 # EXP を上限いっぱいまで再生成する (Server 用)
 func respawn_exps_to_limit() -> void:
+	if is_client:
+		return
+
 	var exps = _get_exps_to_limit()
 	for exp in exps:
 		spawn_exp(-1, exp.point, exp.position)
@@ -53,6 +64,8 @@ func spawn_exp(id: int, point: int, pos: Vector2) -> void:
 	_exps_parent_node.add_child(exp_instance)
 	exps_on_level[exp_instance.id] = exp_instance
 
+	exp_spawned.emit()
+
 
 # EXP を破壊する
 func despawn_exp(id: int) -> void:
@@ -61,8 +74,10 @@ func despawn_exp(id: int) -> void:
 		return
 
 	_exp_point_sum -= exps_on_level[id].point
-	exps_on_level[id].destroy(true)
+	exps_on_level[id].destroy()
 	exps_on_level.erase(id)
+
+	exp_despawned.emit()
 
 
 # Hero を生成する
@@ -70,6 +85,7 @@ func spawn_hero(pid: int) -> void:
 	# Hero インスタンスを作成する
 	var hero_instance = _hero_scene.instantiate()
 	hero_instance.id = pid
+	hero_instance.is_client = is_client
 	hero_instance.exp_point = 0
 
 	_heros_parent_node.add_child(hero_instance)

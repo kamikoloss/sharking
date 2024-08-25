@@ -2,8 +2,11 @@ class_name Hero
 extends Area2D
 
 
+# (state: 変更後の状態)
 signal move_state_changed
+# (dest_position: 行き先の座標, move_duration: 移動にかかる時間)
 signal move_started
+# ()
 signal move_stopped
 
 
@@ -36,12 +39,14 @@ var move_state = MoveState.WAITING:
 		print("[Hero %s] move state changed. %s -> %s" % [id, MoveState.keys()[from], MoveState.keys()[value]])
 
 var id: int = -1
+var is_local: bool = false # 実行マシン上で操作している Hero かどうか
+var is_client: bool = false # Client 上の Hero かどうか
+
 var charge: float = 0.0 # 現在の移動タメ度 (最大 1.0)
 var exp_point: int = 0: # 取得した経験値ポイント
 	set(value):
 		exp_point = value
 		_exp_label.text = str(exp_point)
-var is_local: bool = false # 実行マシン上で操作している Hero かどうか
 var got_exp_ids = [] # 移動中に取得した EXP の ID のリスト, 移動ごとにリセットされる
 
 
@@ -65,6 +70,7 @@ var _tweens: Dictionary = {} # { TweenType: Tween, ... }
 
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
+
 	_exp_label.text = str(exp_point)
 
 	if is_local:

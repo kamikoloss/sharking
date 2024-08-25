@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://pliuagklgv5t"]
+[gd_scene load_steps=7 format=3 uid="uid://pliuagklgv5t"]
 
 [ext_resource type="Script" path="res://scripts/client.gd" id="1_rfnpf"]
 [ext_resource type="PackedScene" uid="uid://dqj72j3uqnvgo" path="res://addons/godot-websocket-nodes/WebSocketClient.tscn" id="2_gpgyy"]
 [ext_resource type="PackedScene" uid="uid://dhwvkf3taw8db" path="res://scenes/level.tscn" id="3_crljq"]
 [ext_resource type="PackedScene" uid="uid://52tpbo5enhtq" path="res://scenes/hero.tscn" id="5_e5wad"]
 [ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://themes/default.tres" id="6_63squ"]
+[ext_resource type="Texture2D" uid="uid://donorrfpj4qwd" path="res://images/base_square.png" id="6_o4myd"]
 
 [node name="Client" type="Node2D" node_paths=PackedStringArray("_level", "_ws_client", "_button_center", "_debug_label_game_mode", "_debug_label_peer_id", "_debug_label_hero_move_state", "_debug_label_hero_charge")]
 script = ExtResource("1_rfnpf")
@@ -20,8 +21,6 @@ _debug_label_hero_charge = NodePath("CanvasLayer/Control/Debug/LabelHeroCharge")
 [node name="WebSocketClient" parent="." instance=ExtResource("2_gpgyy")]
 
 [node name="Level" parent="." instance=ExtResource("3_crljq")]
-
-[node name="OtherHeros" type="Node2D" parent="."]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -58,9 +57,57 @@ offset_bottom = 620.0
 theme = ExtResource("6_63squ")
 text = "▶"
 
-[node name="Debug" type="VBoxContainer" parent="CanvasLayer/Control"]
+[node name="PlayersBG" type="TextureRect" parent="CanvasLayer/Control"]
+modulate = Color(0, 0, 0, 0.501961)
 layout_mode = 0
 offset_right = 180.0
+offset_bottom = 160.0
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("6_o4myd")
+expand_mode = 1
+
+[node name="Players" type="VBoxContainer" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 5.0
+offset_right = 165.0
+offset_bottom = 160.0
+scale = Vector2(0.5, 0.5)
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="CanvasLayer/Control/Players"]
+layout_mode = 2
+theme = ExtResource("6_63squ")
+text = "PX:9999"
+
+[node name="Label2" type="Label" parent="CanvasLayer/Control/Players"]
+layout_mode = 2
+theme = ExtResource("6_63squ")
+text = "PX:9999"
+
+[node name="Label3" type="Label" parent="CanvasLayer/Control/Players"]
+layout_mode = 2
+theme = ExtResource("6_63squ")
+text = "PX:9999"
+
+[node name="Label4" type="Label" parent="CanvasLayer/Control/Players"]
+layout_mode = 2
+theme = ExtResource("6_63squ")
+text = "PX:9999"
+
+[node name="DebugBG" type="TextureRect" parent="CanvasLayer/Control"]
+modulate = Color(0, 0, 0, 0.501961)
+layout_mode = 0
+offset_left = 270.0
+offset_right = 450.0
+offset_bottom = 160.0
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("6_o4myd")
+expand_mode = 1
+
+[node name="Debug" type="VBoxContainer" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 275.0
+offset_right = 435.0
 offset_bottom = 160.0
 scale = Vector2(0.5, 0.5)
 theme_override_constants/separation = 0
