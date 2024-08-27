@@ -61,10 +61,13 @@ func _on_web_socket_server_client_connected(peer_id: int):
 func _on_web_socket_server_client_disconnected(peer_id: int):
 	print("[Server] Peer disconnected. ID: ", peer_id)
 	var msg = {
-		"type": Message.MessageType.OTHER_PLAYER_CONNECTED,
+		"type": Message.MessageType.OTHER_PLAYER_DISCONNECTED,
 		"pid": peer_id,
 	}
 	_send_message_to_peers(msg, peer_id)
+
+	# Server 上の Hero 情報を更新する
+	_level.despawn_hero(peer_id)
 
 
 func _on_web_socket_server_message_received(peer_id: int, message: Variant):

@@ -66,7 +66,8 @@ func _on_web_socket_client_connection_closed():
 
 
 func _on_web_socket_client_message_received(message: Variant):
-	print("[Client] Message received from server. Message: %s" % [message])
+	#print("[Client] Message received from server. Message: %s" % [message])
+
 	match message["type"] as Message.MessageType:
 		# 自プレイヤーが接続したとき
 		Message.MessageType.PLAYER_CONNECTED:
@@ -84,7 +85,7 @@ func _on_web_socket_client_message_received(message: Variant):
 			pass
 		# 他プレイヤーが切断したとき
 		Message.MessageType.OTHER_PLAYER_DISCONNECTED:
-			pass
+			_level.despawn_hero(message["pid"])
 		# Hero が生成されたとき
 		Message.MessageType.HERO_SPAWNED: 
 			_level.spawn_hero(message["pid"])
@@ -96,8 +97,6 @@ func _on_web_socket_client_message_received(message: Variant):
 		# Hero が移動終了したとき
 		Message.MessageType.HERO_MOVE_STOPPED:
 			_level.update_hero(message["pid"], message["exp"], message["pos"])
-			for exp in message["exps"]:
-				_level.spawn_exp(exp["id"], exp["pt"], exp["pos"])
 		# Hero がダメージを受けたとき (死んだときも含む)
 		Message.MessageType.HERO_DAMAGED:
 			pass
@@ -107,8 +106,7 @@ func _on_web_socket_client_message_received(message: Variant):
 				_level.spawn_exp(exp["id"], exp["pt"], exp["pos"])
 		# EXP が破壊されたとき
 		Message.MessageType.EXP_DESPAWNED:
-			for exp_id in message["expids"]:
-				_level.despawn_exp(exp_id)
+			pass
 
 
 func _on_center_button_down():
