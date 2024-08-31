@@ -15,7 +15,7 @@ enum MoveState {
 	WAITING, # 何もしていない/移動タメ開始待ち
 	CHARGING, # 移動タメ中/移動タメ終了待ち
 	MOVING, # 移動中/移動終了待ち
-	COOLING, # クールタイム中/クールタイム終了待ち
+	DAMAGING, # ダメージ移動中/クールタイム終了待ち
 }
 # Tween
 enum TweenType {
@@ -145,10 +145,17 @@ func exit_charge() -> void:
 
 
 # 移動する
-func move(dest_position: Vector2, before_duration: float, move_duration: float) -> void:
+func move(dest_position: Vector2, before_duration: float, move_duration: float, is_damage: bool = false) -> void:
+	if move_state == MoveState.MOVING:
+		return
+
 	move_started.emit(dest_position, move_duration)
-	move_state = MoveState.MOVING
-	_move_start_position = self.position
+
+	if is_damage:
+		move_state = MoveState.DAMAGING
+	else:
+		move_state = MoveState.MOVING
+		_move_start_position = self.position
 
 	var direction = rad_to_deg(position.angle_to_point(dest_position)) + 90.0
 	direction = _clamp_deg(direction)
@@ -171,7 +178,7 @@ func move(dest_position: Vector2, before_duration: float, move_duration: float) 
 # ダメージを受ける
 func damage(dest_position: Vector2, point: int) -> void:
 	exp_point -= point
-	move(dest_position, 0.5, 1.0)
+	move(dest_position, 0.5, 1.0, true)
 
 
 func _on_move_finished():
@@ -191,7 +198,7 @@ func _on_area_entered(area: Area2D) -> void:
 	if area is Hero:
 		# 相手が移動中の場合はダメージを受ける
 		if area.move_state == MoveState.MOVING:
-			var damage_point = clamp(area.exp_point / 10, 10.0, 1000.0)
+			var damage_point = clamp(area.exp_point / 10, 10.0, 100.0)
 			damage(self.position, int(damage_point))
 	# Wall
 	if area.is_in_group("Wall"):
