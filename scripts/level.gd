@@ -16,7 +16,7 @@ var heros_on_level: Dictionary = {}
 @export var _exp_scene: PackedScene
 @export var _exps_parent_node: Node2D
 var _exp_point_sum = 0 # Level 上に存在する EXP pt の合計
-var _exp_point_sum_max = 500 # 合計何 pt になるまで EXP を生成するか
+var _exp_point_sum_max = 1000 # 合計何 pt になるまで EXP を生成するか
 var _exp_point_list: Array[int] = [1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 5] # 生成する EXP pt のリスト (確率込み)
 
 # Hero

@@ -168,6 +168,12 @@ func move(dest_position: Vector2, before_duration: float, move_duration: float) 
 	tween_move.finished.connect(_on_move_finished)
 
 
+# ダメージを受ける
+func damage(dest_position: Vector2, point: int) -> void:
+	exp_point -= point
+	move(dest_position, 0.5, 1.0)
+
+
 func _on_move_finished():
 	move_stopped.emit()
 	move_state = MoveState.WAITING
@@ -181,10 +187,15 @@ func _on_area_entered(area: Area2D) -> void:
 		exp_point += area.point
 		if is_local:
 			got_exp_ids.append(area.id)
+	# Hero
+	if area is Hero:
+		# 相手が移動中の場合はダメージを受ける
+		if area.move_state == MoveState.MOVING:
+			var damage_point = clamp(area.exp_point / 10, 10.0, 1000.0)
+			damage(self.position, int(damage_point))
 	# Wall
 	if area.is_in_group("Wall"):
-		exp_point -= 10
-		move(_move_start_position, 0.5, 1.0)
+		damage(_move_start_position, 10)
 
 
 func _process_rotate_direction(delta: float) -> void:
