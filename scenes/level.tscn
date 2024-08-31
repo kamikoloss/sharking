@@ -24,46 +24,46 @@ texture = ExtResource("1_1htsr")
 [node name="Walls" type="Node2D" parent="."]
 modulate = Color(0.501961, 0.25098, 0.25098, 0.501961)
 
-[node name="StaticBody2D" type="StaticBody2D" parent="Walls" groups=["Wall"]]
+[node name="Area2D" type="Area2D" parent="Walls" groups=["Wall"]]
 position = Vector2(0, -800)
 scale = Vector2(16, 1)
 
-[node name="Sprite2D" type="Sprite2D" parent="Walls/StaticBody2D"]
+[node name="Sprite2D" type="Sprite2D" parent="Walls/Area2D"]
 texture = ExtResource("2_3d4xe")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/StaticBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Area2D"]
 shape = SubResource("RectangleShape2D_u1w2v")
 
-[node name="StaticBody2D2" type="StaticBody2D" parent="Walls" groups=["Wall"]]
+[node name="Area2D2" type="Area2D" parent="Walls" groups=["Wall"]]
 position = Vector2(0, 800)
 scale = Vector2(16, 1)
 
-[node name="Sprite2D" type="Sprite2D" parent="Walls/StaticBody2D2"]
+[node name="Sprite2D" type="Sprite2D" parent="Walls/Area2D2"]
 texture = ExtResource("2_3d4xe")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/StaticBody2D2"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Area2D2"]
 shape = SubResource("RectangleShape2D_u1w2v")
 
-[node name="StaticBody2D3" type="StaticBody2D" parent="Walls" groups=["Wall"]]
+[node name="Area2D3" type="Area2D" parent="Walls" groups=["Wall"]]
 position = Vector2(-800, 0)
 rotation = 1.5708
 scale = Vector2(16, 1)
 
-[node name="Sprite2D" type="Sprite2D" parent="Walls/StaticBody2D3"]
+[node name="Sprite2D" type="Sprite2D" parent="Walls/Area2D3"]
 texture = ExtResource("2_3d4xe")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/StaticBody2D3"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Area2D3"]
 shape = SubResource("RectangleShape2D_u1w2v")
 
-[node name="StaticBody2D4" type="StaticBody2D" parent="Walls" groups=["Wall"]]
+[node name="Area2D4" type="Area2D" parent="Walls" groups=["Wall"]]
 position = Vector2(800, 0)
 rotation = 1.5708
 scale = Vector2(16, 1)
 
-[node name="Sprite2D" type="Sprite2D" parent="Walls/StaticBody2D4"]
+[node name="Sprite2D" type="Sprite2D" parent="Walls/Area2D4"]
 texture = ExtResource("2_3d4xe")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/StaticBody2D4"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Area2D4"]
 shape = SubResource("RectangleShape2D_u1w2v")
 
 [node name="Exps" type="Node2D" parent="."]

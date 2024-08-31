@@ -36,9 +36,15 @@ func respawn_exps_to_limit() -> Array[Exp]:
 	if is_client:
 		return []
 
-	var exps = _get_exps_to_limit()
-	for exp in exps:
+	var exps: Array[Exp] = []
+
+	while (_exp_point_sum < _exp_point_sum_max):
+		var random_point = _exp_point_list.pick_random()
+		var random_position = _get_random_position()
+		var exp = Exp.new(random_point, random_position)
+		_exp_point_sum += random_point
 		spawn_exp(-1, exp.point, exp.position)
+		exps.append(exp)
 
 	return exps
 
@@ -62,6 +68,9 @@ func spawn_exp(id: int, point: int, pos: Vector2) -> void:
 	_exps_parent_node.add_child(exp_instance)
 	exps_on_level[exp_instance.id] = exp_instance
 
+	if not is_client:
+		print("(Level/spawn_exp) _exp_point_sum: %s" % [_exp_point_sum])
+
 
 # EXP を破壊する
 func despawn_exp(id: int) -> void:
@@ -72,6 +81,9 @@ func despawn_exp(id: int) -> void:
 	_exp_point_sum -= exps_on_level[id].point
 	exps_on_level[id].destroy()
 	exps_on_level.erase(id)
+
+	if not is_client:
+		print("(Level/despawn_exp) _exp_point_sum: %s" % [_exp_point_sum])
 
 
 # Hero を生成する
@@ -104,22 +116,6 @@ func update_hero(pid: int, exp: int, pos: Vector2) -> void:
 
 	heros_on_level[pid].exp_point = exp
 	heros_on_level[pid].position = pos
-
-
-# 上限になるまでの EXP のリストを取得する
-func _get_exps_to_limit() -> Array[Exp]:
-	var exps: Array[Exp] = []
-	var point_sum = _exp_point_sum
-
-	while (point_sum < _exp_point_sum_max):
-		var random_point = _exp_point_list.pick_random()
-		var random_position = _get_random_position()
-		var exp_data = Exp.new(random_point, random_position)
-
-		point_sum += random_point
-		exps.append(exp_data)
-
-	return exps
 
 
 # Level 内のランダムな座標を取得する

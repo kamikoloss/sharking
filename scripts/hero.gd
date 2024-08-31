@@ -66,6 +66,7 @@ var _direction_rotation_speed: float = _direction_rotation_speed_default
 var _charge_duration = _charge_duration_default
 
 var _tweens: Dictionary = {} # { TweenType: Tween, ... } 
+var _move_start_position: Vector2 # 移動を開始した位置
 
 
 func _ready() -> void:
@@ -147,6 +148,7 @@ func exit_charge() -> void:
 func move(dest_position: Vector2, before_duration: float, move_duration: float) -> void:
 	move_started.emit(dest_position, move_duration)
 	move_state = MoveState.MOVING
+	_move_start_position = self.position
 
 	var direction = rad_to_deg(position.angle_to_point(dest_position)) + 90.0
 	direction = _clamp_deg(direction)
@@ -174,10 +176,15 @@ func _on_move_finished():
 
 
 func _on_area_entered(area: Area2D) -> void:
+	# EXP
 	if area is Exp:
 		exp_point += area.point
 		if is_local:
 			got_exp_ids.append(area.id)
+	# Wall
+	if area.is_in_group("Wall"):
+		exp_point -= 10
+		move(_move_start_position, 0.5, 1.0)
 
 
 func _process_rotate_direction(delta: float) -> void:
