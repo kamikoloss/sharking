@@ -12,10 +12,10 @@ _level = NodePath("Level")
 _hero_scene = ExtResource("5_e5wad")
 _ws_client = NodePath("WebSocketClient")
 _button_center = NodePath("CanvasLayer/Control/ButtonCenter")
-_debug_label_game_mode = NodePath("CanvasLayer/Control/Debug/States/LabelGameMode")
-_debug_label_peer_id = NodePath("CanvasLayer/Control/Debug/States/LabelPeerId")
-_debug_label_hero_move_state = NodePath("CanvasLayer/Control/Debug/States/LabelHeroMoveState")
-_debug_label_hero_charge = NodePath("CanvasLayer/Control/Debug/States/LabelHeroCharge")
+_debug_label_game_mode = NodePath("CanvasLayer/Control/Debug/Client/LabelGameMode")
+_debug_label_peer_id = NodePath("CanvasLayer/Control/Debug/Client/LabelPeerId")
+_debug_label_hero_move_state = NodePath("CanvasLayer/Control/Debug/Client/LabelHeroMoveState")
+_debug_label_hero_charge = NodePath("CanvasLayer/Control/Debug/Client/LabelHeroCharge")
 
 [node name="WebSocketClient" parent="." instance=ExtResource("2_gpgyy")]
 
@@ -61,61 +61,6 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="States" type="VBoxContainer" parent="CanvasLayer/Control/Debug"]
-layout_mode = 0
-offset_right = 160.0
-offset_bottom = 160.0
-scale = Vector2(0.5, 0.5)
-theme_override_constants/separation = 0
-
-[node name="LabelGameMode" type="Label" parent="CanvasLayer/Control/Debug/States"]
-layout_mode = 2
-theme = ExtResource("6_63squ")
-text = "MOD:XXXX"
-
-[node name="LabelPeerId" type="Label" parent="CanvasLayer/Control/Debug/States"]
-layout_mode = 2
-theme = ExtResource("6_63squ")
-text = "PID:XXXX"
-
-[node name="LabelHeroMoveState" type="Label" parent="CanvasLayer/Control/Debug/States"]
-layout_mode = 2
-theme = ExtResource("6_63squ")
-text = "MST:XXXX"
-
-[node name="LabelHeroCharge" type="Label" parent="CanvasLayer/Control/Debug/States"]
-layout_mode = 2
-theme = ExtResource("6_63squ")
-text = "CHR:0.00"
-
-[node name="Players" type="VBoxContainer" parent="CanvasLayer/Control/Debug"]
-layout_mode = 0
-offset_left = 280.0
-offset_right = 440.0
-offset_bottom = 160.0
-scale = Vector2(0.5, 0.5)
-theme_override_constants/separation = 0
-
-[node name="Label" type="Label" parent="CanvasLayer/Control/Debug/Players"]
-layout_mode = 2
-theme = ExtResource("6_63squ")
-text = "PX:9999"
-
-[node name="Label2" type="Label" parent="CanvasLayer/Control/Debug/Players"]
-layout_mode = 2
-theme = ExtResource("6_63squ")
-text = "PX:9999"
-
-[node name="Label3" type="Label" parent="CanvasLayer/Control/Debug/Players"]
-layout_mode = 2
-theme = ExtResource("6_63squ")
-text = "PX:9999"
-
-[node name="Label4" type="Label" parent="CanvasLayer/Control/Debug/Players"]
-layout_mode = 2
-theme = ExtResource("6_63squ")
-text = "PX:9999"
-
 [node name="Version" type="VBoxContainer" parent="CanvasLayer/Control/Debug"]
 layout_mode = 0
 offset_right = 720.0
@@ -134,3 +79,58 @@ layout_mode = 2
 theme = ExtResource("6_63squ")
 text = "v0.0.0"
 horizontal_alignment = 1
+
+[node name="Client" type="VBoxContainer" parent="CanvasLayer/Control/Debug"]
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 320.0
+scale = Vector2(0.5, 0.5)
+theme_override_constants/separation = 0
+
+[node name="LabelGameMode" type="Label" parent="CanvasLayer/Control/Debug/Client"]
+layout_mode = 2
+theme = ExtResource("6_63squ")
+text = "MOD:XXXX"
+
+[node name="LabelPeerId" type="Label" parent="CanvasLayer/Control/Debug/Client"]
+layout_mode = 2
+theme = ExtResource("6_63squ")
+text = "PID:XXXX"
+
+[node name="LabelHeroMoveState" type="Label" parent="CanvasLayer/Control/Debug/Client"]
+layout_mode = 2
+theme = ExtResource("6_63squ")
+text = "MST:XXXX"
+
+[node name="LabelHeroCharge" type="Label" parent="CanvasLayer/Control/Debug/Client"]
+layout_mode = 2
+theme = ExtResource("6_63squ")
+text = "CHR:0.00"
+
+[node name="Server" type="VBoxContainer" parent="CanvasLayer/Control/Debug"]
+layout_mode = 0
+offset_left = 280.0
+offset_right = 440.0
+offset_bottom = 320.0
+scale = Vector2(0.5, 0.5)
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="CanvasLayer/Control/Debug/Server"]
+layout_mode = 2
+theme = ExtResource("6_63squ")
+text = "PX:9999"
+
+[node name="Label2" type="Label" parent="CanvasLayer/Control/Debug/Server"]
+layout_mode = 2
+theme = ExtResource("6_63squ")
+text = "PX:9999"
+
+[node name="Label3" type="Label" parent="CanvasLayer/Control/Debug/Server"]
+layout_mode = 2
+theme = ExtResource("6_63squ")
+text = "PX:9999"
+
+[node name="Label4" type="Label" parent="CanvasLayer/Control/Debug/Server"]
+layout_mode = 2
+theme = ExtResource("6_63squ")
+text = "PX:9999"

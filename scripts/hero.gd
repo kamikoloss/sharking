@@ -15,7 +15,6 @@ enum MoveState {
 	WAITING, # 何もしていない/移動タメ開始待ち
 	CHARGING, # 移動タメ中/移動タメ終了待ち
 	MOVING, # 移動中/移動終了待ち
-	DAMAGING, # ダメージ移動中/クールタイム終了待ち
 }
 # Tween
 enum TweenType {
@@ -47,12 +46,17 @@ var exp_point: int = 0: # 取得した経験値ポイント
 	set(value):
 		exp_point = value
 		_exp_label.text = str(exp_point)
+var health_point: int = 100: # 体力ポイント
+	set(value):
+		health_point = value
+		_health_label.text = str(health_point)
 var got_exp_ids = [] # 移動中に取得した EXP の ID のリスト, 移動ごとにリセットされる
 
 
 @export var _camera: Camera2D
 @export var _sprite: Sprite2D
 @export var _exp_label: Label
+@export var _health_label: Label
 @export var _arrow: Control # 矢印
 @export var _arrow_square: TextureRect # 矢印の棒 (タメ)
 @export var _arrow_square_ct: TextureRect # 矢印の棒 (クールタイム)
@@ -73,6 +77,7 @@ func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 
 	_exp_label.text = str(exp_point)
+	_health_label.text = str(health_point)
 
 	if is_local:
 		_arrow_square.scale.y = 0.0
@@ -145,17 +150,13 @@ func exit_charge() -> void:
 
 
 # 移動する
-func move(dest_position: Vector2, before_duration: float, move_duration: float, is_damage: bool = false) -> void:
+func move(dest_position: Vector2, before_duration: float, move_duration: float) -> void:
 	if move_state == MoveState.MOVING:
 		return
 
 	move_started.emit(dest_position, move_duration)
-
-	if is_damage:
-		move_state = MoveState.DAMAGING
-	else:
-		move_state = MoveState.MOVING
-		_move_start_position = self.position
+	move_state = MoveState.MOVING
+	_move_start_position = self.position
 
 	var direction = rad_to_deg(position.angle_to_point(dest_position)) + 90.0
 	direction = _clamp_deg(direction)
@@ -176,9 +177,10 @@ func move(dest_position: Vector2, before_duration: float, move_duration: float, 
 
 
 # ダメージを受ける
-func damage(dest_position: Vector2, point: int) -> void:
-	exp_point -= point
-	move(dest_position, 0.5, 1.0, true)
+func damage(point: int) -> void:
+	health_point -= point
+	# TODO: 色を変える, 震えるなどの Tween
+	print("[Hero %s] damaged. %s" % [point])
 
 
 func _on_move_finished():
@@ -196,13 +198,20 @@ func _on_area_entered(area: Area2D) -> void:
 			got_exp_ids.append(area.id)
 	# Hero
 	if area is Hero:
+		# 自分が移動中の場合は (ダメージを与えて) 元の位置に戻る
+		if move_state == MoveState.MOVING:
+			move_state = MoveState.WAITING # いったん初期状態に戻す
+			move(_move_start_position, 0.5, 1.0)
 		# 相手が移動中の場合はダメージを受ける
 		if area.move_state == MoveState.MOVING:
-			var damage_point = clamp(area.exp_point / 10, 10.0, 100.0)
-			damage(self.position, int(damage_point))
+			var damage_point = clamp(area.exp_point / 10, 0.0, 100.0)
+			damage(int(damage_point))
 	# Wall
 	if area.is_in_group("Wall"):
-		damage(_move_start_position, 10)
+		# ダメージを受けて元の位置に戻る
+		damage(10)
+		move_state = MoveState.WAITING # いったん初期状態に戻す
+		move(_move_start_position, 0.5, 1.0)
 
 
 func _process_rotate_direction(delta: float) -> void:
