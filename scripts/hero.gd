@@ -185,17 +185,20 @@ func move(dest_position: Vector2, before_duration: float, move_duration: float) 
 	tween_move.finished.connect(_on_move_finished)
 
 func _on_move_finished():
-	move_stopped.emit()
 	move_state = MoveState.WAITING
 	got_exp_ids = []
 	charge = 0.0
+	move_stopped.emit()
 
 
 # ダメージを受ける
 func damage(point: int) -> void:
 	health_point -= point
-	# TODO: 色を変える, 震えるなどの Tween
 	damaged.emit()
+
+	var tween_damage_color = _get_tween(TweenType.DAMAGE_COLOR)
+	_sprite.self_modulate = Color.RED
+	tween_damage_color.tween_property(_sprite, "self_modulate", Color.WHITE, 1.0)
 
 
 func _on_area_entered(area: Area2D) -> void:

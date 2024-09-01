@@ -29,7 +29,6 @@ var _main_hero: Hero
 @export var _ws_client: WebSocketClient
 @export var _ws_address = "ws://localhost:8000"
 @export var _send_interval: float = 0.05
-var _send_timer: float = 0.0
 
 # UI
 @export var _button_center: Button
