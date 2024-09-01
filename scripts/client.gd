@@ -144,9 +144,13 @@ func _send_message(message: Variant) -> void:
 
 
 func _spawn_main_hero() -> void:
+	# Peer ID を持っていない (接続できていない場合)
 	if _peer_id < 0:
 		print("[Client] failed to spawn main hero.")
 		return
+	# 一度死んだあと = 再生成の場合
+	if _main_hero:
+		_main_hero.queue_free()
 
 	var hero_instance = _hero_scene.instantiate()
 	hero_instance.id = _peer_id
@@ -220,6 +224,11 @@ func _on_hero_damaged() -> void:
 		"hlt": _main_hero.health_point,
 		"pos": _main_hero.position,
 	}
+	_send_message(msg)
+
+	# 死んだ場合: LOBBY に戻る
+	if _main_hero.health_point <= 0:
+		_game_mode = GameMode.LOBBY
 
 
 # Debug

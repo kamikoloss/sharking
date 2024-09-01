@@ -23,7 +23,7 @@ enum TweenType {
 	ARROW_SQ, # 矢印の棒 (タメ)
 	ARROW_SQ_CT, # 矢印の棒 (クールタイム)
 	ARROW_SQ_BG, # 矢印の棒 (タメ背景)
-	DAMAGE_COLOR, # ダメージ時の色
+	DAMAGE, # ダメージ時の色
 }
 
 
@@ -196,9 +196,19 @@ func damage(point: int) -> void:
 	health_point -= point
 	damaged.emit()
 
-	var tween_damage_color = _get_tween(TweenType.DAMAGE_COLOR)
-	_sprite.self_modulate = Color.RED
-	tween_damage_color.tween_property(_sprite, "self_modulate", Color.WHITE, 1.0)
+	var tween_damage = _get_tween(TweenType.DAMAGE)
+	# 死んだとき
+	if health_point <= 0:
+		tween_damage.set_parallel(true)
+		tween_damage.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+		tween_damage.tween_property(_sprite, "rotation_degrees", 1440, 3.0)
+		tween_damage.tween_property(_sprite, "self_modulate", Color.BLUE, 1.0)
+		tween_damage.tween_property(_sprite, "scale", Vector2.ZERO, 3.0)
+	# ダメージを受けたとき
+	else:
+		_sprite.self_modulate = Color.RED
+		tween_damage.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+		tween_damage.tween_property(_sprite, "self_modulate", Color.WHITE, 1.0)
 
 
 func _on_area_entered(area: Area2D) -> void:
@@ -213,11 +223,11 @@ func _on_area_entered(area: Area2D) -> void:
 			got_exp_ids.append(area.id)
 	# Hero
 	if area is Hero:
-		# 自分が移動中の場合は (ダメージを与えて) 元の位置に戻る
+		# 自分が移動中の場合: (ダメージを与えて) 元の位置に戻る
 		if move_state == MoveState.MOVING:
 			move_state = MoveState.WAITING # いったん初期状態に戻す
 			move(_move_start_position, 0.5, 1.0)
-		# 相手が移動中の場合はダメージを受ける
+		# 相手が移動中の場合: ダメージを受ける
 		if area.move_state == MoveState.MOVING:
 			var damege_base = clamp(area.exp_point, 0.0, 100.0)
 			var damage_point = damege_base * area.charge * DAMAGE_RATIO
@@ -225,12 +235,14 @@ func _on_area_entered(area: Area2D) -> void:
 			damage(damage_point)
 	# Wall
 	if area.is_in_group("Wall"):
-		# ダメージを受けて元の位置に戻る
-		var damage_point = 10
+		# ダメージを受ける
+		var damage_point = 50
 		print("[Hero %s] damaged by wall" % [id])
 		damage(damage_point)
-		move_state = MoveState.WAITING # いったん初期状態に戻す
-		move(_move_start_position, 0.5, 1.0)
+		# 死んでない場合: 元の位置に戻る
+		if 0 < health_point:
+			move_state = MoveState.WAITING # いったん初期状態に戻す
+			move(_move_start_position, 0.5, 1.0)
 
 
 func _process_rotate_direction(delta: float) -> void:
