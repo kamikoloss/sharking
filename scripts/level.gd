@@ -3,7 +3,7 @@ extends Node2D
 
 
 # Client 上の Level かどうか
-@export var is_client: bool = true
+var is_client: bool = false
 
 # Level 上に存在する EXP/Hero { ID: Instance, ... }
 # Server: 接続した Client に現在の状態を教えるために保持しておく
@@ -55,7 +55,7 @@ func spawn_exp(id: int, point: int, pos: Vector2) -> void:
 	if exps_on_level.has(id):
 		return
 
-	# EXP インスタンスを作成する
+	# EXP インスタンスを生成する
 	var exp_instance: Exp = _exp_scene.instantiate()
 	# ID が指定されていない場合 Instance ID を使用する (Server)
 	# ID が指定されている場合: それを使用する (Client) 
@@ -69,7 +69,8 @@ func spawn_exp(id: int, point: int, pos: Vector2) -> void:
 	exps_on_level[exp_instance.id] = exp_instance
 
 	if not is_client:
-		print("(Level/spawn_exp) _exp_point_sum: %s" % [_exp_point_sum])
+		#print("(Level/spawn_exp) _exp_point_sum: %s" % [_exp_point_sum])
+		pass
 
 
 # EXP を破壊する
@@ -83,15 +84,17 @@ func despawn_exp(id: int) -> void:
 	exps_on_level.erase(id)
 
 	if not is_client:
-		print("(Level/despawn_exp) _exp_point_sum: %s" % [_exp_point_sum])
+		#print("(Level/despawn_exp) _exp_point_sum: %s" % [_exp_point_sum])
+		pass
 
 
 # Hero を生成する
 func spawn_hero(pid: int) -> void:
-	# Hero インスタンスを作成する
+	# Hero インスタンスを生成する
 	var hero_instance = _hero_scene.instantiate()
 	hero_instance.id = pid
 	hero_instance.is_client = is_client
+	hero_instance.is_local = false # Local Hero は Client の _spawn_main_hero で生成する
 	hero_instance.exp_point = 0
 
 	_heros_parent_node.add_child(hero_instance)
@@ -109,12 +112,13 @@ func despawn_hero(pid: int) -> void:
 
 
 # Hero の情報を更新する
-func update_hero(pid: int, exp: int, pos: Vector2) -> void:
+func update_hero(pid: int, exp: int, health: int, pos: Vector2) -> void:
 	# Level 上に存在しない場合: 何もしない
 	if not heros_on_level.has(pid):
 		return
 
 	heros_on_level[pid].exp_point = exp
+	heros_on_level[pid].health_point = health
 	heros_on_level[pid].position = pos
 
 

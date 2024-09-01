@@ -50,6 +50,7 @@ func _ready() -> void:
 	_button_center.button_up.connect(_on_center_button_up)
 
 	# 初期処理
+	_level.is_client = true
 	_game_mode = GameMode.TITLE
 
 
@@ -79,7 +80,7 @@ func _on_web_socket_client_message_received(message: Variant):
 			# 他 Hero 情報を同期する
 			for hero in message["heros"]:
 				_level.spawn_hero(hero["id"])
-				_level.update_hero(hero["id"], hero["exp"], hero["pos"])
+				_level.update_hero(hero["id"], hero["exp"], hero["hlt"], hero["pos"])
 		# 他プレイヤーが接続したとき
 		Message.MessageType.OTHER_PLAYER_CONNECTED:
 			pass
@@ -89,14 +90,15 @@ func _on_web_socket_client_message_received(message: Variant):
 		# Hero が生成されたとき
 		Message.MessageType.HERO_SPAWNED: 
 			_level.spawn_hero(message["pid"])
-			_level.update_hero(message["pid"], 0, message["pos"])
+			_level.update_hero(message["pid"], message["exp"], message["hlt"], message["pos"])
 		# Hero が移動開始したとき
 		Message.MessageType.HERO_MOVE_STARTED:
+			_level.update_hero(message["pid"], message["exp"], message["hlt"], message["pos"])
 			var other_hero = _level.heros_on_level[message["pid"]]
 			other_hero.move(message["dest"], 0.5, message["dur"])
 		# Hero が移動終了したとき
 		Message.MessageType.HERO_MOVE_STOPPED:
-			_level.update_hero(message["pid"], message["exp"], message["pos"])
+			_level.update_hero(message["pid"], message["exp"], message["hlt"], message["pos"])
 		# Hero がダメージを受けたとき (死んだときも含む)
 		Message.MessageType.HERO_DAMAGED:
 			pass
@@ -157,10 +159,15 @@ func _spawn_main_hero() -> void:
 
 	_main_hero.move_started.connect(_on_hero_move_started)
 	_main_hero.move_stopped.connect(_on_hero_move_stopped)
+	_main_hero.damaged.connect(_on_hero_damaged)
 
 	var msg = {
+		# 基本
 		"type": Message.MessageType.HERO_SPAWNED,
 		"pid": _peer_id,
+		# Hero
+		"exp": _main_hero.exp_point,
+		"hlt": _main_hero.health_point,
 		"pos": _main_hero.position,
 	}
 	_send_message(msg)
@@ -172,13 +179,18 @@ func _despawn_main_hero() -> void:
 	pass
 
 
-func _on_hero_move_started(dest_position: Vector2, move_duration: float) -> void:
+func _on_hero_move_started(charge: float, dest_position: Vector2, move_duration: float) -> void:
 	var msg = {
+		# 基本
 		"type": Message.MessageType.HERO_MOVE_STARTED,
 		"pid": _peer_id,
+		# 移動
+		"chr": charge,
 		"dest": dest_position,
 		"dur": move_duration,
+		# Hero
 		"exp": _main_hero.exp_point,
+		"hlt": _main_hero.health_point,
 		"pos": _main_hero.position,
 	}
 	_send_message(msg)
@@ -186,13 +198,28 @@ func _on_hero_move_started(dest_position: Vector2, move_duration: float) -> void
 
 func _on_hero_move_stopped() -> void:
 	var msg = {
+		# 基本
 		"type": Message.MessageType.HERO_MOVE_STOPPED,
 		"pid": _peer_id,
+		# Hero
 		"expids": _main_hero.got_exp_ids,
 		"exp": _main_hero.exp_point,
+		"hlt": _main_hero.health_point,
 		"pos": _main_hero.position,
 	}
 	_send_message(msg)
+
+
+func _on_hero_damaged() -> void:
+	var msg = {
+		# 基本
+		"type": Message.MessageType.HERO_DAMAGED,
+		"pid": _peer_id,
+		# Hero
+		"exp": _main_hero.exp_point,
+		"hlt": _main_hero.health_point,
+		"pos": _main_hero.position,
+	}
 
 
 # Debug

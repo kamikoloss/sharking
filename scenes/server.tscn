@@ -12,4 +12,3 @@ _ws_server = NodePath("WebSocketServer")
 [node name="WebSocketServer" parent="." instance=ExtResource("2_reafv")]
 
 [node name="Level" parent="." instance=ExtResource("3_juxhr")]
-is_client = false

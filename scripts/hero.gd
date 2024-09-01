@@ -2,19 +2,19 @@ class_name Hero
 extends Area2D
 
 
-# (state: 変更後の状態)
-signal move_state_changed
-# (dest_position: 行き先の座標, move_duration: 移動にかかる時間)
+# (charge: タメの強さ, dest_position: 行き先の座標, move_duration: 移動にかかる時間)
 signal move_started
 # ()
 signal move_stopped
+# ()
+signal damaged
 
 
 # 移動状態
 enum MoveState {
-	WAITING, # 何もしていない/移動タメ開始待ち
-	CHARGING, # 移動タメ中/移動タメ終了待ち
-	MOVING, # 移動中/移動終了待ち
+	WAITING, # 何もしていない / (移動タメ開始 or 移動) 待ち
+	CHARGING, # 移動タメ中 / 移動タメ終了待ち
+	MOVING, # 移動中 / 移動終了待ち
 }
 # Tween
 enum TweenType {
@@ -34,12 +34,11 @@ var move_state = MoveState.WAITING:
 	set(value):
 		var from = move_state
 		move_state = value
-		move_state_changed.emit(value)
 		print("[Hero %s] move state changed. %s -> %s" % [id, MoveState.keys()[from], MoveState.keys()[value]])
 
 var id: int = -1
-var is_local: bool = false # 実行マシン上で操作している Hero かどうか
-var is_client: bool = false # Client 上の Hero かどうか
+var is_client: bool = false # Client 上の Hero かどうか (<--> Server)
+var is_local: bool = false # 実行マシン上で操作している Hero かどうか (<--> Remote)
 
 var charge: float = 0.0 # 現在の移動タメ度 (最大 1.0)
 var exp_point: int = 0: # 取得した経験値ポイント
@@ -95,6 +94,9 @@ func _process(delta: float) -> void:
 
 # 移動のタメを開始する
 func enter_charge() -> void:
+	# Server/Remote: 何もしない
+	if not is_client or not is_local:
+		return
 	if move_state != MoveState.WAITING:
 		return
 	move_state = MoveState.CHARGING
@@ -118,6 +120,9 @@ func enter_charge() -> void:
 
 # 移動のタメを終了する
 func exit_charge() -> void:
+	# Server/Remote: 何もしない
+	if not is_client or not is_local:
+		return
 	if move_state != MoveState.CHARGING:
 		return
 
@@ -151,17 +156,20 @@ func exit_charge() -> void:
 
 # 移動する
 func move(dest_position: Vector2, before_duration: float, move_duration: float) -> void:
+	# Server: 何もしない
+	if not is_client:
+		return
 	if move_state == MoveState.MOVING:
 		return
 
-	move_started.emit(dest_position, move_duration)
+	move_started.emit(charge, dest_position, move_duration)
 	move_state = MoveState.MOVING
 	_move_start_position = self.position
 
+	var tween_move = _get_tween(TweenType.MOVE)
 	var direction = rad_to_deg(position.angle_to_point(dest_position)) + 90.0
 	direction = _clamp_deg(direction)
 
-	var tween_move = _get_tween(TweenType.MOVE)
 	# 移動先の方向に回転する
 	_sprite.flip_h = 180.0 < direction
 	tween_move.set_parallel(true)
@@ -175,14 +183,6 @@ func move(dest_position: Vector2, before_duration: float, move_duration: float) 
 	tween_move.tween_property(_sprite, "scale", Vector2(0.4, 0.4), 0.5)
 	tween_move.finished.connect(_on_move_finished)
 
-
-# ダメージを受ける
-func damage(point: int) -> void:
-	health_point -= point
-	# TODO: 色を変える, 震えるなどの Tween
-	print("[Hero %s] damaged. %s" % [point])
-
-
 func _on_move_finished():
 	move_stopped.emit()
 	move_state = MoveState.WAITING
@@ -190,7 +190,18 @@ func _on_move_finished():
 	charge = 0.0
 
 
+# ダメージを受ける
+func damage(point: int) -> void:
+	health_point -= point
+	# TODO: 色を変える, 震えるなどの Tween
+	damaged.emit()
+
+
 func _on_area_entered(area: Area2D) -> void:
+	# Server: 何もしない
+	if not is_client:
+		return
+
 	# EXP
 	if area is Exp:
 		exp_point += area.point
@@ -204,12 +215,16 @@ func _on_area_entered(area: Area2D) -> void:
 			move(_move_start_position, 0.5, 1.0)
 		# 相手が移動中の場合はダメージを受ける
 		if area.move_state == MoveState.MOVING:
-			var damage_point = clamp(area.exp_point / 10, 0.0, 100.0)
-			damage(int(damage_point))
+			var damage_ratio = 0.5
+			var damage_point = int(clamp(area.exp_point * area.charge * damage_ratio, 0.0, 50.0))
+			print("[Hero %s] damaged by hero. %s x %s x %s = %s" % [id, area.exp_point, area.charge, damage_ratio, damage_point])
+			damage(damage_point)
 	# Wall
 	if area.is_in_group("Wall"):
 		# ダメージを受けて元の位置に戻る
-		damage(10)
+		var damage_point = 10
+		print("[Hero %s] damaged by wall" % [id])
+		damage(damage_point)
 		move_state = MoveState.WAITING # いったん初期状態に戻す
 		move(_move_start_position, 0.5, 1.0)
 
@@ -227,6 +242,7 @@ func _get_tween(type: TweenType) -> Tween:
 	return _tweens[type]
 
 
+# 角度を 0-360 に丸める (負の角度にも対応)
 func _clamp_deg(deg: float) -> float:
 	if deg < 0.0:
 		return deg + 360.0

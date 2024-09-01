@@ -11,7 +11,7 @@ extends Node2D
 @export var _send_interval: float = 0.05
 var _send_timer: float = 0.0
 
-var _respawn_exps_timer: float = 0.0
+var _respawn_exps_timer: float = 0.0 # 最後に EXP を復活させてから何秒経ったかのタイマー
 var _respawn_exps_cooltime: float = 5.0 # 何秒ごとに EXP が復活するか
 
 
@@ -21,6 +21,7 @@ func _ready() -> void:
 	_ws_server.message_received.connect(_on_web_socket_server_message_received)
 
 	# 初期処理
+	_level.is_client = false
 	_level.respawn_exps_to_limit()
 
 	# サーバー開始
@@ -41,7 +42,7 @@ func _on_web_socket_server_client_connected(peer_id: int):
 		exps_data.append({ "id": exp.id, "pt": exp.point, "pos": exp.position })
 	var heros_data = []
 	for hero in _level.heros_on_level.values():
-		heros_data.append({ "id": hero.id, "exp": hero.exp_point, "pos": hero.position })
+		heros_data.append({ "id": hero.id, "exp": hero.exp_point, "hlt": hero.health_point, "pos": hero.position })
 	var msg_pc = {
 		"type": Message.MessageType.PLAYER_CONNECTED,
 		"pid": peer_id,
@@ -85,9 +86,9 @@ func _on_web_socket_server_message_received(peer_id: int, message: Variant):
 	# Server 上の Hero 情報を更新する
 	if message_type == Message.MessageType.HERO_SPAWNED:
 		_level.spawn_hero(message["pid"])
-		_level.update_hero(message["pid"], 0, message["pos"])
+		_level.update_hero(message["pid"], message["exp"], message["hlt"], message["pos"])
 	else:
-		_level.update_hero(message["pid"], message["exp"], message["pos"])
+		_level.update_hero(message["pid"], message["exp"], message["hlt"], message["pos"])
 
 
 func _parse_args() -> void:
