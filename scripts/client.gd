@@ -95,6 +95,7 @@ func _on_web_socket_client_message_received(message: Variant):
 		Message.MessageType.HERO_MOVE_STARTED:
 			_level.update_hero(message["pid"], message["exp"], message["hlt"], message["pos"])
 			var other_hero = _level.heros_on_level[message["pid"]]
+			other_hero.charge = message["chr"]
 			other_hero.move(message["dest"], 0.5, message["dur"])
 		# Hero が移動終了したとき
 		Message.MessageType.HERO_MOVE_STOPPED:
