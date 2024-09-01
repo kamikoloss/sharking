@@ -7,9 +7,7 @@ extends Node2D
 
 # WebSocket
 @export var _ws_server: WebSocketServer
-@export var _ws_port: int = 8000
-@export var _send_interval: float = 0.05
-var _send_timer: float = 0.0
+var _ws_port: int = 8000
 
 var _respawn_exps_timer: float = 0.0 # 最後に EXP を復活させてから何秒経ったかのタイマー
 var _respawn_exps_cooltime: float = 5.0 # 何秒ごとに EXP が復活するか
@@ -96,15 +94,14 @@ func _parse_args() -> void:
 	for arg in args:
 		if "=" in arg:
 			var key_value = arg.split("=")
-			# --tick-rate
-			if key_value[0] == "--tick-rate":
-				_send_interval = 1.0 / float(key_value[1])
+			# --port
+			if key_value[0] == "--port":
+				_ws_port = int(key_value[1])
 
 
 func _start_server() -> void:
 	_ws_server.listen(_ws_port)
 	print("[Server] listen port: %s" % _ws_port)
-	print("[Server] send interval: %s s" % _send_interval)
 
 
 # 特定の Peer にメッセージを送信する

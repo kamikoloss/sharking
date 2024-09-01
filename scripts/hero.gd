@@ -23,12 +23,13 @@ enum TweenType {
 	ARROW_SQ, # 矢印の棒 (タメ)
 	ARROW_SQ_CT, # 矢印の棒 (クールタイム)
 	ARROW_SQ_BG, # 矢印の棒 (タメ背景)
+	DAMAGE_COLOR, # ダメージ時の色
 }
 
 
 const MOVE_VECTOR_RATIO: int = 500 # 移動距離の係数
 const MOVE_BEFORE_SEC: float = 0.5 # 移動開始前の秒数
-
+const DAMAGE_RATIO: float = 0.5 # ダメージの係数
 
 var move_state = MoveState.WAITING:
 	set(value):
@@ -215,9 +216,9 @@ func _on_area_entered(area: Area2D) -> void:
 			move(_move_start_position, 0.5, 1.0)
 		# 相手が移動中の場合はダメージを受ける
 		if area.move_state == MoveState.MOVING:
-			var damage_ratio = 0.5
-			var damage_point = int(clamp(area.exp_point * area.charge * damage_ratio, 0.0, 50.0))
-			print("[Hero %s] damaged by hero. %s x %s x %s = %s" % [id, area.exp_point, area.charge, damage_ratio, damage_point])
+			var damege_base = clamp(area.exp_point, 0.0, 100.0)
+			var damage_point = damege_base * area.charge * DAMAGE_RATIO
+			print("[Hero %s] damaged by hero. %s x %s x %s = %s" % [id, damege_base, area.charge, DAMAGE_RATIO, damage_point])
 			damage(damage_point)
 	# Wall
 	if area.is_in_group("Wall"):
