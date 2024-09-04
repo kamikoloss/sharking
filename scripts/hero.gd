@@ -176,12 +176,12 @@ func move(dest_position: Vector2, before_duration: float, move_duration: float) 
 	tween_move.set_parallel(true)
 	tween_move.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	tween_move.tween_property(_sprite, "rotation_degrees", direction, before_duration)
-	tween_move.tween_property(_sprite, "scale", Vector2(clampf(charge, 0.6, 0.8), 0.4), before_duration)
+	tween_move.tween_property(_sprite, "scale", Vector2(0.2, 0.2), before_duration) # TODO: 倍率にする
 	# 移動先の座標まで移動する
 	tween_move.chain()
 	tween_move.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	tween_move.tween_property(self, "position", dest_position, move_duration)
-	tween_move.tween_property(_sprite, "scale", Vector2(0.4, 0.4), 0.5)
+	tween_move.tween_property(_sprite, "scale", Vector2(0.15, 0.15), 0.5) # TODO: 倍率にする
 	tween_move.finished.connect(_on_move_finished)
 
 func _on_move_finished():

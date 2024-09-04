@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://52tpbo5enhtq"]
 
 [ext_resource type="Script" path="res://scripts/hero.gd" id="1_ifnkb"]
-[ext_resource type="Texture2D" uid="uid://bom0tmx01rvte" path="res://images/shark_a1.png" id="2_1j1dn"]
+[ext_resource type="Texture2D" uid="uid://iehci6p8ox2i" path="res://images/shark_2a.png" id="2_g8pur"]
 [ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://themes/default.tres" id="3_qksco"]
 [ext_resource type="Texture2D" uid="uid://donorrfpj4qwd" path="res://images/base_square.png" id="4_r63cl"]
 [ext_resource type="Texture2D" uid="uid://c512m80ajmvsk" path="res://images/base_triangle.png" id="5_g2pgf"]
@@ -26,8 +26,8 @@ shape = SubResource("CircleShape2D_lxfer")
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.4, 0.4)
-texture = ExtResource("2_1j1dn")
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("2_g8pur")
 
 [node name="Control" type="Control" parent="."]
 z_index = 20
