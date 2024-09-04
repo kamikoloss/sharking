@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bom0tmx01rvte"
-path="res://.godot/imported/shark_a1.png-cf59cdc913871182dc4fd82049063f4c.ctex"
+path="res://.godot/imported/shark_1a.png-6da15181437103e349cb6aef5daf5838.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/shark_a1.png"
-dest_files=["res://.godot/imported/shark_a1.png-cf59cdc913871182dc4fd82049063f4c.ctex"]
+source_file="res://images/shark_1a.png"
+dest_files=["res://.godot/imported/shark_1a.png-6da15181437103e349cb6aef5daf5838.ctex"]
 
 [params]
 
