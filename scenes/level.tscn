@@ -1,10 +1,10 @@
 [gd_scene load_steps=7 format=3 uid="uid://dhwvkf3taw8db"]
 
-[ext_resource type="Texture2D" uid="uid://dlkhlebgvo10n" path="res://images/stage.png" id="1_1htsr"]
 [ext_resource type="Script" path="res://scripts/level.gd" id="1_4ip8d"]
 [ext_resource type="Texture2D" uid="uid://donorrfpj4qwd" path="res://images/base_square.png" id="2_3d4xe"]
 [ext_resource type="PackedScene" uid="uid://52tpbo5enhtq" path="res://scenes/hero.tscn" id="3_38icc"]
 [ext_resource type="PackedScene" uid="uid://1e3yy5gkxjgl" path="res://scenes/exp.tscn" id="4_dxgh1"]
+[ext_resource type="Texture2D" uid="uid://stpl65erxjcx" path="res://images/bg2.png" id="4_mggfh"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_u1w2v"]
 size = Vector2(256, 256)
@@ -17,9 +17,9 @@ _hero_scene = ExtResource("3_38icc")
 _heros_parent_node = NodePath("Heros")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-self_modulate = Color(0.501961, 0.501961, 0.752941, 1)
-scale = Vector2(10, 10)
-texture = ExtResource("1_1htsr")
+modulate = Color(0.752941, 0.752941, 1, 0.501961)
+scale = Vector2(2, 2)
+texture = ExtResource("4_mggfh")
 
 [node name="Walls" type="Node2D" parent="."]
 modulate = Color(0.501961, 0.25098, 0.25098, 0.501961)
