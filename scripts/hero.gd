@@ -40,6 +40,7 @@ var move_state = MoveState.WAITING:
 var id: int = -1
 var is_client: bool = false # Client 上の Hero かどうか (<--> Server)
 var is_local: bool = false # 実行マシン上で操作している Hero かどうか (<--> Remote)
+var is_bot: bool = false # bot かどうか
 
 var charge: float = 0.0 # 現在の移動タメ度 (最大 1.0)
 var exp_point: int = 0: # 取得した経験値ポイント
@@ -62,6 +63,10 @@ var got_exp_ids = [] # 移動中に取得した EXP の ID のリスト, 移動�
 @export var _arrow_square_ct: TextureRect # 矢印の棒 (クールタイム)
 @export var _arrow_square_bg: TextureRect # 矢印の棒 (タメ背景)
 
+@export var _texture_hero_main: Texture
+@export var _texture_hero_other: Texture
+@export var _texture_hero_bot: Texture
+
 var _direction: float = 0.0 # 現在の移動方向 (deg)
 @export var _direction_rotation_speed_default: float = 90.0 # 移動方向の矢印の回転速度 (deg/s)
 var _direction_rotation_speed: float = _direction_rotation_speed_default
@@ -75,6 +80,13 @@ var _move_start_position: Vector2 # 移動を開始した位置
 
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
+
+	if is_local:
+		_sprite.texture = _texture_hero_main
+	elif is_bot:
+		_sprite.texture = _texture_hero_bot
+	else:
+		_sprite.texture = _texture_hero_other
 
 	_exp_label.text = str(exp_point)
 	_health_label.text = str(health_point)
