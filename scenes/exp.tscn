@@ -14,7 +14,7 @@ _sprite = NodePath("Sprite2D")
 _label = NodePath("Label")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-self_modulate = Color(0, 1, 1, 0.25098)
+self_modulate = Color(0, 1, 1, 0.501961)
 texture = ExtResource("1_x41g6")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

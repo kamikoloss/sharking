@@ -15,6 +15,12 @@ var _die_tween: Tween:
 			_die_tween.kill()
 		_die_tween = create_tween()
 		return _die_tween
+var _move_tween: Tween:
+	get:
+		if _move_tween:
+			_move_tween.kill()
+		_move_tween = create_tween()
+		return _move_tween
 
 
 func _init(point: int = 0, position: Vector2 = Vector2.ZERO) -> void:
@@ -25,6 +31,7 @@ func _init(point: int = 0, position: Vector2 = Vector2.ZERO) -> void:
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 	_init_visual()
+	_start_move()
 
 
 # 自身を (見た目上) 破壊する
@@ -57,3 +64,14 @@ func _init_visual() -> void:
 		_label.text = str(point)
 	else:
 		_label.visible = false
+
+
+func _start_move() -> void:
+	var tween = _move_tween
+	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
+	tween.tween_property(self, "position", _get_random_position(), randf_range(1.0, 2.0))
+	tween.finished.connect(_start_move)
+
+func _get_random_position() -> Vector2:
+	var diff = Vector2(randf_range(-20.0, 20.0), randf_range(-20.0, 20.0))
+	return self.position + diff
