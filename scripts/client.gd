@@ -32,6 +32,8 @@ var _main_hero: Hero
 
 # UI
 @export var _button_center: Button
+@export var _button_left: Button
+@export var _button_right: Button
 
 # Debug
 @export var _debug_label_game_mode: Label
@@ -47,10 +49,16 @@ func _ready() -> void:
 
 	_button_center.button_down.connect(_on_center_button_down)
 	_button_center.button_up.connect(_on_center_button_up)
+	_button_left.button_down.connect(_on_left_button_down)
+	_button_right.button_down.connect(_on_right_button_down)
 
 	# 初期処理
 	_level.is_client = true
 	_game_mode = GameMode.TITLE
+
+	# Debug
+	if OS.has_feature("debug_hero"):
+		_game_mode = GameMode.LOBBY
 
 
 func _process(delta: float) -> void:
@@ -130,6 +138,20 @@ func _on_center_button_up() -> void:
 				_main_hero.exit_charge()
 
 
+func _on_left_button_down() -> void:
+	# Debug
+	if OS.has_feature("debug_hero"):
+		if _main_hero:
+			_main_hero.change_hero_texture(Hero.HeroTextureType.Other)
+
+
+func _on_right_button_down() -> void:
+	# Debug
+	if OS.has_feature("debug_hero"):
+		if _main_hero:
+			_main_hero.change_hero_texture(Hero.HeroTextureType.Bot)
+
+
 func _connect_to_server() -> void:
 	var _error = _ws_client.connect_to_url(_ws_address)
 	if _error == OK:
@@ -145,7 +167,7 @@ func _send_message(message: Variant) -> void:
 
 func _spawn_main_hero() -> void:
 	# Peer ID を持っていない (接続できていない場合)
-	if _peer_id < 0:
+	if _peer_id < 0 and not OS.has_feature("debug_hero"):
 		print("[Client] failed to spawn main hero.")
 		return
 	# 一度死んだあと = 再生成の場合

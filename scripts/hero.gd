@@ -82,11 +82,11 @@ func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 
 	if is_local:
-		_sprite.texture = _texture_hero_main
+		change_hero_texture(HeroTextureType.Main)
 	elif is_bot:
-		_sprite.texture = _texture_hero_bot
+		change_hero_texture(HeroTextureType.Bot)
 	else:
-		_sprite.texture = _texture_hero_other
+		change_hero_texture(HeroTextureType.Other)
 
 	_exp_label.text = str(exp_point)
 	_health_label.text = str(health_point)
@@ -221,6 +221,18 @@ func damage(point: int) -> void:
 		_sprite.self_modulate = Color.RED
 		tween_damage.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 		tween_damage.tween_property(_sprite, "self_modulate", Color.WHITE, 1.0)
+
+
+# Hero の見た目を変更する
+enum HeroTextureType { Main, Other, Bot }
+func change_hero_texture(type: HeroTextureType) -> void:
+	match type:
+		HeroTextureType.Main:
+			_sprite.texture = _texture_hero_main
+		HeroTextureType.Other:
+			_sprite.texture = _texture_hero_other
+		HeroTextureType.Bot:
+			_sprite.texture = _texture_hero_bot
 
 
 func _on_area_entered(area: Area2D) -> void:
