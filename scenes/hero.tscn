@@ -45,9 +45,9 @@ anchors_preset = 0
 [node name="HealthBar" type="TextureProgressBar" parent="Control"]
 layout_mode = 0
 offset_left = -32.0
-offset_top = 80.0
+offset_top = 64.0
 offset_right = 224.0
-offset_bottom = 336.0
+offset_bottom = 320.0
 scale = Vector2(0.25, 0.063)
 value = 100.0
 texture_under = ExtResource("4_r63cl")
@@ -58,9 +58,9 @@ tint_progress = Color(0, 1, 0, 0.501961)
 [node name="Exp" type="Label" parent="Control"]
 layout_mode = 0
 offset_left = -32.0
-offset_top = -96.0
+offset_top = -80.0
 offset_right = 32.0
-offset_bottom = -64.0
+offset_bottom = -48.0
 theme = ExtResource("3_qksco")
 text = "9999"
 horizontal_alignment = 1
@@ -69,9 +69,9 @@ vertical_alignment = 1
 [node name="Health" type="Label" parent="Control"]
 layout_mode = 0
 offset_left = -32.0
-offset_top = 64.0
+offset_top = 48.0
 offset_right = 32.0
-offset_bottom = 96.0
+offset_bottom = 80.0
 theme = ExtResource("3_qksco")
 theme_override_colors/font_color = Color(0, 1, 0, 1)
 text = "9999"
