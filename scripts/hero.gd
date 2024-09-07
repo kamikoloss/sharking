@@ -51,6 +51,7 @@ var health_point: int = 100: # 体力ポイント
 	set(value):
 		health_point = value
 		_health_label.text = str(health_point)
+		_health_bar.value = health_point
 var got_exp_ids = [] # 移動中に取得した EXP の ID のリスト, 移動ごとにリセットされる
 
 
@@ -58,6 +59,7 @@ var got_exp_ids = [] # 移動中に取得した EXP の ID のリスト, 移動�
 @export var _sprite: Sprite2D
 @export var _exp_label: Label
 @export var _health_label: Label
+@export var _health_bar: TextureProgressBar
 @export var _arrow: Control # 矢印
 @export var _arrow_square: TextureRect # 矢印の棒 (タメ)
 @export var _arrow_square_ct: TextureRect # 矢印の棒 (クールタイム)
