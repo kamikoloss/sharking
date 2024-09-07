@@ -69,9 +69,9 @@ func _init_visual() -> void:
 func _start_move() -> void:
 	var tween = _move_tween
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
-	tween.tween_property(self, "position", _get_random_position(), randf_range(1.0, 2.0))
+	tween.tween_property(self, "position", _get_random_position(), randf_range(4.0, 8.0))
 	tween.finished.connect(_start_move)
 
 func _get_random_position() -> Vector2:
-	var diff = Vector2(randf_range(-20.0, 20.0), randf_range(-20.0, 20.0))
+	var diff = Vector2(randf_range(-40.0, 40.0), randf_range(-40.0, 40.0))
 	return self.position + diff
