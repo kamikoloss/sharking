@@ -57,15 +57,15 @@ func _process(delta: float) -> void:
 	_process_refresh_debug(delta)
 
 
-func _on_web_socket_client_connected_to_server():
+func _on_web_socket_client_connected_to_server() -> void:
 	print("[Client] Connected to server!")
 
 
-func _on_web_socket_client_connection_closed():
+func _on_web_socket_client_connection_closed() -> void:
 	print("[Client] Connection closed.")
 
 
-func _on_web_socket_client_message_received(message: Variant):
+func _on_web_socket_client_message_received(message: Variant) -> void:
 	#print("[Client] Message received from server. Message: %s" % [message])
 
 	match message["type"] as Message.MessageType:
@@ -111,7 +111,7 @@ func _on_web_socket_client_message_received(message: Variant):
 			pass
 
 
-func _on_center_button_down():
+func _on_center_button_down() -> void:
 	match _game_mode:
 		GameMode.TITLE:
 			_connect_to_server()
@@ -123,14 +123,14 @@ func _on_center_button_down():
 				_main_hero.enter_charge()
 
 
-func _on_center_button_up():
+func _on_center_button_up() -> void:
 	match _game_mode:
 		GameMode.GAME:
 			if _main_hero:
 				_main_hero.exit_charge()
 
 
-func _connect_to_server():
+func _connect_to_server() -> void:
 	var _error = _ws_client.connect_to_url(_ws_address)
 	if _error == OK:
 		_game_mode = GameMode.LOBBY

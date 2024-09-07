@@ -31,7 +31,7 @@ func _process(delta: float) -> void:
 	_process_respawn_exps(delta)
 
 
-func _on_web_socket_server_client_connected(peer_id: int):
+func _on_web_socket_server_client_connected(peer_id: int) -> void:
 	print("[Server] New peer connected. ID: ", peer_id)
 
 	# 新しく接続した Peer に現在の状況を共有する
@@ -57,7 +57,7 @@ func _on_web_socket_server_client_connected(peer_id: int):
 	_send_message_to_peers(msg_opc, peer_id)
 
 
-func _on_web_socket_server_client_disconnected(peer_id: int):
+func _on_web_socket_server_client_disconnected(peer_id: int) -> void:
 	print("[Server] Peer disconnected. ID: ", peer_id)
 	var msg = {
 		"type": Message.MessageType.OTHER_PLAYER_DISCONNECTED,
@@ -69,7 +69,7 @@ func _on_web_socket_server_client_disconnected(peer_id: int):
 	_level.despawn_hero(peer_id)
 
 
-func _on_web_socket_server_message_received(peer_id: int, message: Variant):
+func _on_web_socket_server_message_received(peer_id: int, message: Variant) -> void:
 	print("[Server] Message received from client. ID: %d, Message: %s" % [peer_id, message])
 	var message_type = message["type"] as Message.MessageType
 

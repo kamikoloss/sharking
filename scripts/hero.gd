@@ -196,7 +196,7 @@ func move(dest_position: Vector2, before_duration: float, move_duration: float) 
 	tween_move.tween_property(_sprite, "scale", Vector2(0.15, 0.15), 0.5) # TODO: 倍率にする
 	tween_move.finished.connect(_on_move_finished)
 
-func _on_move_finished():
+func _on_move_finished() -> void:
 	move_state = MoveState.WAITING
 	got_exp_ids = []
 	charge = 0.0
