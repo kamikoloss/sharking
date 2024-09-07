@@ -1,0 +1,53 @@
+[gd_scene load_steps=5 format=3 uid="uid://bwh6o40rwl3m1"]
+
+[ext_resource type="Script" path="res://scenes/debug.gd" id="1_2jhef"]
+[ext_resource type="PackedScene" uid="uid://dhwvkf3taw8db" path="res://scenes/level.tscn" id="2_8tcsb"]
+[ext_resource type="PackedScene" uid="uid://52tpbo5enhtq" path="res://scenes/hero.tscn" id="3_2lnq1"]
+[ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://themes/default.tres" id="4_ocry3"]
+
+[node name="Debug" type="Node2D" node_paths=PackedStringArray("_level", "_main_hero", "_button_center", "_button_left", "_button_right")]
+script = ExtResource("1_2jhef")
+_level = NodePath("Level")
+_main_hero = NodePath("Hero")
+_button_center = NodePath("CanvasLayer/Control/ButtonCenter")
+_button_left = NodePath("CanvasLayer/Control/ButtonLeft")
+_button_right = NodePath("CanvasLayer/Control/ButtonRight")
+
+[node name="Level" parent="." instance=ExtResource("2_8tcsb")]
+
+[node name="Hero" parent="." instance=ExtResource("3_2lnq1")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 360.0
+offset_bottom = 640.0
+
+[node name="ButtonLeft" type="Button" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 560.0
+offset_right = 80.0
+offset_bottom = 620.0
+theme = ExtResource("4_ocry3")
+text = "◀"
+
+[node name="ButtonCenter" type="Button" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 560.0
+offset_right = 260.0
+offset_bottom = 620.0
+theme = ExtResource("4_ocry3")
+text = "(BUTTON)"
+
+[node name="ButtonRight" type="Button" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 280.0
+offset_top = 560.0
+offset_right = 340.0
+offset_bottom = 620.0
+theme = ExtResource("4_ocry3")
+text = "▶"

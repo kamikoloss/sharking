@@ -56,10 +56,6 @@ func _ready() -> void:
 	_level.is_client = true
 	_game_mode = GameMode.TITLE
 
-	# Debug
-	if OS.has_feature("debug_hero"):
-		_game_mode = GameMode.LOBBY
-
 
 func _process(delta: float) -> void:
 	_process_refresh_debug(delta)
@@ -139,17 +135,11 @@ func _on_center_button_up() -> void:
 
 
 func _on_left_button_down() -> void:
-	# Debug
-	if OS.has_feature("debug_hero"):
-		if _main_hero:
-			_main_hero.change_hero_texture(Hero.HeroTextureType.OTHER)
+	pass
 
 
 func _on_right_button_down() -> void:
-	# Debug
-	if OS.has_feature("debug_hero"):
-		if _main_hero:
-			_main_hero.change_hero_texture(Hero.HeroTextureType.BOT)
+	pass
 
 
 func _connect_to_server() -> void:
@@ -167,7 +157,7 @@ func _send_message(message: Variant) -> void:
 
 func _spawn_hero() -> void:
 	# Peer ID を持っていない場合 (接続できていない場合)
-	if _peer_id < 0 and not OS.has_feature("debug_hero"):
+	if _peer_id < 0:
 		print("[Client] failed to spawn main hero.")
 		return
 	# 一度死んだあと = 再生成の場合
