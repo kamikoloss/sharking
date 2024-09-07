@@ -34,11 +34,11 @@ func _process(delta: float) -> void:
 func _on_web_socket_server_client_connected(peer_id: int) -> void:
 	print("[Server] New peer connected. ID: ", peer_id)
 
-	# 新しく接続した Peer に現在の状況を共有する
+	# 接続した Peer に現在の状況を共有する
 	var exps_data = []
+	var heros_data = []
 	for exp in _level.exps_on_level.values():
 		exps_data.append({ "id": exp.id, "pt": exp.point, "pos": exp.position })
-	var heros_data = []
 	for hero in _level.heros_on_level.values():
 		heros_data.append({ "id": hero.id, "exp": hero.exp_point, "hlt": hero.health_point, "pos": hero.position })
 	var msg_pc = {
@@ -49,7 +49,7 @@ func _on_web_socket_server_client_connected(peer_id: int) -> void:
 	}
 	_send_message_to_peer(msg_pc, peer_id)
 
-	# 接続済みの Peer に新しく接続した Peer を共有する
+	# 接続中の Peer に接続した Peer を共有する
 	var msg_opc = {
 		"type": Message.MessageType.OTHER_PLAYER_CONNECTED,
 		"pid": peer_id,
@@ -58,6 +58,7 @@ func _on_web_socket_server_client_connected(peer_id: int) -> void:
 
 
 func _on_web_socket_server_client_disconnected(peer_id: int) -> void:
+	# 接続中の Peer に切断した Peer を共有する
 	print("[Server] Peer disconnected. ID: ", peer_id)
 	var msg = {
 		"type": Message.MessageType.OTHER_PLAYER_DISCONNECTED,
@@ -71,22 +72,28 @@ func _on_web_socket_server_client_disconnected(peer_id: int) -> void:
 
 func _on_web_socket_server_message_received(peer_id: int, message: Variant) -> void:
 	print("[Server] Message received from client. ID: %d, Message: %s" % [peer_id, message])
-	var message_type = message["type"] as Message.MessageType
 
 	# 送信者以外のすべての Peer に共有する
-	if message_type in Message.THROUGH_MESSAGE_TYPES:
+	if message["type"] in Message.THROUGH_MESSAGE_TYPES:
 		_send_message_to_peers(message, peer_id)
 
-	# Server 上の EXP 情報を更新する
-	if message_type == Message.MessageType.HERO_MOVE_STOPPED:
-		for exp_id in message["expids"]:
-			_level.despawn_exp(exp_id)
-	# Server 上の Hero 情報を更新する
-	if message_type == Message.MessageType.HERO_SPAWNED:
-		_level.spawn_hero(message["pid"])
-		_level.update_hero(message["pid"], message["exp"], message["hlt"], message["pos"])
-	else:
-		_level.update_hero(message["pid"], message["exp"], message["hlt"], message["pos"])
+	# Server 上の情報を更新する
+	match message:
+		# Hero が生成されたとき
+		Message.MessageType.HERO_SPAWNED:
+			_level.spawn_hero(message["pid"])
+			_level.update_hero(message["pid"], message["exp"], message["hlt"], message["pos"])
+		# Hero が移動終了したとき
+		Message.MessageType.HERO_MOVE_STOPPED:
+			_level.update_hero(message["pid"], message["exp"], message["hlt"], message["pos"])
+			for exp_id in message["expids"]:
+				_level.despawn_exp(exp_id)
+		# Hero がダメージを受けたとき
+		Message.MessageType.HERO_DAMAGED:
+			_level.update_hero(message["pid"], message["exp"], message["hlt"], message["pos"])
+		# Hero が死んだとき
+		Message.MessageType.HERO_DIED:
+			_level.despawn_hero(message["pid"])
 
 
 func _parse_args() -> void:

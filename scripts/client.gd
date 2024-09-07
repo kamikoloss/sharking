@@ -93,7 +93,7 @@ func _on_web_socket_client_message_received(message: Variant) -> void:
 			pass
 		# 他プレイヤーが切断したとき
 		Message.MessageType.OTHER_PLAYER_DISCONNECTED:
-			_level.despawn_hero(message["pid"])
+			_level.despawn_hero(message["pid"]) # 死んだときと同じ
 		# Hero が生成されたとき
 		Message.MessageType.HERO_SPAWNED: 
 			_level.spawn_hero(message["pid"])
@@ -101,22 +101,22 @@ func _on_web_socket_client_message_received(message: Variant) -> void:
 		# Hero が移動開始したとき
 		Message.MessageType.HERO_MOVE_STARTED:
 			_level.update_hero(message["pid"], message["exp"], message["hlt"], message["pos"])
-			var other_hero = _level.heros_on_level[message["pid"]]
-			other_hero.charge = message["chr"]
-			other_hero.move(message["dest"], 0.5, message["dur"])
+			_level.move_hero(message["pid"], message["chr"], message["dest"], message["dur"])
 		# Hero が移動終了したとき
 		Message.MessageType.HERO_MOVE_STOPPED:
 			_level.update_hero(message["pid"], message["exp"], message["hlt"], message["pos"])
-		# Hero がダメージを受けたとき (死んだときも含む)
+			for exp_id in message["expids"]:
+				_level.despawn_exp(exp_id)
+		# Hero がダメージを受けたとき
 		Message.MessageType.HERO_DAMAGED:
-			pass
+			_level.update_hero(message["pid"], message["exp"], message["hlt"], message["pos"])
+		# Hero が死んだとき
+		Message.MessageType.HERO_DIED:
+			_level.despawn_hero(message["pid"])
 		# EXP が生成されたとき
 		Message.MessageType.EXP_SPAWNED:
 			for exp in message["exps"]:
 				_level.spawn_exp(exp["id"], exp["pt"], exp["pos"])
-		# EXP が破壊されたとき
-		Message.MessageType.EXP_DESPAWNED:
-			pass
 
 
 func _on_center_button_down() -> void:
@@ -125,7 +125,7 @@ func _on_center_button_down() -> void:
 			_connect_to_server()
 		GameMode.LOBBY:
 			# TODO: スポーン位置選択
-			_spawn_main_hero()
+			_spawn_hero()
 		GameMode.GAME:
 			if _main_hero:
 				_main_hero.enter_charge()
@@ -142,14 +142,14 @@ func _on_left_button_down() -> void:
 	# Debug
 	if OS.has_feature("debug_hero"):
 		if _main_hero:
-			_main_hero.change_hero_texture(Hero.HeroTextureType.Other)
+			_main_hero.change_hero_texture(Hero.HeroTextureType.OTHER)
 
 
 func _on_right_button_down() -> void:
 	# Debug
 	if OS.has_feature("debug_hero"):
 		if _main_hero:
-			_main_hero.change_hero_texture(Hero.HeroTextureType.Bot)
+			_main_hero.change_hero_texture(Hero.HeroTextureType.BOT)
 
 
 func _connect_to_server() -> void:
@@ -165,8 +165,8 @@ func _send_message(message: Variant) -> void:
 	_ws_client.send(message)
 
 
-func _spawn_main_hero() -> void:
-	# Peer ID を持っていない (接続できていない場合)
+func _spawn_hero() -> void:
+	# Peer ID を持っていない場合 (接続できていない場合)
 	if _peer_id < 0 and not OS.has_feature("debug_hero"):
 		print("[Client] failed to spawn main hero.")
 		return
@@ -181,11 +181,12 @@ func _spawn_main_hero() -> void:
 	hero_instance.exp_point = 0
 	hero_instance.position = Vector2.ZERO # TODO
 	add_child(hero_instance)
-	_main_hero = hero_instance
 
+	_main_hero = hero_instance
 	_main_hero.move_started.connect(_on_hero_move_started)
 	_main_hero.move_stopped.connect(_on_hero_move_stopped)
 	_main_hero.damaged.connect(_on_hero_damaged)
+	_main_hero.died.connect(_on_hero_died)
 
 	var msg = {
 		# 基本
@@ -201,23 +202,19 @@ func _spawn_main_hero() -> void:
 	_game_mode = GameMode.GAME
 
 
-func _despawn_main_hero() -> void:
-	pass
-
-
 func _on_hero_move_started(charge: float, dest_position: Vector2, move_duration: float) -> void:
 	var msg = {
 		# 基本
 		"type": Message.MessageType.HERO_MOVE_STARTED,
 		"pid": _peer_id,
-		# 移動
-		"chr": charge,
-		"dest": dest_position,
-		"dur": move_duration,
 		# Hero
 		"exp": _main_hero.exp_point,
 		"hlt": _main_hero.health_point,
 		"pos": _main_hero.position,
+		# 移動開始
+		"chr": charge,
+		"dest": dest_position,
+		"dur": move_duration,
 	}
 	_send_message(msg)
 
@@ -228,10 +225,11 @@ func _on_hero_move_stopped() -> void:
 		"type": Message.MessageType.HERO_MOVE_STOPPED,
 		"pid": _peer_id,
 		# Hero
-		"expids": _main_hero.got_exp_ids,
 		"exp": _main_hero.exp_point,
 		"hlt": _main_hero.health_point,
 		"pos": _main_hero.position,
+		# 移動終了
+		"expids": _main_hero.got_exp_ids,
 	}
 	_send_message(msg)
 
@@ -248,9 +246,20 @@ func _on_hero_damaged() -> void:
 	}
 	_send_message(msg)
 
-	# 死んだ場合: LOBBY に戻る
-	if _main_hero.health_point <= 0:
-		_game_mode = GameMode.LOBBY
+
+func _on_hero_died() -> void:
+	var msg = {
+		# 基本
+		"type": Message.MessageType.HERO_DAMAGED,
+		"pid": _peer_id,
+		# Hero
+		"exp": _main_hero.exp_point,
+		"hlt": _main_hero.health_point,
+		"pos": _main_hero.position,
+	}
+	_send_message(msg)
+
+	_game_mode = GameMode.LOBBY
 
 
 # Debug

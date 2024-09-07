@@ -51,7 +51,6 @@ func respawn_exps_to_limit() -> Array[Exp]:
 
 # EXP を生成する
 func spawn_exp(id: int, point: int, pos: Vector2) -> void:
-	# Level 上に存在する場合: 何もしない
 	if exps_on_level.has(id):
 		return
 
@@ -69,23 +68,23 @@ func spawn_exp(id: int, point: int, pos: Vector2) -> void:
 	exps_on_level[exp_instance.id] = exp_instance
 
 	if not is_client:
-		#print("(Level/spawn_exp) _exp_point_sum: %s" % [_exp_point_sum])
+		print("(Level/spawn_exp) _exp_point_sum: %s" % [_exp_point_sum])
 		pass
 
 
 # EXP を破壊する
 func despawn_exp(id: int) -> void:
-	# Level 上に存在しない場合: 何もしない
 	if not exps_on_level.has(id):
 		return
 
-	_exp_point_sum -= exps_on_level[id].point
+	if not is_client:
+		_exp_point_sum -= exps_on_level[id].point
+
 	exps_on_level[id].destroy()
 	exps_on_level.erase(id)
 
 	if not is_client:
-		#print("(Level/despawn_exp) _exp_point_sum: %s" % [_exp_point_sum])
-		pass
+		print("(Level/despawn_exp) _exp_point_sum: %s" % [_exp_point_sum])
 
 
 # Hero を生成する
@@ -94,7 +93,7 @@ func spawn_hero(pid: int) -> void:
 	var hero_instance = _hero_scene.instantiate()
 	hero_instance.id = pid
 	hero_instance.is_client = is_client
-	hero_instance.is_local = false # Local Hero は Client の _spawn_main_hero で生成する
+	hero_instance.is_local = false # Local Hero は Client の _spawn_hero で生成する
 	hero_instance.exp_point = 0
 
 	_heros_parent_node.add_child(hero_instance)
@@ -103,23 +102,30 @@ func spawn_hero(pid: int) -> void:
 
 # Hero を破壊する
 func despawn_hero(pid: int) -> void:
-	# Level 上に存在しない場合: 何もしない
 	if not heros_on_level.has(pid):
 		return
 
-	heros_on_level[pid].queue_free()
+	heros_on_level[pid].die()
 	heros_on_level.erase(pid)
 
 
 # Hero の情報を更新する
 func update_hero(pid: int, exp: int, health: int, pos: Vector2) -> void:
-	# Level 上に存在しない場合: 何もしない
 	if not heros_on_level.has(pid):
 		return
 
 	heros_on_level[pid].exp_point = exp
 	heros_on_level[pid].health_point = health
 	heros_on_level[pid].position = pos
+
+
+# Hero を移動させる
+func move_hero(pid: int, charge: float, dest: Vector2, duration: float) -> void:
+	if not heros_on_level.has(pid):
+		return
+
+	heros_on_level[pid].charge = charge
+	heros_on_level[pid].move(dest, 0.5, duration)
 
 
 # Level 内のランダムな座標を取得する

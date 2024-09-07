@@ -8,6 +8,8 @@ signal move_started
 signal move_stopped
 # ()
 signal damaged
+# ()
+signal died
 
 
 # 移動状態
@@ -37,7 +39,7 @@ var move_state = MoveState.WAITING:
 		move_state = value
 		print("[Hero %s] move state changed. %s -> %s" % [id, MoveState.keys()[from], MoveState.keys()[value]])
 
-var id: int = -1
+var id: int = -1 # Peer ID が与えられる
 var is_client: bool = false # Client 上の Hero かどうか (<--> Server)
 var is_local: bool = false # 実行マシン上で操作している Hero かどうか (<--> Remote)
 var is_bot: bool = false # bot かどうか
@@ -57,6 +59,8 @@ var got_exp_ids = [] # 移動中に取得した EXP の ID のリスト, 移動�
 
 @export var _camera: Camera2D
 @export var _sprite: Sprite2D
+
+@export var _control: Control
 @export var _exp_label: Label
 @export var _health_label: Label
 @export var _health_bar: TextureProgressBar
@@ -84,11 +88,11 @@ func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 
 	if is_local:
-		change_hero_texture(HeroTextureType.Main)
+		change_hero_texture(HeroTextureType.MAIN)
 	elif is_bot:
-		change_hero_texture(HeroTextureType.Bot)
+		change_hero_texture(HeroTextureType.BOT)
 	else:
-		change_hero_texture(HeroTextureType.Other)
+		change_hero_texture(HeroTextureType.OTHER)
 
 	_exp_label.text = str(exp_point)
 	_health_label.text = str(health_point)
@@ -109,7 +113,6 @@ func _process(delta: float) -> void:
 
 # 移動のタメを開始する
 func enter_charge() -> void:
-	# Server/Remote: 何もしない
 	if not is_client or not is_local:
 		return
 	if move_state != MoveState.WAITING:
@@ -135,7 +138,6 @@ func enter_charge() -> void:
 
 # 移動のタメを終了する
 func exit_charge() -> void:
-	# Server/Remote: 何もしない
 	if not is_client or not is_local:
 		return
 	if move_state != MoveState.CHARGING:
@@ -171,7 +173,6 @@ func exit_charge() -> void:
 
 # 移動する
 func move(dest_position: Vector2, before_duration: float, move_duration: float) -> void:
-	# Server: 何もしない
 	if not is_client:
 		return
 	if move_state == MoveState.MOVING:
@@ -199,46 +200,56 @@ func move(dest_position: Vector2, before_duration: float, move_duration: float) 
 	tween_move.finished.connect(_on_move_finished)
 
 func _on_move_finished() -> void:
+	move_stopped.emit()
 	move_state = MoveState.WAITING
 	got_exp_ids = []
 	charge = 0.0
-	move_stopped.emit()
 
 
 # ダメージを受ける
 func damage(point: int) -> void:
-	health_point -= point
 	damaged.emit()
+	health_point -= point
 
-	var tween_damage = _get_tween(TweenType.DAMAGE)
 	# 死んだとき
 	if health_point <= 0:
-		tween_damage.set_parallel(true)
-		tween_damage.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
-		tween_damage.tween_property(_sprite, "rotation_degrees", 1440, 3.0)
-		tween_damage.tween_property(_sprite, "self_modulate", Color.BLUE, 1.0)
-		tween_damage.tween_property(_sprite, "scale", Vector2.ZERO, 3.0)
-	# ダメージを受けたとき
-	else:
-		_sprite.self_modulate = Color.RED
-		tween_damage.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
-		tween_damage.tween_property(_sprite, "self_modulate", Color.WHITE, 1.0)
+		die()
+		return
+
+	# まだ生きているとき
+	var tween = _get_tween(TweenType.DAMAGE)
+	_sprite.self_modulate = Color.RED
+	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+	tween.tween_property(_sprite, "self_modulate", Color.WHITE, 1.0)
+
+
+# 死ぬ
+func die() -> void:
+	died.emit()
+	_control.visible = false
+
+	var tween = _get_tween(TweenType.DAMAGE)
+	tween.set_parallel(true)
+	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+	tween.tween_property(_sprite, "rotation_degrees", 1080, 3.0)
+	tween.tween_property(_sprite, "self_modulate", Color.BLUE, 2.0)
+	tween.tween_property(_sprite, "scale", Vector2.ZERO, 3.0)
+	tween.finished.connect(func(v): queue_free())
 
 
 # Hero の見た目を変更する
-enum HeroTextureType { Main, Other, Bot }
+enum HeroTextureType { MAIN, OTHER, BOT }
 func change_hero_texture(type: HeroTextureType) -> void:
 	match type:
-		HeroTextureType.Main:
+		HeroTextureType.MAIN:
 			_sprite.texture = _texture_hero_main
-		HeroTextureType.Other:
+		HeroTextureType.OTHER:
 			_sprite.texture = _texture_hero_other
-		HeroTextureType.Bot:
+		HeroTextureType.BOT:
 			_sprite.texture = _texture_hero_bot
 
 
 func _on_area_entered(area: Area2D) -> void:
-	# Server: 何もしない
 	if not is_client:
 		return
 
@@ -250,7 +261,7 @@ func _on_area_entered(area: Area2D) -> void:
 	# Hero
 	if area is Hero:
 		# 自分が移動中の場合: (ダメージを与えて) 元の位置に戻る
-		if move_state == MoveState.MOVING:
+		if move_state == MoveState.MOVING and 0 < area.health_point:
 			move_state = MoveState.WAITING # いったん初期状態に戻す
 			move(_move_start_position, 0.5, 1.0)
 		# 相手が移動中の場合: ダメージを受ける

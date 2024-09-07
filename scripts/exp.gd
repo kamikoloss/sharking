@@ -34,7 +34,7 @@ func _ready() -> void:
 	_start_move()
 
 
-# 自身を (見た目上) 破壊する
+# 自身を破壊する
 func destroy() -> void:
 	_label.visible = false
 
@@ -49,10 +49,11 @@ func destroy() -> void:
 func _on_area_entered(area: Area2D) -> void:
 	# Hero
 	if area is Hero:
-		# Client の場合: 破壊する
-		# Server の場合: 破壊しない (Client から受信したデータを元に Level が手動で破壊する)
-		if area.is_client:
+		# Client/Local の場合: 破壊する
+		if area.is_client and area.is_local:
 			destroy()
+		# Server の場合: 破壊しない
+		# Client から受信したデータを元に Level が手動で破壊する
 
 
 # 自身の見た目を決定する
@@ -66,12 +67,10 @@ func _init_visual() -> void:
 		_label.visible = false
 
 
+# 移動を開始する
 func _start_move() -> void:
+	var dest_position = self.position + Vector2(randf_range(-40.0, 40.0), randf_range(-40.0, 40.0))
 	var tween = _move_tween
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
-	tween.tween_property(self, "position", _get_random_position(), randf_range(4.0, 8.0))
-	tween.finished.connect(_start_move)
-
-func _get_random_position() -> Vector2:
-	var diff = Vector2(randf_range(-40.0, 40.0), randf_range(-40.0, 40.0))
-	return self.position + diff
+	tween.tween_property(self, "position", dest_position, randf_range(4.0, 8.0))
+	tween.finished.connect(_start_move) # 座標を相対的に算出するので最初からやり直す

@@ -12,10 +12,11 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_lxfer"]
 radius = 40.0
 
-[node name="Hero" type="Area2D" node_paths=PackedStringArray("_camera", "_sprite", "_exp_label", "_health_label", "_health_bar", "_arrow", "_arrow_square", "_arrow_square_ct", "_arrow_square_bg")]
+[node name="Hero" type="Area2D" node_paths=PackedStringArray("_camera", "_sprite", "_control", "_exp_label", "_health_label", "_health_bar", "_arrow", "_arrow_square", "_arrow_square_ct", "_arrow_square_bg")]
 script = ExtResource("1_ifnkb")
 _camera = NodePath("Camera2D")
 _sprite = NodePath("Sprite2D")
+_control = NodePath("Control")
 _exp_label = NodePath("Control/Exp")
 _health_label = NodePath("Control/Health")
 _health_bar = NodePath("Control/HealthBar")
