@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://52tpbo5enhtq"]
+[gd_scene load_steps=10 format=3 uid="uid://52tpbo5enhtq"]
 
 [ext_resource type="Script" path="res://scripts/hero.gd" id="1_ifnkb"]
 [ext_resource type="Texture2D" uid="uid://iehci6p8ox2i" path="res://images/shark_2a.png" id="2_g8pur"]
-[ext_resource type="Texture2D" uid="uid://n8n0jhflk3q6" path="res://images/shark_2b.png" id="3_0l4i4"]
+[ext_resource type="Texture2D" uid="uid://cbfhl0yws6r8o" path="res://images/shark_3a.png" id="2_mm6xn"]
+[ext_resource type="Texture2D" uid="uid://c065fnnkkpt4j" path="res://images/shark_3b.png" id="3_haphq"]
 [ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://themes/default.tres" id="3_qksco"]
-[ext_resource type="Texture2D" uid="uid://b4r23qtl6bdil" path="res://images/shark_2c.png" id="4_kylog"]
+[ext_resource type="Texture2D" uid="uid://d2ud3ffmcokv3" path="res://images/shark_3c.png" id="4_bbqww"]
 [ext_resource type="Texture2D" uid="uid://donorrfpj4qwd" path="res://images/base_square.png" id="4_r63cl"]
 [ext_resource type="Texture2D" uid="uid://c512m80ajmvsk" path="res://images/base_triangle.png" id="5_g2pgf"]
 
@@ -21,9 +22,9 @@ _arrow = NodePath("Control/Arrow")
 _arrow_square = NodePath("Control/Arrow/Square")
 _arrow_square_ct = NodePath("Control/Arrow/SquareCt")
 _arrow_square_bg = NodePath("Control/Arrow/SquareBg")
-_texture_hero_main = ExtResource("2_g8pur")
-_texture_hero_other = ExtResource("3_0l4i4")
-_texture_hero_bot = ExtResource("4_kylog")
+_texture_hero_main = ExtResource("2_mm6xn")
+_texture_hero_other = ExtResource("3_haphq")
+_texture_hero_bot = ExtResource("4_bbqww")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_lxfer")
