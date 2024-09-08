@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bxe4id1rhqlnr"
-path="res://.godot/imported/base_circle.png-9ad04265a7df40d90c409839fe355b74.ctex"
+uid="uid://cb1mxt1jvjigo"
+path="res://.godot/imported/base_triangle.svg-680738606c1f80e0640720e00f3dce47.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/base_circle.png"
-dest_files=["res://.godot/imported/base_circle.png-9ad04265a7df40d90c409839fe355b74.ctex"]
+source_file="res://images/base_triangle.svg"
+dest_files=["res://.godot/imported/base_triangle.svg-680738606c1f80e0640720e00f3dce47.ctex"]
 
 [params]
 
@@ -32,3 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

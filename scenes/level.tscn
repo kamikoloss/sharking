@@ -1,10 +1,10 @@
 [gd_scene load_steps=7 format=3 uid="uid://dhwvkf3taw8db"]
 
 [ext_resource type="Script" path="res://scripts/level.gd" id="1_4ip8d"]
-[ext_resource type="Texture2D" uid="uid://donorrfpj4qwd" path="res://images/base_square.png" id="2_3d4xe"]
 [ext_resource type="PackedScene" uid="uid://52tpbo5enhtq" path="res://scenes/hero.tscn" id="3_38icc"]
 [ext_resource type="PackedScene" uid="uid://1e3yy5gkxjgl" path="res://scenes/exp.tscn" id="4_dxgh1"]
 [ext_resource type="Texture2D" uid="uid://b3rvv7xrsir24" path="res://images/bg3.png" id="4_qjwuw"]
+[ext_resource type="Texture2D" uid="uid://dsqpoa8t2wvms" path="res://images/base_square.svg" id="5_reaeu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_u1w2v"]
 size = Vector2(256, 256)
@@ -21,14 +21,14 @@ modulate = Color(0, 0.501961, 0.501961, 1)
 texture = ExtResource("4_qjwuw")
 
 [node name="Walls" type="Node2D" parent="."]
-modulate = Color(0.501961, 0.25098, 0.25098, 0.501961)
+modulate = Color(1, 0.501961, 0.501961, 0.501961)
 
 [node name="Area2D" type="Area2D" parent="Walls" groups=["Wall"]]
 position = Vector2(0, -1024)
 scale = Vector2(8, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="Walls/Area2D"]
-texture = ExtResource("2_3d4xe")
+texture = ExtResource("5_reaeu")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Area2D"]
 shape = SubResource("RectangleShape2D_u1w2v")
@@ -38,7 +38,7 @@ position = Vector2(0, 1024)
 scale = Vector2(8, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="Walls/Area2D2"]
-texture = ExtResource("2_3d4xe")
+texture = ExtResource("5_reaeu")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Area2D2"]
 shape = SubResource("RectangleShape2D_u1w2v")
@@ -49,7 +49,7 @@ rotation = 1.5708
 scale = Vector2(8, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="Walls/Area2D3"]
-texture = ExtResource("2_3d4xe")
+texture = ExtResource("5_reaeu")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Area2D3"]
 shape = SubResource("RectangleShape2D_u1w2v")
@@ -60,7 +60,7 @@ rotation = 1.5708
 scale = Vector2(8, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="Walls/Area2D4"]
-texture = ExtResource("2_3d4xe")
+texture = ExtResource("5_reaeu")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Area2D4"]
 shape = SubResource("RectangleShape2D_u1w2v")

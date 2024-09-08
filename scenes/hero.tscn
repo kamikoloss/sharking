@@ -6,8 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://c065fnnkkpt4j" path="res://images/shark_3b.png" id="3_haphq"]
 [ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://themes/default.tres" id="3_qksco"]
 [ext_resource type="Texture2D" uid="uid://d2ud3ffmcokv3" path="res://images/shark_3c.png" id="4_bbqww"]
-[ext_resource type="Texture2D" uid="uid://donorrfpj4qwd" path="res://images/base_square.png" id="4_r63cl"]
-[ext_resource type="Texture2D" uid="uid://c512m80ajmvsk" path="res://images/base_triangle.png" id="5_g2pgf"]
+[ext_resource type="Texture2D" uid="uid://cb1mxt1jvjigo" path="res://images/base_triangle.svg" id="8_ha215"]
+[ext_resource type="Texture2D" uid="uid://dsqpoa8t2wvms" path="res://images/base_square.svg" id="9_sydrv"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lxfer"]
 radius = 40.0
@@ -50,8 +50,8 @@ offset_right = 224.0
 offset_bottom = 320.0
 scale = Vector2(0.25, 0.063)
 value = 100.0
-texture_under = ExtResource("4_r63cl")
-texture_progress = ExtResource("4_r63cl")
+texture_under = ExtResource("9_sydrv")
+texture_progress = ExtResource("9_sydrv")
 tint_under = Color(0, 0, 0, 0.501961)
 tint_progress = Color(0, 1, 0, 0.501961)
 
@@ -88,7 +88,7 @@ offset_left = -10.0
 offset_top = -100.0
 offset_right = 10.0
 offset_bottom = -80.0
-texture = ExtResource("5_g2pgf")
+texture = ExtResource("8_ha215")
 expand_mode = 1
 
 [node name="SquareBg" type="TextureRect" parent="Control/Arrow"]
@@ -98,7 +98,7 @@ offset_left = -4.0
 offset_top = -80.0
 offset_right = 4.0
 offset_bottom = 80.0
-texture = ExtResource("4_r63cl")
+texture = ExtResource("9_sydrv")
 expand_mode = 1
 
 [node name="SquareCt" type="TextureRect" parent="Control/Arrow"]
@@ -108,7 +108,7 @@ offset_left = -4.0
 offset_top = -80.0
 offset_right = 4.0
 offset_bottom = 80.0
-texture = ExtResource("4_r63cl")
+texture = ExtResource("9_sydrv")
 expand_mode = 1
 
 [node name="Square" type="TextureRect" parent="Control/Arrow"]
@@ -118,5 +118,5 @@ offset_left = -4.0
 offset_top = -80.0
 offset_right = 4.0
 offset_bottom = 80.0
-texture = ExtResource("4_r63cl")
+texture = ExtResource("9_sydrv")
 expand_mode = 1

@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://1e3yy5gkxjgl"]
 
-[ext_resource type="Texture2D" uid="uid://bxe4id1rhqlnr" path="res://images/base_circle.png" id="1_x41g6"]
 [ext_resource type="Script" path="res://scripts/exp.gd" id="1_yyyhv"]
 [ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://themes/default.tres" id="2_8t3s3"]
+[ext_resource type="Texture2D" uid="uid://q6qttcju75ue" path="res://images/base_circle.svg" id="2_i03jq"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_32f54"]
 radius = 128.0
@@ -15,7 +15,7 @@ _label = NodePath("Label")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 self_modulate = Color(0, 1, 1, 0.501961)
-texture = ExtResource("1_x41g6")
+texture = ExtResource("2_i03jq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_32f54")
