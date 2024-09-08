@@ -134,8 +134,8 @@ func move_hero(pid: int, charge: float, dest: Vector2, duration: float) -> void:
 
 
 func _is_valid_exp(id: int) -> bool:
-	return exps_on_level.has(id) and exps_on_level[id]
+	return exps_on_level.has(id) and exps_on_level[id] != null
 
 
 func _is_valid_hero(pid: int) -> bool:
-	return heros_on_level.has(pid) and heros_on_level[pid]
+	return heros_on_level.has(pid) and heros_on_level[pid] != null

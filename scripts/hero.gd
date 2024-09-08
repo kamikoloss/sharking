@@ -208,8 +208,8 @@ func _on_move_finished() -> void:
 
 # ダメージを受ける
 func damage(point: int) -> void:
-	damaged.emit()
 	health_point -= point
+	damaged.emit()
 
 	# 死んだとき
 	if health_point <= 0:
@@ -255,8 +255,8 @@ func _on_area_entered(area: Area2D) -> void:
 
 	# EXP
 	if area is Exp:
-		exp_point += area.point
 		if is_local:
+			exp_point += area.point
 			got_exp_ids.append(area.id)
 	# Hero
 	if area is Hero:

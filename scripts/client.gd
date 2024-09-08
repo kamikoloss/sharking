@@ -123,14 +123,14 @@ func _on_center_button_down() -> void:
 			# TODO: スポーン位置選択
 			_spawn_hero()
 		GameMode.GAME:
-			if _main_hero:
+			if _is_valid_main_hero():
 				_main_hero.enter_charge()
 
 
 func _on_center_button_up() -> void:
 	match _game_mode:
 		GameMode.GAME:
-			if _main_hero:
+			if _is_valid_main_hero():
 				_main_hero.exit_charge()
 
 
@@ -162,7 +162,7 @@ func _spawn_hero() -> void:
 		print("[Client] failed to spawn main hero.")
 		return
 	# 一度死んだあと = 再生成の場合
-	if _main_hero:
+	if _is_valid_main_hero():
 		_main_hero.queue_free()
 
 	var hero_instance = _hero_scene.instantiate()
@@ -253,10 +253,14 @@ func _on_hero_died() -> void:
 	_game_mode = GameMode.LOBBY
 
 
+func _is_valid_main_hero() -> bool:
+	return _main_hero != null
+
+
 # Debug
 func _process_refresh_debug(_delta: float) -> void:
 	_debug_label_game_mode.text = "MOD:%s" % GameMode.keys()[_game_mode]
 	_debug_label_peer_id.text = "PID:%s" % _peer_id
-	if _main_hero:
+	if _is_valid_main_hero():
 		_debug_label_hero_move_state.text = "MST:%s" % Hero.MoveState.keys()[_main_hero.move_state]
 		_debug_label_hero_charge.text = "CHR:%s" % snapped(_main_hero.charge, 0.01)
