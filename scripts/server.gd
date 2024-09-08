@@ -2,12 +2,12 @@ class_name Server
 extends Node2D
 
 
-# Game Nodes
-@export var _level: Level
-
 # WebSocket
 @export var _ws_server: WebSocketServer
 var _ws_port: int = 8000
+
+# Game Nodes
+@export var _level: Level
 
 var _respawn_exps_timer: float = 0.0 # 最後に EXP を復活させてから何秒経ったかのタイマー
 var _respawn_exps_cooltime: float = 5.0 # 何秒ごとに EXP が復活するか
@@ -78,7 +78,7 @@ func _on_web_socket_server_message_received(peer_id: int, message: Variant) -> v
 		_send_message_to_peers(message, peer_id)
 
 	# Server 上の情報を更新する
-	match message:
+	match message["type"]:
 		# Hero が生成されたとき
 		Message.MessageType.HERO_SPAWNED:
 			_level.spawn_hero(message["pid"])
@@ -134,12 +134,10 @@ func _process_respawn_exps(delta: float) -> void:
 func _respawn_exps() -> void:
 	var exps = _level.respawn_exps_to_limit()
 	var exps_data = []
-	var total_point = 0
 	for exp in exps:
-		exps_data.append({ "id": exp.id, "pt": exp.point, "pos": exp.position })
 		_level.spawn_exp(exp.id, exp.point, exp.position)
-		total_point += exp.point
+		exps_data.append({ "id": exp.id, "pt": exp.point, "pos": exp.position })
 
-	print("[Server] Respaened exps. Count: %s, Total Point: %s" % [exps_data.size(), total_point])
+	print("[Server] Respaened exps. Count: %s" % [exps_data.size()])
 	var msg = { "type": Message.MessageType.EXP_SPAWNED, "exps": exps_data }
 	_send_message_to_peers(msg)

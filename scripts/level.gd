@@ -23,8 +23,7 @@ var _exp_point_list: Array[int] = [1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 5] # 生成す�
 @export var _hero_scene: PackedScene
 @export var _heros_parent_node: Node2D
 
-var _level_size: int = 640 # Level の大きさ (px, 辺/2)
-var _rng = RandomNumberGenerator.new()
+var _level_size: int = 800 # Level の大きさ (px, 辺/2)
 
 
 func _ready() -> void:
@@ -130,6 +129,6 @@ func move_hero(pid: int, charge: float, dest: Vector2, duration: float) -> void:
 
 # Level 内のランダムな座標を取得する
 func _get_random_position() -> Vector2:
-	var x = _rng.randi_range(_level_size * -1, _level_size)
-	var y = _rng.randi_range(_level_size * -1, _level_size)
+	var x = randi_range(_level_size * -1, _level_size)
+	var y = randi_range(_level_size * -1, _level_size)
 	return Vector2(x, y)

@@ -21,14 +21,15 @@ var _game_mode = GameMode.TITLE:
 				_button_center.text = "MOVE"
 var _peer_id = -1
 
-@export var _level: Level
-@export var _hero_scene: PackedScene
-var _main_hero: Hero
-
 # WebSocket
 @export var _ws_client: WebSocketClient
 @export var _ws_address = "ws://localhost:8000"
 @export var _send_interval: float = 0.05
+
+# Game Nodes
+@export var _level: Level
+@export var _hero_scene: PackedScene
+var _main_hero: Hero
 
 # UI
 @export var _button_center: Button
