@@ -30,8 +30,8 @@ func _ready() -> void:
 	pass
 
 
-# EXP を上限いっぱいまで再生成する (Server 用)
-func respawn_exps_to_limit() -> Array[Exp]:
+# EXP を上限まで取得する (Server 用)
+func get_exps_to_limit() -> Array[Exp]:
 	if is_client:
 		return []
 
@@ -41,16 +41,19 @@ func respawn_exps_to_limit() -> Array[Exp]:
 		var random_point = _exp_point_list.pick_random()
 		var random_position = _get_random_position()
 		var exp = Exp.new(random_point, random_position)
-		_exp_point_sum += random_point
-		spawn_exp(-1, exp.point, exp.position)
 		exps.append(exp)
 
 	return exps
 
+func _get_random_position() -> Vector2:
+	var x = randi_range(_level_size * -1, _level_size)
+	var y = randi_range(_level_size * -1, _level_size)
+	return Vector2(x, y)
+
 
 # EXP を生成する
-func spawn_exp(id: int, point: int, pos: Vector2) -> void:
-	if exps_on_level.has(id):
+func spawn_exp(id: int, point: int, position: Vector2) -> void:
+	if _is_valid_exp(id):
 		return
 
 	# EXP インスタンスを生成する
@@ -60,20 +63,22 @@ func spawn_exp(id: int, point: int, pos: Vector2) -> void:
 	var exp_id = exp_instance.get_instance_id() if id < 0 else id
 	exp_instance.id = exp_id
 	exp_instance.point = point
-	exp_instance.position = pos
+	exp_instance.position = position
 
-	_exp_point_sum += point
+	if not is_client:
+		_exp_point_sum += point
+
 	_exps_parent_node.add_child(exp_instance)
 	exps_on_level[exp_instance.id] = exp_instance
 
 	if not is_client:
-		print("(Level/spawn_exp) _exp_point_sum: %s" % [_exp_point_sum])
+		print("(Level/spawn_exp) point sum: %s" % [_exp_point_sum])
 		pass
 
 
 # EXP を破壊する
 func despawn_exp(id: int) -> void:
-	if not exps_on_level.has(id):
+	if not _is_valid_exp(id):
 		return
 
 	if not is_client:
@@ -83,7 +88,7 @@ func despawn_exp(id: int) -> void:
 	exps_on_level.erase(id)
 
 	if not is_client:
-		print("(Level/despawn_exp) _exp_point_sum: %s" % [_exp_point_sum])
+		print("(Level/despawn_exp) point sum: %s" % [_exp_point_sum])
 
 
 # Hero を生成する
@@ -101,7 +106,7 @@ func spawn_hero(pid: int) -> void:
 
 # Hero を破壊する
 func despawn_hero(pid: int) -> void:
-	if not heros_on_level.has(pid):
+	if not _is_valid_hero(pid):
 		return
 
 	heros_on_level[pid].die()
@@ -110,7 +115,7 @@ func despawn_hero(pid: int) -> void:
 
 # Hero の情報を更新する
 func update_hero(pid: int, exp: int, health: int, pos: Vector2) -> void:
-	if not heros_on_level.has(pid):
+	if not _is_valid_hero(pid):
 		return
 
 	heros_on_level[pid].exp_point = exp
@@ -120,15 +125,16 @@ func update_hero(pid: int, exp: int, health: int, pos: Vector2) -> void:
 
 # Hero を移動させる
 func move_hero(pid: int, charge: float, dest: Vector2, duration: float) -> void:
-	if not heros_on_level.has(pid):
+	if not _is_valid_hero(pid):
 		return
 
 	heros_on_level[pid].charge = charge
 	heros_on_level[pid].move(dest, 0.5, duration)
 
 
-# Level 内のランダムな座標を取得する
-func _get_random_position() -> Vector2:
-	var x = randi_range(_level_size * -1, _level_size)
-	var y = randi_range(_level_size * -1, _level_size)
-	return Vector2(x, y)
+func _is_valid_exp(id: int) -> bool:
+	return exps_on_level.has(id) and exps_on_level[id]
+
+
+func _is_valid_hero(pid: int) -> bool:
+	return heros_on_level.has(pid) and heros_on_level[pid]

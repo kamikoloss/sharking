@@ -24,7 +24,6 @@ var _peer_id = -1
 # WebSocket
 @export var _ws_client: WebSocketClient
 @export var _ws_address = "ws://localhost:8000"
-@export var _send_interval: float = 0.05
 
 # Game Nodes
 @export var _level: Level
@@ -146,6 +145,7 @@ func _on_right_button_down() -> void:
 func _connect_to_server() -> void:
 	var _error = _ws_client.connect_to_url(_ws_address)
 	if _error == OK:
+		print("[Client] connection succeeded.")
 		_game_mode = GameMode.LOBBY
 	else:
 		print("[Client] connection failed. (%s)" % error_string(_error))

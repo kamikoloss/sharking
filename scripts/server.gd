@@ -20,11 +20,13 @@ func _ready() -> void:
 
 	# 初期処理
 	_level.is_client = false
-	_level.respawn_exps_to_limit()
+	_respawn_exps_to_limit()
 
 	# サーバー開始
 	_parse_args()
 	_start_server()
+
+	print("[Server] _ready")
 
 
 func _process(delta: float) -> void:
@@ -128,16 +130,18 @@ func _process_respawn_exps(delta: float) -> void:
 	_respawn_exps_timer += delta
 	if _respawn_exps_cooltime < _respawn_exps_timer:
 		_respawn_exps_timer = 0.0
-		_respawn_exps()
+		_respawn_exps_to_limit()
 
 
-func _respawn_exps() -> void:
-	var exps = _level.respawn_exps_to_limit()
+func _respawn_exps_to_limit() -> void:
+	var exps = _level.get_exps_to_limit()
 	var exps_data = []
 	for exp in exps:
 		_level.spawn_exp(exp.id, exp.point, exp.position)
 		exps_data.append({ "id": exp.id, "pt": exp.point, "pos": exp.position })
 
-	print("[Server] Respaened exps. Count: %s" % [exps_data.size()])
-	var msg = { "type": Message.MessageType.EXP_SPAWNED, "exps": exps_data }
+	var msg = {
+		"type": Message.MessageType.EXP_SPAWNED,
+		"exps": exps_data,
+	}
 	_send_message_to_peers(msg)

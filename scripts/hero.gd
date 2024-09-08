@@ -234,7 +234,7 @@ func die() -> void:
 	tween.tween_property(_sprite, "rotation_degrees", 1080, 3.0)
 	tween.tween_property(_sprite, "self_modulate", Color.BLUE, 2.0)
 	tween.tween_property(_sprite, "scale", Vector2.ZERO, 3.0)
-	tween.finished.connect(func(v): queue_free())
+	tween.finished.connect(func(): queue_free())
 
 
 # Hero の見た目を変更する
