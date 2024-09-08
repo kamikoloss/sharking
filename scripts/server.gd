@@ -137,11 +137,15 @@ func _spawn_exps_to_limit() -> void:
 	var exps = _level.spawn_exps_to_limit()
 
 	var exps_data = []
+	var heros_data = []
 	for exp in exps:
 		exps_data.append({ "id": exp.id, "pt": exp.point, "pos": exp.position })
+	for hero in _level.heros_on_level.values():
+		heros_data.append({ "id": hero.id, "exp": hero.exp_point, "hlt": hero.health_point, "pos": hero.position })
 
 	var msg = {
 		"type": Message.MessageType.EXP_SPAWNED,
 		"exps": exps_data,
+		"heros": heros_data,
 	}
 	_send_message_to_peers(msg)

@@ -20,6 +20,7 @@ var _game_mode = GameMode.TITLE:
 			GameMode.GAME:
 				_button_center.text = "MOVE"
 var _peer_id = -1
+var _heros_data = []
 
 # WebSocket
 @export var _ws_client: WebSocketClient
@@ -34,6 +35,7 @@ var _main_hero: Hero
 @export var _button_center: Button
 @export var _button_left: Button
 @export var _button_right: Button
+@export var _label_raking: Label
 
 # Debug
 @export var _debug_label_game_mode: Label
@@ -55,6 +57,7 @@ func _ready() -> void:
 	# 初期処理
 	_level.is_client = true
 	_game_mode = GameMode.TITLE
+	_refresh_ranking([])
 
 
 func _process(delta: float) -> void:
@@ -113,6 +116,7 @@ func _on_web_socket_client_message_received(message: Variant) -> void:
 		Message.MessageType.EXP_SPAWNED:
 			for exp in message["exps"]:
 				_level.spawn_exp(exp["id"], exp["pt"], exp["pos"])
+			_refresh_ranking(message["heros"])
 
 
 func _on_center_button_down() -> void:
@@ -257,8 +261,21 @@ func _is_valid_main_hero() -> bool:
 	return _main_hero != null
 
 
+func _refresh_ranking(heros_data: Array) -> void:
+	var ranking_data = heros_data
+	ranking_data.sort_custom(func(a, b): return a["exp"] > b["exp"]) # 降順
+
+	var ranking_string = ""
+	for hero in ranking_data:
+		var id = str(hero["id"]).substr(0, 4)
+		var me = " ★" if hero["id"] == _peer_id else ""
+		ranking_string += "P%s: %s%s\n" % [id, hero["exp"], me]
+	_label_raking.text = ranking_string
+
+
 # Debug
 func _process_refresh_debug(_delta: float) -> void:
+	# Client
 	_debug_label_game_mode.text = "MOD:%s" % GameMode.keys()[_game_mode]
 	_debug_label_peer_id.text = "PID:%s" % _peer_id
 	if _is_valid_main_hero():
