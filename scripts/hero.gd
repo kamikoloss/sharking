@@ -37,7 +37,7 @@ var move_state = MoveState.WAITING:
 	set(value):
 		var from = move_state
 		move_state = value
-		print("[Hero %s] move state changed. %s -> %s" % [id, MoveState.keys()[from], MoveState.keys()[value]])
+		#print("[Hero %s] move state changed. %s -> %s" % [id, MoveState.keys()[from], MoveState.keys()[value]])
 
 var id: int = -1 # Peer ID が与えられる
 var is_client: bool = false # Client 上の Hero かどうか (<--> Server)

@@ -54,12 +54,17 @@ func _on_area_entered(area: Area2D) -> void:
 			destroy()
 		# Server の場合: 破壊しない
 		# Client から受信したデータを元に Level が手動で破壊する
+	# Wall
+	if area.is_in_group("Wall"):
+		# 流されすぎているので中央に戻る
+		self.position = Vector2(0.0, 0.0)
+		_start_move()
 
 
 # 自身の見た目を決定する
 func _init_visual() -> void:
 	var scale_ratio: = 1.0 + (float(point) - 1.0) / 2.0
-	scale *= scale_ratio
+	self.scale *= scale_ratio
 
 	if 1 < point:
 		_label.text = str(point)
