@@ -11,14 +11,14 @@ script = ExtResource("1_rfnpf")
 _ws_client = NodePath("WebSocketClient")
 _level = NodePath("Level")
 _hero_scene = ExtResource("5_e5wad")
-_button_center = NodePath("CanvasLayer/Control/ButtonCenter")
-_button_left = NodePath("CanvasLayer/Control/ButtonLeft")
-_button_right = NodePath("CanvasLayer/Control/ButtonRight")
-_label_raking = NodePath("CanvasLayer/Control/Debug/Server/LabelRanking")
-_debug_label_game_mode = NodePath("CanvasLayer/Control/Debug/Client/LabelGameMode")
-_debug_label_peer_id = NodePath("CanvasLayer/Control/Debug/Client/LabelPeerId")
-_debug_label_hero_move_state = NodePath("CanvasLayer/Control/Debug/Client/LabelHeroMoveState")
-_debug_label_hero_charge = NodePath("CanvasLayer/Control/Debug/Client/LabelHeroCharge")
+_button_center = NodePath("CanvasLayer/Buttons/ButtonCenter")
+_button_left = NodePath("CanvasLayer/Buttons/ButtonLeft")
+_button_right = NodePath("CanvasLayer/Buttons/ButtonRight")
+_label_raking = NodePath("CanvasLayer/Labels/Server/LabelRanking")
+_debug_label_game_mode = NodePath("CanvasLayer/Labels/Client/LabelGameMode")
+_debug_label_peer_id = NodePath("CanvasLayer/Labels/Client/LabelPeerId")
+_debug_label_hero_move_state = NodePath("CanvasLayer/Labels/Client/LabelHeroMoveState")
+_debug_label_hero_charge = NodePath("CanvasLayer/Labels/Client/LabelHeroCharge")
 
 [node name="WebSocketClient" parent="." instance=ExtResource("2_gpgyy")]
 
@@ -26,13 +26,13 @@ _debug_label_hero_charge = NodePath("CanvasLayer/Control/Debug/Client/LabelHeroC
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="Control" type="Control" parent="CanvasLayer"]
+[node name="Buttons" type="Control" parent="CanvasLayer"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 360.0
 offset_bottom = 640.0
 
-[node name="ButtonLeft" type="Button" parent="CanvasLayer/Control"]
+[node name="ButtonLeft" type="Button" parent="CanvasLayer/Buttons"]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 560.0
@@ -41,7 +41,7 @@ offset_bottom = 620.0
 theme = ExtResource("6_63squ")
 text = "◀"
 
-[node name="ButtonCenter" type="Button" parent="CanvasLayer/Control"]
+[node name="ButtonCenter" type="Button" parent="CanvasLayer/Buttons"]
 layout_mode = 0
 offset_left = 100.0
 offset_top = 560.0
@@ -50,7 +50,7 @@ offset_bottom = 620.0
 theme = ExtResource("6_63squ")
 text = "(BUTTON)"
 
-[node name="ButtonRight" type="Button" parent="CanvasLayer/Control"]
+[node name="ButtonRight" type="Button" parent="CanvasLayer/Buttons"]
 layout_mode = 0
 offset_left = 280.0
 offset_top = 560.0
@@ -59,31 +59,32 @@ offset_bottom = 620.0
 theme = ExtResource("6_63squ")
 text = "▶"
 
-[node name="Debug" type="Control" parent="CanvasLayer/Control"]
+[node name="Labels" type="Control" parent="CanvasLayer"]
+layout_mode = 3
 anchors_preset = 0
 offset_top = 10.0
 offset_bottom = 10.0
 
-[node name="Version" type="VBoxContainer" parent="CanvasLayer/Control/Debug"]
+[node name="Version" type="VBoxContainer" parent="CanvasLayer/Labels"]
 layout_mode = 0
 offset_right = 720.0
 offset_bottom = 160.0
 scale = Vector2(0.5, 0.5)
 theme_override_constants/separation = 5
 
-[node name="Label" type="Label" parent="CanvasLayer/Control/Debug/Version"]
+[node name="Label" type="Label" parent="CanvasLayer/Labels/Version"]
 layout_mode = 2
 theme = ExtResource("6_63squ")
 text = "SHARKING"
 horizontal_alignment = 1
 
-[node name="Label2" type="Label" parent="CanvasLayer/Control/Debug/Version"]
+[node name="Label2" type="Label" parent="CanvasLayer/Labels/Version"]
 layout_mode = 2
 theme = ExtResource("6_63squ")
 text = "v0.1.0"
 horizontal_alignment = 1
 
-[node name="Server" type="VBoxContainer" parent="CanvasLayer/Control/Debug"]
+[node name="Server" type="VBoxContainer" parent="CanvasLayer/Labels"]
 layout_mode = 0
 offset_left = 10.0
 offset_right = 170.0
@@ -91,12 +92,12 @@ offset_bottom = 320.0
 scale = Vector2(0.5, 0.5)
 theme_override_constants/separation = 5
 
-[node name="Label" type="Label" parent="CanvasLayer/Control/Debug/Server"]
+[node name="Label" type="Label" parent="CanvasLayer/Labels/Server"]
 layout_mode = 2
 theme = ExtResource("6_63squ")
 text = "<RANKING>"
 
-[node name="LabelRanking" type="Label" parent="CanvasLayer/Control/Debug/Server"]
+[node name="LabelRanking" type="Label" parent="CanvasLayer/Labels/Server"]
 layout_mode = 2
 theme = ExtResource("6_63squ")
 text = "P1111: 9999
@@ -108,7 +109,7 @@ P6666: 9999
 P7777: 9999
 P8888: 9999"
 
-[node name="Client" type="VBoxContainer" parent="CanvasLayer/Control/Debug"]
+[node name="Client" type="VBoxContainer" parent="CanvasLayer/Labels"]
 layout_mode = 0
 offset_left = 270.0
 offset_right = 430.0
@@ -116,27 +117,27 @@ offset_bottom = 320.0
 scale = Vector2(0.5, 0.5)
 theme_override_constants/separation = 5
 
-[node name="Label" type="Label" parent="CanvasLayer/Control/Debug/Client"]
+[node name="Label" type="Label" parent="CanvasLayer/Labels/Client"]
 layout_mode = 2
 theme = ExtResource("6_63squ")
 text = "<DEBUG>"
 
-[node name="LabelGameMode" type="Label" parent="CanvasLayer/Control/Debug/Client"]
+[node name="LabelGameMode" type="Label" parent="CanvasLayer/Labels/Client"]
 layout_mode = 2
 theme = ExtResource("6_63squ")
 text = "MOD:XXXX"
 
-[node name="LabelPeerId" type="Label" parent="CanvasLayer/Control/Debug/Client"]
+[node name="LabelPeerId" type="Label" parent="CanvasLayer/Labels/Client"]
 layout_mode = 2
 theme = ExtResource("6_63squ")
 text = "PID:XXXX"
 
-[node name="LabelHeroMoveState" type="Label" parent="CanvasLayer/Control/Debug/Client"]
+[node name="LabelHeroMoveState" type="Label" parent="CanvasLayer/Labels/Client"]
 layout_mode = 2
 theme = ExtResource("6_63squ")
 text = "MST:XXXX"
 
-[node name="LabelHeroCharge" type="Label" parent="CanvasLayer/Control/Debug/Client"]
+[node name="LabelHeroCharge" type="Label" parent="CanvasLayer/Labels/Client"]
 layout_mode = 2
 theme = ExtResource("6_63squ")
 text = "CHR:0.00"

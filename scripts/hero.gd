@@ -68,6 +68,7 @@ var got_exp_ids = [] # 移動中に取得した EXP の ID のリスト, 移動�
 @export var _arrow_square: TextureRect # 矢印の棒 (タメ)
 @export var _arrow_square_ct: TextureRect # 矢印の棒 (クールタイム)
 @export var _arrow_square_bg: TextureRect # 矢印の棒 (タメ背景)
+@export var _rader: Control
 
 @export var _texture_hero_main: Texture
 @export var _texture_hero_other: Texture
@@ -104,6 +105,7 @@ func _ready() -> void:
 	else:
 		_camera.enabled = false
 		_arrow.visible = false
+		_rader.visible = false
 
 
 func _process(delta: float) -> void:

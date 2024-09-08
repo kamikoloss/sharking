@@ -56,8 +56,8 @@ func _on_area_entered(area: Area2D) -> void:
 		# Client から受信したデータを元に Level が手動で破壊する
 	# Wall
 	if area.is_in_group("Wall"):
-		# 流されすぎているので中央に戻る
-		self.position = Vector2(0.0, 0.0)
+		# 流されすぎているので中央付近に戻る
+		self.position = Vector2(randf_range(-256.0, 256.0), randf_range(-256.0, 256.0))
 		_start_move()
 
 

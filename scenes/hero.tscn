@@ -13,7 +13,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_lxfer"]
 radius = 40.0
 
-[node name="Hero" type="Area2D" node_paths=PackedStringArray("_camera", "_sprite", "_control", "_exp_label", "_health_label", "_health_bar", "_arrow", "_arrow_square", "_arrow_square_ct", "_arrow_square_bg")]
+[node name="Hero" type="Area2D" node_paths=PackedStringArray("_camera", "_sprite", "_control", "_exp_label", "_health_label", "_health_bar", "_arrow", "_arrow_square", "_arrow_square_ct", "_arrow_square_bg", "_rader")]
 script = ExtResource("1_ifnkb")
 _camera = NodePath("Camera2D")
 _sprite = NodePath("Sprite2D")
@@ -25,6 +25,7 @@ _arrow = NodePath("Control/Arrow")
 _arrow_square = NodePath("Control/Arrow/Square")
 _arrow_square_ct = NodePath("Control/Arrow/SquareCt")
 _arrow_square_bg = NodePath("Control/Arrow/SquareBg")
+_rader = NodePath("Control/Rader")
 _texture_hero_main = ExtResource("2_mm6xn")
 _texture_hero_other = ExtResource("3_haphq")
 _texture_hero_bot = ExtResource("4_bbqww")
@@ -137,6 +138,7 @@ expand_mode = 1
 
 [node name="Triangle2" type="TextureRect" parent="Control/Rader"]
 self_modulate = Color(1, 0, 0, 0.501961)
+layout_mode = 0
 offset_left = -5.0
 offset_top = -165.0
 offset_right = 5.0

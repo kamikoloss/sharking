@@ -174,7 +174,7 @@ func _spawn_hero() -> void:
 	hero_instance.is_client = true
 	hero_instance.is_local = true
 	hero_instance.exp_point = 0
-	hero_instance.position = Vector2.ZERO # TODO
+	hero_instance.position = Vector2(randf_range(-512.0, 512.0), randf_range(-512.0, 512.0))
 	add_child(hero_instance)
 
 	_main_hero = hero_instance
