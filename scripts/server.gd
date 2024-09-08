@@ -20,7 +20,7 @@ func _ready() -> void:
 
 	# 初期処理
 	_level.is_client = false
-	_respawn_exps_to_limit()
+	_spawn_exps_to_limit()
 
 	# サーバー開始
 	_parse_args()
@@ -130,14 +130,14 @@ func _process_respawn_exps(delta: float) -> void:
 	_respawn_exps_timer += delta
 	if _respawn_exps_cooltime < _respawn_exps_timer:
 		_respawn_exps_timer = 0.0
-		_respawn_exps_to_limit()
+		_spawn_exps_to_limit()
 
 
-func _respawn_exps_to_limit() -> void:
-	var exps = _level.get_exps_to_limit()
+func _spawn_exps_to_limit() -> void:
+	var exps = _level.spawn_exps_to_limit()
+
 	var exps_data = []
 	for exp in exps:
-		_level.spawn_exp(exp.id, exp.point, exp.position)
 		exps_data.append({ "id": exp.id, "pt": exp.point, "pos": exp.position })
 
 	var msg = {

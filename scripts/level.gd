@@ -30,8 +30,8 @@ func _ready() -> void:
 	pass
 
 
-# EXP を上限まで取得する (Server 用)
-func get_exps_to_limit() -> Array[Exp]:
+# EXP を上限まで生成する (Server 用)
+func spawn_exps_to_limit() -> Array[Exp]:
 	if is_client:
 		return []
 
@@ -41,6 +41,7 @@ func get_exps_to_limit() -> Array[Exp]:
 		var random_point = _exp_point_list.pick_random()
 		var random_position = _get_random_position()
 		var exp = Exp.new(random_point, random_position)
+		spawn_exp(-1, random_point, random_position)
 		exps.append(exp)
 
 	return exps
