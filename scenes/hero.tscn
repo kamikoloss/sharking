@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://52tpbo5enhtq"]
+[gd_scene load_steps=11 format=3 uid="uid://52tpbo5enhtq"]
 
 [ext_resource type="Script" path="res://scripts/hero.gd" id="1_ifnkb"]
 [ext_resource type="Texture2D" uid="uid://iehci6p8ox2i" path="res://images/shark_2a.png" id="2_g8pur"]
@@ -7,6 +7,7 @@
 [ext_resource type="Theme" uid="uid://cji20uu480k3h" path="res://themes/default.tres" id="3_qksco"]
 [ext_resource type="Texture2D" uid="uid://d2ud3ffmcokv3" path="res://images/shark_3c.png" id="4_bbqww"]
 [ext_resource type="Texture2D" uid="uid://cb1mxt1jvjigo" path="res://images/base_triangle.svg" id="8_ha215"]
+[ext_resource type="Texture2D" uid="uid://eik8d301xa05" path="res://images/base_circle_line.svg" id="9_scxnm"]
 [ext_resource type="Texture2D" uid="uid://dsqpoa8t2wvms" path="res://images/base_square.svg" id="9_sydrv"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lxfer"]
@@ -119,4 +120,27 @@ offset_top = -80.0
 offset_right = 4.0
 offset_bottom = 80.0
 texture = ExtResource("9_sydrv")
+expand_mode = 1
+
+[node name="Rader" type="Control" parent="Control"]
+anchors_preset = 0
+
+[node name="Circle" type="TextureRect" parent="Control/Rader"]
+self_modulate = Color(1, 0, 0, 0.25098)
+layout_mode = 0
+offset_left = -160.0
+offset_top = -160.0
+offset_right = 160.0
+offset_bottom = 160.0
+texture = ExtResource("9_scxnm")
+expand_mode = 1
+
+[node name="Triangle2" type="TextureRect" parent="Control/Rader"]
+self_modulate = Color(1, 0, 0, 0.501961)
+offset_left = -5.0
+offset_top = -165.0
+offset_right = 5.0
+offset_bottom = -155.0
+pivot_offset = Vector2(5, 165)
+texture = ExtResource("8_ha215")
 expand_mode = 1
