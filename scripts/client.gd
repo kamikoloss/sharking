@@ -117,6 +117,7 @@ func _on_web_socket_client_message_received(message: Variant) -> void:
 			for exp in message["exps"]:
 				_level.spawn_exp(exp["id"], exp["pt"], exp["pos"])
 			_refresh_ranking(message["heros"])
+			_refresh_rader(message["heros"])
 
 
 func _on_center_button_down() -> void:
@@ -124,7 +125,6 @@ func _on_center_button_down() -> void:
 		GameMode.TITLE:
 			_connect_to_server()
 		GameMode.LOBBY:
-			# TODO: スポーン位置選択
 			_spawn_hero()
 		GameMode.GAME:
 			if _is_valid_main_hero():
@@ -174,7 +174,7 @@ func _spawn_hero() -> void:
 	hero_instance.is_client = true
 	hero_instance.is_local = true
 	hero_instance.exp_point = 0
-	hero_instance.position = Vector2(randf_range(-512.0, 512.0), randf_range(-512.0, 512.0))
+	hero_instance.position = Vector2(randf_range(-512, 512), randf_range(-512, 512))
 	add_child(hero_instance)
 
 	_main_hero = hero_instance
@@ -262,15 +262,30 @@ func _is_valid_main_hero() -> bool:
 
 
 func _refresh_ranking(heros_data: Array) -> void:
-	var ranking_data = heros_data
-	ranking_data.sort_custom(func(a, b): return a["exp"] > b["exp"]) # 降順
+	var hero_ranking_data = heros_data
+	hero_ranking_data.sort_custom(func(a, b): return a["exp"] > b["exp"]) # 降順
 
 	var ranking_string = ""
-	for hero in ranking_data:
-		var id = str(hero["id"]).substr(0, 4)
+	for hero in hero_ranking_data:
+		var id = str(hero["id"]).substr(0, 4) # 先頭4ケタにする
 		var me = " ★" if hero["id"] == _peer_id else ""
 		ranking_string += "P%s: %s%s\n" % [id, hero["exp"], me]
 	_label_raking.text = ranking_string
+
+
+func _refresh_rader(heros_data: Array) -> void:
+	if not _is_valid_main_hero():
+		return
+
+	var hero_ranking_data = heros_data
+	hero_ranking_data.sort_custom(func(a, b): return a["exp"] > b["exp"]) # 降順
+
+	var degs = []
+	for hero in hero_ranking_data:
+		if hero["id"] != _peer_id:
+			var rad = _main_hero.position.angle_to_point(hero["pos"])
+			degs.append(rad_to_deg(rad))
+	_main_hero.update_rader_triangles(degs)
 
 
 # Debug

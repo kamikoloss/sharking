@@ -57,7 +57,7 @@ func _on_area_entered(area: Area2D) -> void:
 	# Wall
 	if area.is_in_group("Wall"):
 		# 流されすぎているので中央付近に戻る
-		self.position = Vector2(randf_range(-256.0, 256.0), randf_range(-256.0, 256.0))
+		self.position = Vector2(randf_range(-256, 256), randf_range(-256, 256))
 		_start_move()
 
 
@@ -74,8 +74,8 @@ func _init_visual() -> void:
 
 # 移動を開始する
 func _start_move() -> void:
-	var dest_position = self.position + Vector2(randf_range(-40.0, 40.0), randf_range(-40.0, 40.0))
+	var dest_position = self.position + Vector2(randf_range(-40, 40), randf_range(-40, 40))
 	var tween = _move_tween
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
-	tween.tween_property(self, "position", dest_position, randf_range(4.0, 8.0))
+	tween.tween_property(self, "position", dest_position, randf_range(4, 8))
 	tween.finished.connect(_start_move) # 座標を相対的に算出するので最初からやり直す

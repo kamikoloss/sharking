@@ -69,6 +69,10 @@ var got_exp_ids = [] # 移動中に取得した EXP の ID のリスト, 移動�
 @export var _arrow_square_ct: TextureRect # 矢印の棒 (クールタイム)
 @export var _arrow_square_bg: TextureRect # 矢印の棒 (タメ背景)
 @export var _rader: Control
+@export var _rader_triangle_1: TextureRect
+@export var _rader_triangle_2: TextureRect
+@export var _rader_triangle_3: TextureRect
+@export var _rader_triangle_4: TextureRect
 
 @export var _texture_hero_main: Texture
 @export var _texture_hero_other: Texture
@@ -102,6 +106,7 @@ func _ready() -> void:
 		_arrow_square.scale.y = 0.0
 		_arrow_square_ct.scale.y = 0.0
 		_arrow_square_bg.scale.y = 0.0
+		update_rader_triangles([])
 	else:
 		_camera.enabled = false
 		_arrow.visible = false
@@ -249,6 +254,23 @@ func change_hero_texture(type: HeroTextureType) -> void:
 			_sprite.texture = _texture_hero_other
 		HeroTextureType.BOT:
 			_sprite.texture = _texture_hero_bot
+
+
+# Rader の三角を更新する
+# TODO: Tween
+func update_rader_triangles(degs: Array) -> void:
+	var rader_triangles = [
+		_rader_triangle_1,
+		_rader_triangle_2,
+		_rader_triangle_3,
+	 	_rader_triangle_4,
+	]
+	for i in range(4): # 0-3
+		if i < degs.size():
+			rader_triangles[i].visible = true
+			rader_triangles[i].rotation_degrees = degs[i] + 90.0
+		else:
+			rader_triangles[i].visible = false
 
 
 func _on_area_entered(area: Area2D) -> void:
