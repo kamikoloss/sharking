@@ -90,6 +90,7 @@ func despawn_exp(id: int) -> void:
 
 	if not is_client:
 		print("(Level/despawn_exp) point sum: %s" % [_exp_point_sum])
+		pass
 
 
 # Hero を生成する

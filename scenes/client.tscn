@@ -80,7 +80,7 @@ horizontal_alignment = 1
 [node name="Label2" type="Label" parent="CanvasLayer/Control/Debug/Version"]
 layout_mode = 2
 theme = ExtResource("6_63squ")
-text = "v0.0.0"
+text = "v0.1.0"
 horizontal_alignment = 1
 
 [node name="Server" type="VBoxContainer" parent="CanvasLayer/Control/Debug"]

@@ -24,7 +24,7 @@ var _heros_data = []
 
 # WebSocket
 @export var _ws_client: WebSocketClient
-@export var _ws_address = "ws://localhost:8000"
+@export var _ws_address = "wss://ws.gloxi.net/sharking:443"
 
 # Game Nodes
 @export var _level: Level
